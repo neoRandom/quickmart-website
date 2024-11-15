@@ -12,5 +12,9 @@ Utiliza PHP com TailwindCSS.
 
 <br />
 
+## Documentação
+
+Veja a pasta [docs](docs/index.md) para saber mais.
+
 ## To-do list (features):
 - [x] To-do list

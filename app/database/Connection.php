@@ -3,16 +3,13 @@
 class Connection extends PDO
 {
     private static ?Connection $conn = null;  // Singleton model (one instance for the whole project)
-    private string $host = "127.0.0.1";
-    private string $user = "root";
-    private string $password = "";
-    private string $dbname = "minimercado";
 
     private function __construct()
     {
-        $dsn = "mysql:host={$this->host};dbname={$this->dbname};charset=utf8";
+        $env = parse_ini_file(__DIR__ . "../../config/.env");
+        $dsn = "mysql:host={$env['HOST']};dbname={$env['DBNAME']};charset=utf8";
         try {
-            parent::__construct($dsn, $this->user, $this->password);
+            parent::__construct($dsn, $env['USER'], $env['PASSWORD']);
             $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         } catch (PDOException $e) {

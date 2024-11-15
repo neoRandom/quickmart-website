@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> QuickMart </title>
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
 </head>
 <body>
     <header>

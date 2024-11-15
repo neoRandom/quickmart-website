@@ -16,7 +16,7 @@ class Connection extends PDO
             $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new PDOException("Erro ao conectar ao banco de dados");
+            throw new PDOException("Erro ao conectar ao banco de dados: " . $e->getMessage());
         }
     }
 

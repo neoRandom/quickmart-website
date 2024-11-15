@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "buildtw": "npx tailwindcss -i ./app/input.css -o ./app/main.css",
-    "dev": "npm run buildtw && sudo ./bash/load.sh"
+    "build:css": "npx tailwindcss -i ./resources/css/input.css -o ./assets/css/main.css",
+    "dev": "npm run build:css && sudo ./config/load.sh"
   },
   "repository": {
     "type": "git",

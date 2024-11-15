@@ -1,1 +1,0 @@
-firefox localhost/quickmart/app/

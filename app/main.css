@@ -554,6 +554,22 @@ video {
   display: none;
 }
 
+.mt-16 {
+  margin-top: 4rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
 .text-center {
   text-align: center;
 }
@@ -561,6 +577,11 @@ video {
 .text-3xl {
   font-size: 1.875rem;
   line-height: 2.25rem;
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
 }
 
 .font-bold {
@@ -571,4 +592,4 @@ video {
   text-decoration-line: underline;
 }
 
-/*  */
+/* Generates a 'main.css' file when compiled w/ Tailwind */

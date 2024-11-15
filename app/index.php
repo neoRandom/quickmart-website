@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> QuickMart </title>
+    <link rel="stylesheet" href="main.css">
 </head>
 <body>
-    <h1 class="font-bold text-3xl text-center">
-        Under Construction 🚧
-    </h1>
-    <p class="underline text-center">
-        This page isn't available yet ;)
-    </p>
+    <div class="flex flex-col gap-4 mt-16">
+        <h1 class="font-bold text-4xl text-center">
+            Under Construction 🚧
+        </h1>
+        <p class="text-center">
+            This page isn't available yet ;)
+        </p>
+    </div>
 </body>
 </html>

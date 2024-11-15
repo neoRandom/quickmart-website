@@ -1,0 +1,25 @@
+{
+  "name": "quickmart-website",
+  "version": "1.0.0",
+  "description": "Projeto interdisciplinar que consiste na criação de um sistema completo para um minimercado.  Utiliza PHP com TailwindCSS.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "buildtw": "npx tailwindcss -i ./app/input.css -o ./app/main.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neoRandom/quickmart-website.git"
+  },
+  "author": "neoRandom",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neoRandom/quickmart-website/issues"
+  },
+  "homepage": "https://github.com/neoRandom/quickmart-website#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15"
+  }
+}

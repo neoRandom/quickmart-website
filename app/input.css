@@ -1,0 +1,5 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Generates a 'main.css' file when compiled w/ Tailwind */

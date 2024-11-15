@@ -12,3 +12,17 @@
 - `docs`: Documentação, como arquivos Markdown e Diagramas
 - `public`: Diretório que os usuários devem acessar, os arquivos aqui chamam os controllers que chamam os views
 - `resources`: Arquivos estáticos a serem compilados, como o `input.css` do Tailwind (vão para a pasta `assets`)
+
+<br />
+
+# Pré-requisitos para rodar
+
+- Carregar um servidor, de preferencia o Apache por meio do XAMPP/LAMPP.
+
+- Carregar o Schema do banco de dados MySQL, de preferencia pelo phpMyAdmin.
+
+- Criar um arquivo de variáveis de ambiente na pasta `config/` chamado `.env`, seguindo o exemplo do arquivo `config/.env.example`.
+
+- Rodar o script `npm run dev` (se estiver usando LAMPP), ou compilar o arquivo CSS com `npm run build:css` e colocar o caminho da pasta do projeto no servidor (se não estiver usando LAMPP).
+
+- Abrir o projeto no seu navegador favorito.

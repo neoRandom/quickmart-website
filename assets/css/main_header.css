@@ -1,0 +1,17 @@
+.image {
+    width: 40px;
+    aspect-ratio: 1/1;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.menubar-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+}

@@ -3,3 +3,12 @@
 @tailwind utilities;
 
 /* Generates a 'main.css' file when compiled w/ Tailwind */
+@layer components {
+    .btn-w-bg-image {
+        @apply 
+            p-1
+            scale-95 hover:scale-100
+            transition-transform duration-300
+        ;
+    }
+}

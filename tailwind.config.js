@@ -20,6 +20,10 @@ module.exports = {
                     DEFAULT: "#fed233",
                     dark: "#000000"  // Undefined for now
                 }
+            },
+            width: {
+                desktop: "1366px",
+                mobile: "100vw"
             }
         },
     },

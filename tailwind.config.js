@@ -11,7 +11,10 @@ module.exports = {
         extend: {
             colors: {
                 white: "#fdfdfd",
-                black: "#202020",
+                black: {
+                    DEFAULT: "#202020",
+                    pure: "#000000"
+                },
                 primary: {
                     DEFAULT: "#003366",
                     dark: "#002952"
@@ -22,7 +25,7 @@ module.exports = {
                 }
             },
             width: {
-                desktop: "1366px",
+                desktop: "1365px",
                 mobile: "100vw"
             }
         },

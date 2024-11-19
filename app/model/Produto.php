@@ -204,10 +204,13 @@ class Produto extends Model {
 
     // ========================= Table-scoped Methods =========================
 
-    public static function getAll(): array {
-        $sql = "SELECT * FROM produto";
+    public static function getAll(string $value = ""): array {
+        $sql = "SELECT * FROM produto" . ($value === "") ? "" : " WHERE nome LIKE '%:nome%'";
 
-        $stmt = Connection::executeDQL($sql);
+        $stmt = Connection::executeDQL(
+            $sql, 
+            [':nome' => $value]
+        );
 
         $produtos = [];
 

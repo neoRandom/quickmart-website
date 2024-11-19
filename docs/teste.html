@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Page Title</title>
+    </head>
+    <body>
+    <script>
+        let table = [
+            {
+                name: "nome",
+                type: "text"
+            },
+            {
+                name: "data",
+                type: "date"
+            }
+        ];
+        
+        function renderContainer(
+            {
+                tagName, 
+                innerText, 
+                attributes, 
+                classList
+            }, 
+            ...children
+        ) {
+            return renderElement(
+                {
+                    container: document.body, 
+                    tagName, 
+                    innerText, 
+                    attributes, 
+                    classList
+                }, 
+                ...children
+            );
+        }
+
+        function renderChild(
+            {
+                tagName, 
+                innerText, 
+                attributes, 
+                classList
+            }, 
+            ...children
+        ) {
+            return renderElement(
+                {
+                    container: null, 
+                    tagName, 
+                    innerText, 
+                    attributes, 
+                    classList
+                }, 
+                ...children
+            );
+        }
+
+        function renderElement(
+            {
+                container, 
+                tagName, 
+                innerText, 
+                attributes, 
+                classList
+            }, 
+            ...children
+        ) {
+            const newElement = document.createElement(tagName);
+
+            if (innerText !== "")
+                newElement.innerText = innerText;
+
+            Object.keys(attributes).forEach(key => {
+                newElement[key] = attributes[key];
+            });
+
+            if (classList !== "")
+                newElement.classList.add(classList);
+
+            for (let child of children) {
+                newElement.appendChild(child);
+            }
+
+            if (container !== null)
+                container.appendChild(newElement);
+
+            return newElement;
+        }
+
+        renderContainer(
+            {
+                tagName: "form", 
+                innerText: "",
+                attributes: { 
+                    action: "post", 
+                    method: "POST" 
+                },
+                classList: ""
+            },
+            ...table.flatMap(attribute => [
+                renderChild(
+                    "label", attribute.name,
+                    { for: attribute.name },
+                    ""
+                ), 
+
+                renderChild(
+                    "input", "",
+                    { name: attribute.name,
+                      type: attribute.type },
+                    ""
+                )
+            ]),
+            renderChild({
+                tagName: "button",
+                innerText: "Submit",
+                attributes: { type: "submit" },
+                classList: ""
+            })
+        );
+    </script>
+    </body>
+</html>

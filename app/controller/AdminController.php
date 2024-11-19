@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../middleware/Authentication.php";
 
 class AdminController
 {
@@ -8,6 +9,8 @@ class AdminController
 
         require_once __DIR__ . "/../view/admin/admin.php";
     }
+
+    private function getDefault() { /* ... */ }
 
     public static function postInsert() { /* ... */ }
     public static function postUpdate() { /* ... */ }

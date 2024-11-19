@@ -28,7 +28,7 @@ abstract class Model {
 
     // ========================= Table-scoped Methods =========================
 
-    public abstract static function getAll(): array;
+    public abstract static function getAll(string $value = ""): array;
 }
 
 ?>

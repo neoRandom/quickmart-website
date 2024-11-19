@@ -10,6 +10,6 @@
     <h1>
         Login
     </h1>
-    <a href=""></a>
+    <a href="..">Voltar</a>
 </body>
 </html>

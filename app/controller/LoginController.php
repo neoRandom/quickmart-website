@@ -4,7 +4,7 @@ class LoginController
 {
     public function __construct()
     {
-        if ($_SERVER['REQUEST_METHOD'] === "POST") {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->postLogin();
         }
         else {

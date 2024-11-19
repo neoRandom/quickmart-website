@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/../middleware/Authentication.php";
 
 class MainController
 {

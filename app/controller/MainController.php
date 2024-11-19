@@ -1,10 +1,11 @@
 <?php
-require_once __DIR__ . "/Controller.php";
 
-class MainController extends Controller
+class MainController
 {
     public function __construct()
     {
+        new Authentication();
+
         require_once __DIR__ . "/../view/main.php";
     }
 }

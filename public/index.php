@@ -2,6 +2,6 @@
 
 require_once '../app/controller/MainController.php';
 
-new MainController();
+MainController::loadMain();
 
 ?>

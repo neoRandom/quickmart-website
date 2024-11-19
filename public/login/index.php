@@ -1,7 +1,7 @@
 <?php 
 
-require_once '../../app/controller/LoginController.php';
+require_once '../../app/controller/MainController.php';
 
-new LoginController();
+MainController::loadLogin();
 
 ?>

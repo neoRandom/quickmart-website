@@ -3,30 +3,46 @@ require_once __DIR__ . "/../autoload.php";
 
 class Authentication 
 {
-    public ?string $token = null;
-
-    public function __construct() 
-    {
+    public static function validateClient() {
         session_start();
 
-        if (!isset($_SESSION["token"])) {
+        if (!isset($_SESSION["client_token"])) {
             header("HTTP/1.1 401 Unauthorized");
-            $this->redirectLogin();
+            self::redirectLogin("login");  // quickmart/public/login
         }
 
-        if (!$this->verifyToken($_SESSION["token"])) {
+        if (!self::verifyClientToken($_SESSION["client_token"])) {
             header("HTTP/1.1 403 Forbidden");
-            $this->redirectLogin();
+            self::redirectLogin("login");  // quickmart/public/login
         }
     }
 
-    public function verifyToken(string $token): bool {
-        /* ... */
+    private static function verifyClientToken(string $token) {
         return false;
     }
 
-    public function redirectLogin() {
-        header("Location: " . BASE_URL . "login/");
+    public static function validateAdmin() {
+        session_start();
+
+        if (!isset($_SESSION["admin_token"])) {
+            header("HTTP/1.1 401 Unauthorized");
+            self::redirectLogin("admin/login");  // quickmart/public/admin/login
+        }
+
+        if (!self::verifyAdminToken($_SESSION["admin_token"])) {
+            header("HTTP/1.1 403 Forbidden");
+            self::redirectLogin("admin/login");  // quickmart/public/admin/login
+        }
+
+        return true;
+    }
+
+    private static function verifyAdminToken(string $token) {
+        return false;
+    }
+
+    private static function redirectLogin(string $url) {
+        header("Location: " . BASE_URL . $url);
         die();
     }
 }

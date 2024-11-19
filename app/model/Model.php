@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "../database/Connection.php";
+require_once __DIR__ . "/../database/Connection.php";
 
 abstract class Model {
     /* private ... */

@@ -1,7 +1,7 @@
 <?php 
 
-require_once '../app/controller/IndexController.php';
+require_once '../app/controller/MainController.php';
 
-IndexController::loadPage();
+new MainController();
 
 ?>

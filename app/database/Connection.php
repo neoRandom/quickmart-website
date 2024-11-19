@@ -6,7 +6,7 @@ class Connection extends PDO
 
     private function __construct()
     {
-        $env = parse_ini_file(__DIR__ . "../../config/.env");
+        $env = parse_ini_file(__DIR__ . "/../../config/.env");
 
         if (!(isset($env['HOST']) && 
             isset($env['DBNAME']) && 

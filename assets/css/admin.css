@@ -1,0 +1,262 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f3f3f3;
+    display: flex;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+/* Estilo do menu lateral */
+.sidebar {
+    background-color: #fff;
+    width: 250px;
+    height: calc(100% - 60px); 
+    position: fixed;
+    top: 60px; 
+    left: 0;
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px; 
+    transition: width 0.3s;
+}
+
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.menu-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; 
+    color: #003366;
+    padding: 15px;
+    font-weight: bold;
+}
+
+.separator {
+    margin: 0;
+    border: none;
+    border-top: 2px solid #ddd;
+}
+
+/* Seta de expansão/contração */
+.expand-btn {
+    position: absolute;
+    top: 80px; 
+    left: 250px;
+    background-color: transparent;
+    color: #003366;
+    font-size: 24px;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    transition: left 0.3s;
+    border-radius: 5px;
+}
+
+.expand-btn:focus {
+    outline: none;
+}
+
+/* Seta triangular */
+.expand-btn:before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 8px solid #003366;
+    display: inline-block;
+    transition: transform 0.3s;
+}
+
+/* Seta para indicar o estado expandido ou recolhido */
+.sidebar.collapsed + .expand-btn:before {
+    transform: rotate(180deg); /* Seta para dentro quando expandido */
+}
+
+/* Estilo da lista de menu */
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.menu-item:hover {
+    background-color: #f4f4f4;
+}
+
+.menu-icon {
+    width: 18px; 
+    height: 18px; 
+    margin-right: 15px; 
+    background-color: #ccc;
+    border-radius: 2px;
+}
+
+/* Destacar o quadradinho e o texto quando selecionado */
+.menu-item.active .menu-icon {
+    background-color: #003366; /* Cor do quadradinho quando ativo */
+}
+
+.menu-item.active {
+    color: #003366;
+}
+
+.menu-text {
+    white-space: nowrap;
+}
+
+.sidebar.collapsed .menu-text {
+    display: none;
+}
+
+/* Estilo do cabeçalho */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #003366;
+    color: #fff;
+    padding: 15px 20px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.project-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #FED233;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.logout-button {
+    background-color: #fff;
+    color: #1c74d1;
+    border: none;
+    padding: 6px 11px;
+    border-radius: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.user-greeting {
+    margin-right: 10px;
+}
+
+/* Estilo da área de acesso e permissões */
+.access-info {
+    background-color: #003366;
+    color: #fff;
+    padding: 15px;
+    margin-top: auto; 
+}
+
+.access-title,
+.permissions-title {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* Estilo da parte central - Tabela e campo de pesquisa */
+.main-content {
+    margin-left: 270px; /* Deixa o conteúdo à direita do menu lateral */
+    padding: 20px;
+    width: calc(100% - 270px); /* Ajusta o tamanho para ocupar o restante da largura */
+    margin-top: 80px; /* Espaçamento abaixo do cabeçalho */
+}
+
+/* Retângulo com Tabela: Produto e botão Novo Registro */
+.table-header {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.new-record-btn {
+    background-color: #003366;
+    color: white;
+    padding: 8px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.new-record-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Campo de pesquisa */
+.search-box {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.search-content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.search-input {
+    width: 1500px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.search-btn {
+    background-color: #003366;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.search-btn:hover {
+    background-color: #0056b3;
+}

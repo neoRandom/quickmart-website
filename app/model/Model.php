@@ -1,13 +1,12 @@
 <?php
+require_once __DIR__ . "../database/Connection.php";
 
-class Exemplo {
+abstract class Model {
     /* private ... */
-    private Connection $db;
 
     public function __construct(
         /* ... */
     ) {
-        $this->db = Connection::getInstance();
         /* ... */
     }
 
@@ -19,17 +18,17 @@ class Exemplo {
 
     // ========================= Object-scoped Methods =========================
 
-    public function create(): bool { /* ... */ }
+    public abstract function create(): bool;
 
-    public function read(): bool { /* ... */ }
+    public abstract function read(): bool;
 
-    public function update(): bool { /* ... */ }
+    public abstract function update(): bool;
 
-    public function delete(): bool { /* ... */ }
+    public abstract function delete(): bool;
 
     // ========================= Table-scoped Methods =========================
 
-    public static function getAll(): array { /* ... */ }
+    public abstract static function getAll(): array;
 }
 
 ?>

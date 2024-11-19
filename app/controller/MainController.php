@@ -1,11 +1,11 @@
 <?php
 require_once __DIR__ . "Controller.php";
 
-class AdminController extends Controller
+class MainController extends Controller
 {
     public function __construct()
     {
-        require_once __DIR__ . '/../view/admin/index.php';
+        require_once __DIR__ . '/../view/index.php';
     }
 }
 

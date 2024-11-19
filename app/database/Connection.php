@@ -7,15 +7,27 @@ class Connection extends PDO
     private function __construct()
     {
         $env = parse_ini_file(__DIR__ . "../../config/.env");
+
+        if (!(isset($env['HOST']) && 
+            isset($env['DBNAME']) && 
+            isset($env['USER']) && 
+            isset($env['PASSWORD']))
+            ) {
+            throw new RuntimeException("Error: .env file not found");
+        }
         $dsn = "mysql:host={$env['HOST']};dbname={$env['DBNAME']};charset=utf8";
         try {
             parent::__construct($dsn, $env['USER'], $env['PASSWORD']);
             $this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new PDOException("Erro ao conectar ao banco de dados: " . $e->getMessage());
+            throw new PDOException("Error connecting to the database: " . $e->getMessage());
         }
     }
+
+    private function __clone() {}
+    private function __wakeup() {}
+
 
     // Method to get the connection
     public static function getInstance(): Connection
@@ -30,14 +42,14 @@ class Connection extends PDO
      * 
      * Returns the Statement, so use it with 'select' operations
      */
-    public function executeDQL(string $query, array $params = []): ?PDOStatement
+    public static function executeDQL(string $query, array $params = []): ?PDOStatement
     {
         try {
-            $stmt = $this->prepare($query);
+            $stmt = self::getInstance()->prepare($query);
             $stmt->execute($params);
             return $stmt;
         } catch (PDOException $e) {
-            throw new PDOException("Erro ao executar a query (DQL): " . $e->getMessage());
+            throw new PDOException("Error executing the query (DQL): " . $e->getMessage());
         }
     }
 
@@ -45,13 +57,13 @@ class Connection extends PDO
      * 
      * Returns true if the execution was successful, so don't use it with 'select' operations
      */
-    public function executeDML(string $query, array $params = []): bool
+    public static function executeDML(string $query, array $params = []): bool
     {
         try {
-            $stmt = $this->prepare($query);
+            $stmt = self::getInstance()->prepare($query);
             return $stmt->execute($params);
         } catch (PDOException $e) {
-            throw new PDOException("Erro ao executar a query (DML): " . $e->getMessage());
+            throw new PDOException("Error executing the query (DML): " . $e->getMessage());
         }
         return false;
     }

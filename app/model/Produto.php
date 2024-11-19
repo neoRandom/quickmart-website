@@ -1,6 +1,7 @@
 <?php
+require_once __DIR__ . "Model.php";
 
-class Produto {
+class Produto extends Model {
     private int $codProd;
     private int $codCate;
     private int $codPromoProd;
@@ -10,7 +11,6 @@ class Produto {
     private ?string $descricao;
     private int $estoque;
     private float $preco;
-    private Connection $db;
 
 
     // Class constructor, includes a Connection object
@@ -25,7 +25,6 @@ class Produto {
         int $estoque = 0,
         float $preco = 0.0
     ) {
-        $this->db = Connection::getInstance();
         $this->codProd = $codProd;
         $this->codCate = $codCate;
         $this->codPromoProd = $codPromoProd;
@@ -120,7 +119,7 @@ class Produto {
         $sql = "INSERT INTO produto (cod_cate, cod_promo_prod, cod_classific, id_fabric, nome, descricao, estoque, preco)
                 VALUES (:codCate, :codPromoProd, :codClassific, :idFabric, :nome, :descricao, :estoque, :preco)";
         
-        $result = $this->db->executeDML(
+        $result = Connection::executeDML(
             $sql,
             [
                 ':codCate' => $this->getCodCate(),
@@ -135,7 +134,7 @@ class Produto {
         );
 
         if ($result == true) {
-            $this->setCodProd($this->db->lastInsertId());
+            $this->setCodProd(Connection::getInstance()->lastInsertId());
         }
 
         return $result;
@@ -144,7 +143,7 @@ class Produto {
     // Searchs for a certain Produto in the database
     public function read(): bool {
         $sql = "SELECT * FROM produto WHERE cod_prod = :codProd";
-        $stmt = $this->db->executeDQL(
+        $stmt = Connection::executeDQL(
             $sql, 
             [":codProd" => $this->getCodProd()]
         );
@@ -178,7 +177,7 @@ class Produto {
                     preco = :preco
                 WHERE cod_prod = :codProd";
         
-        return $this->db->executeDML(
+        return Connection::executeDML(
             $sql,
             [
                 ':codProd' => $this->getCodProd(),
@@ -197,7 +196,7 @@ class Produto {
     // Deletes the current Produto from the database
     public function delete(): bool {
         $sql = "DELETE FROM produto WHERE cod_prod = :codProd";
-        return $this->db->executeDML(
+        return Connection::executeDML(
             $sql, 
             [':codProd' => $this->codProd]
         );
@@ -206,11 +205,9 @@ class Produto {
     // ========================= Table-scoped Methods =========================
 
     public static function getAll(): array {
-        $conn = Connection::getInstance();
-
         $sql = "SELECT * FROM produto";
 
-        $stmt = $conn->executeDQL($sql);
+        $stmt = Connection::executeDQL($sql);
 
         $produtos = [];
 

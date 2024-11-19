@@ -7,6 +7,10 @@ class AdminController extends Controller
     {
         require_once __DIR__ . "/../view/admin/admin.php";
     }
+
+    public static function postInsert() { /* ... */ }
+    public static function postUpdate() { /* ... */ }
+    public static function postDelete() { /* ... */ }
 }
 
 ?>

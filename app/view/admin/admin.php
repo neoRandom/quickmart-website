@@ -117,7 +117,7 @@
             </div>
 
             <!-- Table and stuff -->
-            <div id="side-container" class="absolute top-0 right-0 w-[calc(100%-16rem)] h-full p-8">
+            <div id="side-container" class="absolute top-0 right-0 w-[calc(100%-16rem)] h-full p-8 transition-all duration-700">
                 <div class="flex flex-col gap-4 w-full h-full *:w-full *:bg-white *:rounded-md *:shadow-sm">
                     <!-- Header -->
                     <header class="flex justify-between items-center px-4 py-2">

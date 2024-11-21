@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:css": "npx tailwindcss -i ./resources/css/input.css -o ./assets/css/main.css --minify",
-    "dev:l": "npm run build:css && sudo ./config/load.sh",
-    "dev:w": "npm run build:css && .\\config\\load.bat"
+    "dev": "tsc && npm run build:css",
+    "dev:l": "npm run dev && sudo ./config/load.sh",
+    "dev:w": "npm run dev && .\\config\\load.bat"
   },
   "repository": {
     "type": "git",

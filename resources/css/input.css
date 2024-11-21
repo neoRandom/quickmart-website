@@ -1,8 +1,42 @@
+/* Generates a 'main.css' file when compiled w/ Tailwind */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Generates a 'main.css' file when compiled w/ Tailwind */
+:root {
+    --primary: #003366;
+    --primary-dark: #002952;
+    --secondary: #fed233;
+    --desktop-width: 1365px;
+    --mobile-width: 100vw;
+}
+
+/* Scrollbar configurations */
+
+/* For webkit */
+::-webkit-scrollbar {
+    width: 3px;
+}
+
+::-webkit-scrollbar-track {
+    background: #DDD;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary--dark);
+    cursor: pointer;
+}
+
+/* For FireFox */
+* {
+    scrollbar-width: 3px;
+    scrollbar-color: var(--primary) #DDD;
+}
 
 @layer components {
     .btn-w-bg-image {

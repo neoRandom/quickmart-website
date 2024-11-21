@@ -1,0 +1,9 @@
+<?php 
+
+function generateHeader() {
+    ?> 
+    
+    <?php
+}
+
+?>

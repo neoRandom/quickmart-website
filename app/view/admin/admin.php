@@ -42,8 +42,8 @@
                         <img src="/quickmart/assets/images/icon.png" alt="user" width="100%" height="100%">
                     </button>
 
-                    <div id="dropdown-menu" class="hidden absolute top-16 right-0 h-fit w-fit p-2 rounded-md shadow-md">
-                        <ul class="flex flex-col gap-2 mt-2">
+                    <div id="dropdown-menu" class="hidden absolute top-16 right-0 h-fit w-fit p-2 bg-white rounded-md shadow-md">
+                        <ul class="flex flex-col gap-2">
                             <li>
                                 <a href="/quickmart/public/admin/logout">
                                     <div class="

@@ -1,12 +1,15 @@
 class Carousel {
-    container: HTMLElement;
-    positionsList: Array<string>;
-    currentPosition: number;
-    cycleFunctionID: number | null;
-    timeBetween: number;
-    leftToRight: boolean;
+    private container: HTMLElement;
+    private positionsList: Array<string>;
+    private currentPosition: number;
+    private cycleFunctionID: number | null;
+    private timeBetween: number;
+    public leftToRight: boolean;
 
-    constructor(container: HTMLElement, ltr = true) {
+    constructor(
+        container: HTMLElement, 
+        ltr: boolean = true
+    ) {
         this.container = container;
         this.positionsList = ["0"];
         this.currentPosition = 0;

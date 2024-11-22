@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var _a, _b;
-import { renderElement, renderChild } from "Render/index.js";
+import { renderElement, renderChild } from "./Render/index.js";
 const sideMenu = document.querySelector("#sidebar");
 const sideMenuItens = sideMenu.querySelectorAll("div > ul > li");
 const crudContainer = document.querySelector("#side-container");
@@ -40,12 +40,8 @@ function loadTable(id) {
             else
                 e.classList.remove("selected-item");
         });
-        const tableMetadata = yield fetch(`get_table?id=${id}`)
-            .then(response => response.json())
-            .catch(error => {
-            console.error("Error:", error);
-        });
-        console.log(tableMetadata);
+        let payload = yield fetch(`get_table?id=${id}`);
+        let tableMetadata = yield payload.json();
         const crudBase = crudContainer.children[0];
         while (crudBase.firstChild) {
             crudBase.removeChild(crudBase.firstChild);
@@ -81,6 +77,7 @@ function loadTable(id) {
                 class: "text-white font-bold px-8 py-2 rounded-md bg-primary hover:bg-primary-dark"
             }
         }));
+        yield new Promise((resolve) => setTimeout(resolve, 2000));
         crudContainer.classList.remove("hidden");
     });
 }

@@ -61,6 +61,8 @@ class AdminController
      * HTTP status code and an error message.
      */
     public static function getTable() {
+        // TODO: Change the request method to POST or start to require a token from the user
+        
         // Ensure the request method is GET
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
             http_response_code(405);

@@ -2,7 +2,7 @@
 import { 
     renderElement, 
     renderChild 
-} from "Render/index.js";  
+} from "./Render/index.js";  
 
 
 const sideMenu = document.querySelector("#sidebar") as HTMLDivElement;
@@ -53,17 +53,12 @@ async function loadTable(id: number) {
     });
 
     // Fetch metadata from the server
-    const tableMetadata = await fetch(`get_table?id=${id}`)
-        .then(response => response.json())
-        .catch(error => {
-            console.error("Error:", error);
-        });
+    let payload = await fetch(`get_table?id=${id}`);
+    let tableMetadata = await payload.json();
 
-    console.log(tableMetadata);
-
-    const crudBase = crudContainer.children[0] as HTMLDivElement;
-    
     // Removing all child Nodes from tableBase element
+    const crudBase = crudContainer.children[0] as HTMLDivElement;
+
     while (crudBase.firstChild) {
         crudBase.removeChild(crudBase.firstChild);
     }

@@ -50,7 +50,7 @@ class AdminController
 
 
     /**
-     * Handle a GET request to retrieve the metadata of a table
+     * Handle a GET request to retrieve the data and metadata of a table
      *
      * This method verifies that the request method is GET and that the
      * 'id' parameter is set and a valid integer. It then uses the
@@ -61,8 +61,6 @@ class AdminController
      * HTTP status code and an error message.
      */
     public static function getTable() {
-        // TODO: Change the request method to POST or start to require a token from the user
-        
         // Ensure the request method is GET
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
             http_response_code(405);
@@ -84,7 +82,7 @@ class AdminController
             exit;
         }
 
-        $tableIndex = (int)$_GET['id'];
+        $tableIndex = (int) $_GET['id'];
 
         // error_log("Table index: $tableIndex");
 
@@ -97,18 +95,21 @@ class AdminController
             exit;
         }
 
-        $tableName = $tableNames[$tableIndex];
+        $tableName = $tableNames[$tableIndex]::TABLE_NAME;
 
         // error_log("Table name: $tableName");
 
         try {
+            $payload = [];
+
             // Fetch metadata for the specified table
-            $tableMetadata = Connection::getTableMetadata($tableName);
-            $tableMetadata['tableName'] = $tableName;
+            $payload['name'] = $tableName;
+            $payload['metadata'] = Connection::getTableMetadata($tableName);
+            $payload['rows'] = Connection::getTableRowsJSON($tableIndex);
 
             // Return the metadata as a JSON response
             header('Content-Type: application/json');
-            echo json_encode($tableMetadata);
+            echo json_encode($payload);
         } catch (\PDOException $e) {
             error_log("PDOException: " . $e->getMessage());
             http_response_code(500);

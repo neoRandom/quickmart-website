@@ -1,32 +1,9 @@
 import type {
     RenderElement, 
-    RenderChild
+    RenderElementWoContainer, 
+    RenderElementWoInnerText, 
+    RenderElementWoInnerTextAndContainer
 } from './types.ts';
-
-
-/**
- * Creates a new HTML element with the given attributes and adds it to the
- * given container if one is provided. The element is also populated with the
- * given children.
- * 
- * @param renderChild The child element to create and add to the container.
- * @param children The children to add to the element.
- * @returns The created element.
- */
-function renderChild(
-    renderChild: RenderChild, 
-    ...children: HTMLElement[]
-) {
-    return renderElement(
-        {
-            container: null, 
-            tagName: renderChild.tagName, 
-            innerText: renderChild.innerText, 
-            attributes: renderChild.attributes
-        }, 
-        ...children
-    );
-}
 
 
 /**
@@ -39,12 +16,16 @@ function renderChild(
  * @returns The created element.
  */
 function renderElement(
-    element: RenderElement, 
+    element: 
+        RenderElement | 
+        RenderElementWoContainer | 
+        RenderElementWoInnerText | 
+        RenderElementWoInnerTextAndContainer, 
     ...children: HTMLElement[]
 ) {
     const newElement = document.createElement(element.tagName) as HTMLElement;
 
-    if (element.innerText !== "")
+    if ('innerText' in element && element.innerText !== "")
         newElement.innerText = element.innerText;
 
     Object.keys(element.attributes).forEach(key => {
@@ -52,18 +33,34 @@ function renderElement(
             newElement.setAttribute(key, element.attributes[key]);
     });
 
-    for (let child of children) {
+    for (let child of children)
         newElement.appendChild(child);
-    }
 
-    if (element.container !== null)
+    if ('container' in element && element.container !== null)
         element.container.appendChild(newElement);
 
     return newElement;
 }
 
 
+/**
+ * Creates a new HTML element. The element is also populated with the given children.
+ * 
+ * @param tagName The tag name of the element to create.
+ * @param children The children to add to the element.
+ * @returns The created HTMLElement.
+ */
+function renderTag(tagName: string, ...children: HTMLElement[]): HTMLElement {
+    const newElement = document.createElement(tagName) as HTMLElement;
+
+    for (let child of children)
+        newElement.appendChild(child);
+
+    return newElement;
+}
+
+
 export {
-    renderChild, 
-    renderElement
+    renderElement,
+    renderTag
 };

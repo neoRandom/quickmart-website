@@ -1,12 +1,17 @@
 <?php
+namespace model;
+
+use database;
+
 require_once __DIR__ . "/Model.php";
 
 class Produto extends Model {
-    private int $codProd;
-    private int $codCate;
-    private int $codPromoProd;
-    private int $codClassific;
-    private int $idFabric;
+    public const TABLE_NAME = "produto";
+    private int $cod_prod;
+    private int $cod_cate;
+    private int $cod_promo_prod;
+    private int $cod_classific;
+    private int $id_fabric;
     private string $nome;
     private ?string $descricao;
     private int $estoque;
@@ -15,67 +20,81 @@ class Produto extends Model {
 
     // Class constructor, includes a Connection object
     public function __construct(
-        int $codProd = 0,
-        int $codCate = 0,
-        int $codPromoProd = 0,
-        int $codClassific = 0,
-        int $idFabric = 0,
+        int $cod_prod = 0,
+        int $cod_cate = 0,
+        int $cod_promo_prod = 0,
+        int $cod_classific = 0,
+        int $id_fabric = 0,
         string $nome = '',
         ?string $descricao = null,
         int $estoque = 0,
         float $preco = 0.0
     ) {
-        $this->codProd = $codProd;
-        $this->codCate = $codCate;
-        $this->codPromoProd = $codPromoProd;
-        $this->codClassific = $codClassific;
-        $this->idFabric = $idFabric;
+        $this->cod_prod = $cod_prod;
+        $this->cod_cate = $cod_cate;
+        $this->cod_promo_prod = $cod_promo_prod;
+        $this->cod_classific = $cod_classific;
+        $this->id_fabric = $id_fabric;
         $this->nome = $nome;
         $this->descricao = $descricao;
         $this->estoque = $estoque;
         $this->preco = $preco;
     }
 
+    public function toArray(): array {
+        return [
+            "cod_prod" => $this->cod_prod,
+            "cod_cate" => $this->cod_cate,
+            "cod_promo_prod" => $this->cod_promo_prod,
+            "cod_classific" => $this->cod_classific,
+            "id_fabric" => $this->id_fabric,
+            "nome" => $this->nome,
+            "descricao" => $this->descricao,
+            "estoque" => $this->estoque,
+            "preco" => $this->preco
+        ];
+    }
+
     // ================================================== Getters and Setters ==================================================
 
     public function getCodProd(): int {
-        return $this->codProd;
+        return $this->cod_prod;
     }
 
-    public function setCodProd(int $codProd): void {
-        $this->codProd = $codProd;
+    public function setCodProd(int $cod_prod): void {
+        $this->cod_prod = $cod_prod;
     }
 
     public function getCodCate(): int {
-        return $this->codCate;
+        return $this->cod_cate;
     }
 
-    public function setCodCate(int $codCate): void {
-        $this->codCate = $codCate;
+    public function setCodCate(int $cod_cate): void {
+        $this->cod_cate = $cod_cate;
     }
 
     public function getCodPromoProd(): int {
-        return $this->codPromoProd;
+        return $this->cod_promo_prod;
     }
 
-    public function setCodPromoProd(int $codPromoProd): void {
-        $this->codPromoProd = $codPromoProd;
+    public function setCodPromoProd(int $cod_promo_prod): void {
+        $this->cod_promo_prod = $cod_promo_prod;
     }
 
     public function getCodClassific(): int {
-        return $this->codClassific;
+        return $this->cod_classific;
     }
 
-    public function setCodClassific(int $codClassific): void {
-        $this->codClassific = $codClassific;
+    public function setCodClassific(int $cod_classific): void {
+        $this->cod_classific = $cod_classific;
     }
 
     public function getIdFabric(): int {
-        return $this->idFabric;
+        return $this->id_fabric;
     }
 
-    public function setIdFabric(int $idFabric): void {
-        $this->idFabric = $idFabric;
+    public function setIdFabric(int $id_fabric): void {
+        $this->id_fabric = $id_fabric;
     }
 
     public function getNome(): string {
@@ -114,18 +133,23 @@ class Produto extends Model {
 
     // ========================= Object-scoped Methods =========================
 
-    // Inserts a new Produto into the database
+    /**
+     * Inserts a new Produto into the database
+     * 
+     * @return bool True if the insertion was successful, false otherwise
+     */
     public function create(): bool {
         $sql = "INSERT INTO produto (cod_cate, cod_promo_prod, cod_classific, id_fabric, nome, descricao, estoque, preco)
-                VALUES (:codCate, :codPromoProd, :codClassific, :idFabric, :nome, :descricao, :estoque, :preco)";
+                VALUES (:cod_cate, :cod_promo_prod, :cod_classific, :id_fabric, :nome, :descricao, :estoque, :preco)";
         
-        $result = Connection::executeDML(
+        // Execute the insertion query
+        $result = database\Connection::executeDML(
             $sql,
             [
-                ':codCate' => $this->getCodCate(),
-                ':codPromoProd' => $this->getCodPromoProd(),
-                ':codClassific' => $this->getCodClassific(),
-                ':idFabric' => $this->getIdFabric(),
+                ':cod_cate' => $this->getCodCate(),
+                ':cod_promo_prod' => $this->getCodPromoProd(),
+                ':cod_classific' => $this->getCodClassific(),
+                ':id_fabric' => $this->getIdFabric(),
                 ':nome' => $this->getNome(),
                 ':descricao' => $this->getDescricao(),
                 ':estoque' => $this->getEstoque(),
@@ -133,23 +157,30 @@ class Produto extends Model {
             ]
         );
 
+        // If the insertion was successful, set the cod_prod attribute with the last inserted ID
         if ($result == true) {
-            $this->setCodProd(Connection::getInstance()->lastInsertId());
+            $this->setCodProd(database\Connection::getInstance()->lastInsertId());
         }
 
+        // Return the result of the insertion
         return $result;
     }
 
-    // Searchs for a certain Produto in the database
+    /**
+     * Searches for a certain Produto in the database
+     * 
+     * @return bool True if the Produto was found, false otherwise
+     */
     public function read(): bool {
-        $sql = "SELECT * FROM produto WHERE cod_prod = :codProd";
-        $stmt = Connection::executeDQL(
+        $sql = "SELECT * FROM produto WHERE cod_prod = :cod_prod";
+        $stmt = database\Connection::executeDQL(
             $sql, 
-            [":codProd" => $this->getCodProd()]
+            [":cod_prod" => $this->getCodProd()]
         );
 
-        $produto = $stmt->fetch(Connection::FETCH_ASSOC);
+        $produto = $stmt->fetch(database\Connection::FETCH_ASSOC);
         if ($produto) {
+            // Assign the attributes of the found Produto to the current object
             $this->setCodProd($produto['cod_prod']);
             $this->setCodCate($produto['cod_cate']);
             $this->setCodPromoProd($produto['cod_promo_prod']);
@@ -159,32 +190,40 @@ class Produto extends Model {
             $this->setDescricao($produto['descricao']);
             $this->setEstoque($produto['estoque']);
             $this->setPreco((float) $produto['preco']);
+
             return true;
         }
+
         return false;
     }
 
-    // Updates the existing Produto
+    /**
+     * Updates the existing Produto in the database
+     * 
+     * @return bool True if the update was successful, false otherwise
+     */
     public function update(): bool {
         $sql = "UPDATE produto SET
-                    cod_cate = :codCate,
-                    cod_promo_prod = :codPromoProd,
-                    cod_classific = :codClassific,
-                    id_fabric = :idFabric,
+                    // Update the fields of the produto table
+                    cod_cate = :cod_cate,
+                    cod_promo_prod = :cod_promo_prod,
+                    cod_classific = :cod_classific,
+                    id_fabric = :id_fabric,
                     nome = :nome,
                     descricao = :descricao,
                     estoque = :estoque,
                     preco = :preco
-                WHERE cod_prod = :codProd";
+                WHERE cod_prod = :cod_prod";
         
-        return Connection::executeDML(
+        // Execute the update query
+        return database\Connection::executeDML(
             $sql,
             [
-                ':codProd' => $this->getCodProd(),
-                ':codCate' => $this->getCodCate(),
-                ':codPromoProd' => $this->getCodPromoProd(),
-                ':codClassific' => $this->getCodClassific(),
-                ':idFabric' => $this->getIdFabric(),
+                ':cod_prod' => $this->getCodProd(),
+                ':cod_cate' => $this->getCodCate(),
+                ':cod_promo_prod' => $this->getCodPromoProd(),
+                ':cod_classific' => $this->getCodClassific(),
+                ':id_fabric' => $this->getIdFabric(),
                 ':nome' => $this->getNome(),
                 ':descricao' => $this->getDescricao(),
                 ':estoque' => $this->getEstoque(),
@@ -193,39 +232,71 @@ class Produto extends Model {
         );
     }
 
-    // Deletes the current Produto from the database
+    /**
+     * Deletes the current Produto from the database.
+     * 
+     * @return bool True if the deletion was successful, false otherwise
+     */
     public function delete(): bool {
-        $sql = "DELETE FROM produto WHERE cod_prod = :codProd";
-        return Connection::executeDML(
+        // SQL query to delete the produto record based on cod_prod
+        $sql = "DELETE FROM produto WHERE cod_prod = :cod_prod";
+        
+        // Execute the deletion query
+        return database\Connection::executeDML(
             $sql, 
-            [':codProd' => $this->codProd]
+            [':cod_prod' => $this->cod_prod]
         );
     }
 
     // ========================= Table-scoped Methods =========================
 
+    /**
+     * Returns an array of all Produto instances in the database that match the given value in the name
+     * 
+     * If no value is provided, it returns all Produtos
+     * 
+     * @param string $value The value to search for in the name
+     * @return array An array of Produto instances
+     */
     public static function getAll(string $value = ""): array {
-        $sql = "SELECT * FROM produto" . ($value === "") ? "" : " WHERE nome LIKE '%:nome%'";
+        if ($value !== "") {
+            $sql = "SELECT * FROM produto WHERE nome LIKE :nome";
 
-        $stmt = Connection::executeDQL(
-            $sql, 
-            [':nome' => $value]
-        );
+            $stmt = database\Connection::executeDQL(
+                $sql, 
+                [':nome' => "%$value%"]
+            );
+        }
+        else {
+            $sql = "SELECT * FROM produto";
+
+            $stmt = database\Connection::executeDQL(
+                $sql
+            );
+        }
+
+        if ($stmt === null) {
+            throw new \PDOException("Erro ao executar a consulta SQL");
+        }
 
         $produtos = [];
 
         // For each register found, create a new Produto instance
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            if ($row === false) {
+                throw new \PDOException("Erro ao ler o registro da consulta SQL");
+            }
+
             $produtos[] = new Produto(
-                codCate: $row['cod_cate'],
-                codPromoProd: $row['cod_promo_prod'],
-                codClassific: $row['cod_classific'],
-                idFabric: $row['id_fabric'],
+                cod_cate: $row['cod_cate'],
+                cod_promo_prod: $row['cod_promo_prod'],
+                cod_classific: $row['cod_classific'],
+                id_fabric: $row['id_fabric'],
                 nome: $row['nome'],
                 descricao: $row['descricao'],
                 estoque: $row['estoque'],
                 preco: (float) $row['preco'],
-                codProd: $row['cod_prod']
+                cod_prod: $row['cod_prod']
             );
         }
 

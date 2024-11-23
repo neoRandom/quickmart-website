@@ -32,10 +32,10 @@ function generateSidebar(array $access) {
                     px-4 py-2 overflow-auto 
                     *:w-full *:pt-1
                     *:*:flex *:*:items-center *:*:gap-4
-                    *:*:w-full *:*:p-2 *:*:rounded-md
+                    *:*:w-full *:*:p-2 *:*:rounded-md *:*:transition-colors
                     hover:*:*:bg-neutral-200
                 ">
-                <?php for ($i = 0; $i < 18; $i++) { ?>
+                <?php foreach (database\Connection::getTables() as $name) { ?>
                 <li>
                     <button type="button">
                         <div class="w-6 aspect-square">
@@ -46,7 +46,9 @@ function generateSidebar(array $access) {
                                 <path d="M3 6C3 5.05719 3 4.58579 3.29289 4.29289C3.58579 4 4.05719 4 5 4H19C19.9428 4 20.4142 4 20.7071 4.29289C21 4.58579 21 5.05719 21 6V9H3V6Z" stroke-width="2" stroke-linecap="round"/>
                             </svg>
                         </div>
-                        <p class="opacity-75"> Tabela X </p>
+                        <p class="opacity-75"> 
+                            <?php echo substr($name, strpos($name, "\\") + 1) ?> 
+                        </p>
                     </button>
                 </li>
                 <?php } ?>

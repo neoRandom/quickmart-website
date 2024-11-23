@@ -38,58 +38,9 @@
             <?php generateSidebar($access) ?>
 
             <!-- Table and stuff -->
-            <div id="side-container" class="hidden absolute top-0 right-0 w-[calc(100%-16rem)] h-full p-8 transition-all duration-700">
+            <div id="side-container" class="absolute top-0 right-0 w-[calc(100%-16rem)] h-full p-8 transition-all duration-700">
                 <div class="flex flex-col gap-4 w-full h-full *:w-full *:bg-white *:rounded-md *:shadow-sm">
-                    <!-- Header -->
-                    <header class="flex justify-between items-center px-4 py-2">
-                        <div class="text-lg">
-                            <span class="opacity-80 mr-2">Tabela: </span>
-                            <span>Produto</span>
-                        </div>
-                        <button type="button" class="text-white font-bold px-8 py-2 rounded-md bg-primary hover:bg-primary-dark">
-                            Novo Registro
-                        </button>
-                    </header>
                     
-                    <!-- Search bar and Table -->
-                    <div class="flex-1 flex flex-col p-4 *:w-full">
-                        <!-- Search bar -->
-                        <div>
-                            <form action="" class="flex gap-4 w-full">
-                                <label 
-                                    for="search-input" 
-                                    class="hidden"></label>
-                                <input 
-                                    required
-                                    type="search" 
-                                    name="search-input" 
-                                    id="search-input" 
-                                    placeholder="Pesquise pelo nome" 
-                                    class="
-                                        flex-1 px-4 py-1 bg-neutral-100 
-                                        border-2 border-transparent 
-                                        rounded-md outline-none focus:border-secondary
-                                    ">
-                                <button 
-                                    type="submit" 
-                                    class="
-                                        text-white font-bold 
-                                        px-4 py-1 
-                                        rounded-md 
-                                        bg-primary hover:bg-primary-dark
-                                    ">
-                                    Pesquisar
-                                </button>
-                            </form>
-                        </div>
-
-                        <hr class="border-t-2 my-4">
-                        
-                        <!-- Table -->
-                        <div class="flex-1 bg-red-500">
-                            <!--  TODO: all the rest -->
-                        </div>
-                    </div>
                 </div>
             </div>
         </main>

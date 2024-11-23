@@ -1,7 +1,10 @@
 <?php
+namespace model;
+
 require_once __DIR__ . "/../database/Connection.php";
 
 abstract class Model {
+    public const TABLE_NAME = "";
     /* private ... */
 
     public function __construct(
@@ -9,6 +12,8 @@ abstract class Model {
     ) {
         /* ... */
     }
+
+    public abstract function toArray(): array;
 
     // ================================================== Getters and Setters ==================================================
 

@@ -1,5 +1,8 @@
 <?php
 namespace database;
+use model;
+
+require_once __DIR__ . "/../autoload.php";
 
 class Connection extends \PDO
 {
@@ -45,8 +48,12 @@ class Connection extends \PDO
     }
 
     // Prevent cloning the instance
-    private function __clone() {}
-    private function __wakeup() {}
+    public function __clone() {
+        throw new \Exception('Cannot clone singleton');
+    }
+    public function __wakeup() {
+        throw new \Exception('Cannot unserialize singleton');
+    }
 
 
     /**
@@ -107,7 +114,33 @@ class Connection extends \PDO
     }
 
     /**
+     * Gets a list of all tables in the database
+     * 
+     * Returns an array with the names of all tables in the database
+     * 
+     * @return array The list of tables
+     */
+    public static function getTables(): array
+    {
+        // Old method
+        // try {
+        //     $stmt = self::getInstance()->query("SHOW TABLES");
+        //     return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        // } catch (\PDOException $e) {
+        //     throw new \PDOException("Error getting the list of tables: " . $e->getMessage(), $e->getCode(), $e);
+        // }
+
+        // New method
+        return [
+            model\Produto::class,
+            model\Categoria::class
+        ];
+    }
+
+    /**
      * Method to get the metadata of a table
+     * 
+     * The table is based directly on the database, not on the model class
      * 
      * Returns an array of associative arrays, where each associative array represents
      * a column of the table, with the keys 'Field', 'Type', 'Null', 'Key', 'Default'
@@ -130,21 +163,17 @@ class Connection extends \PDO
         }
     }
 
-    /**
-     * Gets a list of all tables in the database
-     * 
-     * Returns an array with the names of all tables in the database
-     * 
-     * @return array The list of tables
-     */
-    public static function getTables(): array
+    public static function getTableRowsJSON(int $tableID): array
     {
-        try {
-            $stmt = self::getInstance()->query("SHOW TABLES");
-            return $stmt->fetchAll(\PDO::FETCH_COLUMN);
-        } catch (\PDOException $e) {
-            throw new \PDOException("Error getting the list of tables: " . $e->getMessage(), $e->getCode(), $e);
+        $table = self::getTables()[$tableID];
+
+        $rows = $table::getAll();
+
+        foreach ($rows as $key => $row) {
+            $rows[$key] = $row->toArray();
         }
+
+        return $rows;
     }
 }
 

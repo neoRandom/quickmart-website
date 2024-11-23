@@ -60,7 +60,8 @@ function calculateTableSize(tableMetadata: SQLMetadata[]) {
     for (let rowData of tableMetadata) {
         if (rowData.Type.includes("char") || rowData.Type.includes("binary")) {
             let columnSize = parseInt(rowData.Type.split("(")[1]?.split(")")[0] ?? "1");
-            let gridCols = Math.floor(columnSize / 16);
+            console.log(columnSize / 15);
+            let gridCols = Math.floor(columnSize / 12);
             sizes.columns.push(gridCols);
             sizes.total += gridCols;
         }
@@ -129,20 +130,20 @@ async function loadTable(id: number) {
                 tagName: "span", innerText: "Tabela: ", 
                 attributes: {
                     class: "opacity-80 mr-2"
-                }}
-            ),
+                }
+            }),
             renderElement({
                 tagName: "span", innerText: tableData.name, 
-                attributes: {}}
-            )
+                attributes: {}
+            })
         ),
         renderElement({
             tagName: "button", innerText: "Novo Registro", 
             attributes: { 
                 type: "button", 
                 class: "text-white font-bold px-8 py-2 rounded-md bg-primary hover:bg-primary-dark" 
-            }}
-        )
+            }
+        })
     )
 
     // Render the body
@@ -159,8 +160,8 @@ async function loadTable(id: number) {
                 attributes: {
                     for: "search-input", 
                     class: "hidden"
-                }}
-            ),
+                }
+            }),
             renderElement({
                 tagName: "input", 
                 attributes: {
@@ -174,8 +175,8 @@ async function loadTable(id: number) {
                         border-2 border-transparent 
                         rounded-md outline-none focus:border-secondary
                     `
-                }}
-            ),
+                }
+            }),
             renderElement({
                 tagName: "button", 
                 innerText: "Pesquisar",
@@ -187,8 +188,8 @@ async function loadTable(id: number) {
                         rounded-md 
                         bg-primary hover:bg-primary-dark
                     `
-                }}
-            )
+                }
+            })
         )
     );
 
@@ -197,55 +198,53 @@ async function loadTable(id: number) {
         attributes: {
             class: `
                 text-sm text-black-pure/75
-                grid gap-x-2 
+                grid gap-x-2
                 h-8 mb-2 
                 border-b-2 border-neutral-200 
                 *:px-2
-            `
+            `,
+            style: `grid-template-columns: repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr));`
         }},
         ...tableData.metadata.map((row: SQLMetadata, i: number) => 
             renderElement({ 
                 tagName: "div", 
                 innerText: row.Field, 
                 attributes: { 
-                    class: `col-span-${tableData.metadata.sizes.columns[i]}` 
-                }}
-            )
+                    title: row.Field,
+                    class: "truncate",
+                    style: `grid-column: span ${tableData.metadata.sizes.columns[i]} / span ${tableData.metadata.sizes.columns[i]};` 
+                }
+            })
         )
     );
-
-    tableHeader.style.gridTemplateColumns = `repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr))`;
 
     const tableRows = renderElement({
         tagName: "div",
         attributes: {
-            class: "grid gap-x-2 *:h-8 *:px-2 *:my-2 [&>input]:bg-neutral-100 [&>input]:rounded-md"
+            class: "flex flex-col *:h-8 *:*:px-2 *:my-2 *:[&>input]:bg-neutral-100 *:[&>input]:rounded-md"
         }},
-
-        ...tableData.rows.flatMap((row: any[]) => {
-            return Object.keys(row).map((element: any, i: number) => 
+        ...tableData.rows.map((row: Record<string, any>) => 
+            renderElement({ 
+                tagName: "div", 
+                attributes: {
+                    class: "grid gap-x-2",
+                    style: `grid-template-columns: repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr));`
+                }
+            },
+            ...Object.keys(row).map((column: string, i: number) => 
                 renderElement({ 
                     tagName: "div", 
-                    innerText: row[element], 
-                    attributes: { 
-                        class: `col-span-${tableData.metadata.sizes.columns[i]}`
+                    innerText: row[column], 
+                    attributes: {
+                        title: row[column],
+                        class: "truncate",
+                        style: `grid-column: span ${tableData.metadata.sizes.columns[i]} / span ${tableData.metadata.sizes.columns[i]};` 
                     }
                 })
-            );
-        }),
-        
-        renderElement({ tagName: "input", attributes: { class: "col-span-2", value: "1" } }),
-        renderElement({ tagName: "input", attributes: { class: "col-span-6", value: "Descrição genérica" } }),
-        // Read-only rows
-        renderElement({ tagName: "div", innerText: "1", attributes: { class: "col-span-1" } }),
-        renderElement({ tagName: "div", innerText: "1", attributes: { class: "col-span-2" } }),
-        renderElement({ tagName: "div", innerText: "Descrição genérica", attributes: { class: "col-span-6" } }),
-        renderElement({ tagName: "div", innerText: "2", attributes: { class: "col-span-1" } }),
-        renderElement({ tagName: "div", innerText: "1", attributes: { class: "col-span-2" } }),
-        renderElement({ tagName: "div", innerText: "Descrição genérica", attributes: { class: "col-span-6" } })
+            )
+        ))
     )
-
-    tableRows.style.gridTemplateColumns = `repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr))`;
+        
 
     const tableActions = renderElement({
         tagName: "div",
@@ -323,8 +322,8 @@ async function loadTable(id: number) {
             innerText: "Page 1 of N",
             attributes: {
                 class: "mt-2"
-            }}
-        )
+            }
+        })
     );
 
     crudContainer.classList.remove("hidden");  // Show the CRUD container

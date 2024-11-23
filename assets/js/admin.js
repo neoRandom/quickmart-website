@@ -41,7 +41,8 @@ function calculateTableSize(tableMetadata) {
     for (let rowData of tableMetadata) {
         if (rowData.Type.includes("char") || rowData.Type.includes("binary")) {
             let columnSize = parseInt((_b = (_a = rowData.Type.split("(")[1]) === null || _a === void 0 ? void 0 : _a.split(")")[0]) !== null && _b !== void 0 ? _b : "1");
-            let gridCols = Math.floor(columnSize / 16);
+            console.log(columnSize / 15);
+            let gridCols = Math.floor(columnSize / 12);
             sizes.columns.push(gridCols);
             sizes.total += gridCols;
         }
@@ -149,35 +150,42 @@ function loadTable(id) {
             attributes: {
                 class: `
                 text-sm text-black-pure/75
-                grid gap-x-2 
+                grid gap-x-2
                 h-8 mb-2 
                 border-b-2 border-neutral-200 
                 *:px-2
-            `
+            `,
+                style: `grid-template-columns: repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr));`
             }
         }, ...tableData.metadata.map((row, i) => renderElement({
             tagName: "div",
             innerText: row.Field,
             attributes: {
-                class: `col-span-${tableData.metadata.sizes.columns[i]}`
+                title: row.Field,
+                class: "truncate",
+                style: `grid-column: span ${tableData.metadata.sizes.columns[i]} / span ${tableData.metadata.sizes.columns[i]};`
             }
         })));
-        tableHeader.style.gridTemplateColumns = `repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr))`;
         const tableRows = renderElement({
             tagName: "div",
             attributes: {
-                class: "grid gap-x-2 *:h-8 *:px-2 *:my-2 [&>input]:bg-neutral-100 [&>input]:rounded-md"
+                class: "flex flex-col *:h-8 *:*:px-2 *:my-2 *:[&>input]:bg-neutral-100 *:[&>input]:rounded-md"
             }
-        }, ...tableData.rows.flatMap((row) => {
-            return Object.keys(row).map((element, i) => renderElement({
-                tagName: "div",
-                innerText: row[element],
-                attributes: {
-                    class: `col-span-${tableData.metadata.sizes.columns[i]}`
-                }
-            }));
-        }), renderElement({ tagName: "input", attributes: { class: "col-span-2", value: "1" } }), renderElement({ tagName: "input", attributes: { class: "col-span-6", value: "Descrição genérica" } }), renderElement({ tagName: "div", innerText: "1", attributes: { class: "col-span-1" } }), renderElement({ tagName: "div", innerText: "1", attributes: { class: "col-span-2" } }), renderElement({ tagName: "div", innerText: "Descrição genérica", attributes: { class: "col-span-6" } }), renderElement({ tagName: "div", innerText: "2", attributes: { class: "col-span-1" } }), renderElement({ tagName: "div", innerText: "1", attributes: { class: "col-span-2" } }), renderElement({ tagName: "div", innerText: "Descrição genérica", attributes: { class: "col-span-6" } }));
-        tableRows.style.gridTemplateColumns = `repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr))`;
+        }, ...tableData.rows.map((row) => renderElement({
+            tagName: "div",
+            attributes: {
+                class: "grid gap-x-2",
+                style: `grid-template-columns: repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr));`
+            }
+        }, ...Object.keys(row).map((column, i) => renderElement({
+            tagName: "div",
+            innerText: row[column],
+            attributes: {
+                title: row[column],
+                class: "truncate",
+                style: `grid-column: span ${tableData.metadata.sizes.columns[i]} / span ${tableData.metadata.sizes.columns[i]};`
+            }
+        })))));
         const tableActions = renderElement({
             tagName: "div",
             attributes: {

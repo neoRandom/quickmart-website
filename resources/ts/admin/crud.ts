@@ -16,87 +16,29 @@ import renderContent from "./renderContent.js";
 let metadata: TableMetadata;
 
 
-function showCreate(new_metadata: TableMetadata) {
-    metadata = new_metadata;
-
+function createModal() {
     function deleteModal() {
-        baseForm.classList.remove("translate-y-0");
-        baseForm.classList.add("translate-y-[100vh]");
+        modal.classList.remove("translate-y-0");
+        modal.classList.add("translate-y-[100vh]");
         container.classList.remove("bg-opacity-50");
         setTimeout(() => {
             container.remove();
         }, 500);
     }
 
-    const cancelButton = renderElement({
-        tagName: "button",
-        innerText: "Cancelar",
+    const modal = renderElement({
+        tagName: "div",
         attributes: {
-            type: "button",
-            class: "py-2 hover:underline",
+            class: `
+                flex flex-col
+                p-4 bg-white rounded-md 
+                shadow-md 
+                translate-y-[100vh] 
+                transition-transform duration-500
+            `,
+            style: "z-index: 101;"
         }
     });
-
-    const baseForm = renderElement(
-        {
-            tagName: "div",
-            attributes: {
-                class: `
-                    flex flex-col
-                    h-4/5 min-w-[640px] p-4 
-                    bg-white rounded-md 
-                    shadow-md 
-                    translate-y-[100vh] 
-                    transition-transform duration-500
-                `,
-                style: "z-index: 101;"
-            }
-        },
-        renderElement(
-            {
-                tagName: "div",
-                attributes: {
-                    class: `
-                        flex items-center justify-between 
-                        w-full h-fit px-4 py-2
-                        border-b-2 border-primary-dark border-opacity-50
-                    `
-                }
-            },
-            renderElement({
-                tagName: "h1",
-                innerText: `Criar ${metadata.name}`,
-                attributes: {
-                    class: "text-2xl"
-                }
-            }),
-            cancelButton
-        ),
-        renderElement(
-            {
-                tagName: "form",
-                attributes: {
-                    class: "flex-1 flex flex-col gap-4 p-4 overflow-auto",
-                    action: "",
-                    method: "POST"
-                },
-                events: {
-                    submit: (e: Event) => postCreate(e, deleteModal)
-                }
-            },
-            ...metadata.rows.map((column) => {
-                return renderCreateSection(column);
-            }),
-            renderElement({
-                tagName: "button",
-                innerText: "Criar",
-                attributes: {
-                    type: "submit",
-                    class: "w-3/4 mx-auto mt-6 p-3 bg-primary text-white rounded-md transition-colors hover:bg-primary-dark"
-                }
-            })
-        )
-    );
 
     const container = renderElement(
         {
@@ -114,15 +56,97 @@ function showCreate(new_metadata: TableMetadata) {
                 style: "z-index: 100;"
             }
         },
-        baseForm
+        modal
     );
 
     // For some reason, the setTimeout with 0 delay makes the animation smoother
     setTimeout(() => {
-        baseForm.classList.add("translate-y-0");
-        baseForm.classList.remove("translate-y-[100vh]");
+        modal.classList.add("translate-y-0");
+        modal.classList.remove("translate-y-[100vh]");
         container.classList.add("bg-opacity-50");
     }, 0);
+
+    return {
+        modal,
+        deleteModal
+    };
+}
+
+
+function showCreate(new_metadata: TableMetadata) {
+    metadata = new_metadata;
+
+    let {
+        modal,
+        deleteModal
+    } = createModal();
+
+    const cancelButton = renderElement({
+        tagName: "button",
+        innerText: "Cancelar",
+        attributes: {
+            type: "button",
+            class: "py-2 hover:underline",
+        }
+    });
+
+    modal.classList.add("h-4/5", "min-w-[640px]");
+
+    // Header
+    renderElement(
+        {
+            container: modal,
+            tagName: "div",
+            attributes: {
+                class: `
+                    flex items-center justify-between 
+                    w-full h-fit px-4 py-2
+                    border-b-2 border-primary-dark border-opacity-50
+                `
+            }
+        },
+        renderElement({
+            tagName: "h1",
+            innerText: `Criar ${metadata.name}`,
+            attributes: {
+                class: "text-2xl"
+            }
+        }),
+        cancelButton
+    );
+
+    // Body
+    renderElement(
+        {
+            container: modal,
+            tagName: "form",
+            attributes: {
+                class: "flex-1 flex flex-col gap-4 p-4 overflow-auto",
+                action: "",
+                method: "POST"
+            },
+            events: {
+                submit: (e: Event) => postCreate(e, deleteModal)
+            }
+        },
+        ...metadata.rows.map((column) => {
+            return renderCreateSection(column);
+        }),
+        renderElement({
+            tagName: "button",
+            innerText: "Criar",
+            attributes: {
+                type: "submit",
+                class: `
+                    text-white 
+                    w-3/4 mx-auto 
+                    mt-6 p-3 
+                    bg-primary hover:bg-primary-dark 
+                    rounded-md transition-colors
+                `
+            }
+        })
+    );
 
     // Cancel button logic
     cancelButton.addEventListener("click", deleteModal);

@@ -11,16 +11,56 @@ import { renderElement } from "../Render/index.js";
 import { renderCreateSection } from "./utils.js";
 import renderContent from "./renderContent.js";
 let metadata;
-function showCreate(new_metadata) {
-    metadata = new_metadata;
+function createModal() {
     function deleteModal() {
-        baseForm.classList.remove("translate-y-0");
-        baseForm.classList.add("translate-y-[100vh]");
+        modal.classList.remove("translate-y-0");
+        modal.classList.add("translate-y-[100vh]");
         container.classList.remove("bg-opacity-50");
         setTimeout(() => {
             container.remove();
         }, 500);
     }
+    const modal = renderElement({
+        tagName: "div",
+        attributes: {
+            class: `
+                flex flex-col
+                p-4 bg-white rounded-md 
+                shadow-md 
+                translate-y-[100vh] 
+                transition-transform duration-500
+            `,
+            style: "z-index: 101;"
+        }
+    });
+    const container = renderElement({
+        container: document.body,
+        tagName: "div",
+        attributes: {
+            class: `
+                    absolute top-0 left-0 
+                    flex items-center justify-center 
+                    w-full h-full 
+                    bg-black bg-opacity-0 
+                    overflow-hidden
+                    transition-colors duration-500
+                `,
+            style: "z-index: 100;"
+        }
+    }, modal);
+    setTimeout(() => {
+        modal.classList.add("translate-y-0");
+        modal.classList.remove("translate-y-[100vh]");
+        container.classList.add("bg-opacity-50");
+    }, 0);
+    return {
+        modal,
+        deleteModal
+    };
+}
+function showCreate(new_metadata) {
+    metadata = new_metadata;
+    let { modal, deleteModal } = createModal();
     const cancelButton = renderElement({
         tagName: "button",
         innerText: "Cancelar",
@@ -29,27 +69,16 @@ function showCreate(new_metadata) {
             class: "py-2 hover:underline",
         }
     });
-    const baseForm = renderElement({
+    modal.classList.add("h-4/5", "min-w-[640px]");
+    renderElement({
+        container: modal,
         tagName: "div",
         attributes: {
             class: `
-                    flex flex-col
-                    h-4/5 min-w-[640px] p-4 
-                    bg-white rounded-md 
-                    shadow-md 
-                    translate-y-[100vh] 
-                    transition-transform duration-500
-                `,
-            style: "z-index: 101;"
-        }
-    }, renderElement({
-        tagName: "div",
-        attributes: {
-            class: `
-                        flex items-center justify-between 
-                        w-full h-fit px-4 py-2
-                        border-b-2 border-primary-dark border-opacity-50
-                    `
+                    flex items-center justify-between 
+                    w-full h-fit px-4 py-2
+                    border-b-2 border-primary-dark border-opacity-50
+                `
         }
     }, renderElement({
         tagName: "h1",
@@ -57,7 +86,9 @@ function showCreate(new_metadata) {
         attributes: {
             class: "text-2xl"
         }
-    }), cancelButton), renderElement({
+    }), cancelButton);
+    renderElement({
+        container: modal,
         tagName: "form",
         attributes: {
             class: "flex-1 flex flex-col gap-4 p-4 overflow-auto",
@@ -74,29 +105,15 @@ function showCreate(new_metadata) {
         innerText: "Criar",
         attributes: {
             type: "submit",
-            class: "w-3/4 mx-auto mt-6 p-3 bg-primary text-white rounded-md transition-colors hover:bg-primary-dark"
-        }
-    })));
-    const container = renderElement({
-        container: document.body,
-        tagName: "div",
-        attributes: {
             class: `
-                    absolute top-0 left-0 
-                    flex items-center justify-center 
-                    w-full h-full 
-                    bg-black bg-opacity-0 
-                    overflow-hidden
-                    transition-colors duration-500
-                `,
-            style: "z-index: 100;"
+                    text-white 
+                    w-3/4 mx-auto 
+                    mt-6 p-3 
+                    bg-primary hover:bg-primary-dark 
+                    rounded-md transition-colors
+                `
         }
-    }, baseForm);
-    setTimeout(() => {
-        baseForm.classList.add("translate-y-0");
-        baseForm.classList.remove("translate-y-[100vh]");
-        container.classList.add("bg-opacity-50");
-    }, 0);
+    }));
     cancelButton.addEventListener("click", deleteModal);
 }
 function showDetails(new_metadata) {

@@ -126,12 +126,12 @@ INSERT INTO `funcionario` (`id_func`, `nome_func`, `data_nasc`, `cpf`, `rg`, `en
 -- Dumping data for table `itens`
 --
 
-INSERT INTO `itens` (`cod_lote`, `cod_compra`, `quantidade`) VALUES
-(1, 1, 10),
-(2, 2, 15),
-(3, 3, 5),
-(4, 4, 8),
-(5, 5, 12);
+INSERT INTO `itens` (`cod_item`, `cod_lote`, `cod_compra`, `quantidade`) VALUES
+(1, 1, 1, 10),
+(2, 2, 2, 15),
+(3, 3, 3, 5),
+(4, 4, 4, 8),
+(5, 5, 5, 12);
 
 --
 -- Dumping data for table `lote`
@@ -187,6 +187,7 @@ INSERT INTO `promocao_categoria` (`cod_promo_cate`, `porcentagem`, `data_inicio`
 (3, 0.20000, '2024-11-01', '2024-11-30'),
 (4, 0.25000, '2024-12-01', '2024-12-31'),
 (5, 0.30000, '2025-01-01', '2025-01-31');
+
 --
 -- Dumping data for table `promocao_produto`
 --
@@ -202,12 +203,12 @@ INSERT INTO `promocao_produto` (`cod_promo_prod`, `porcentagem`, `data_inicio`, 
 -- Dumping data for table `telefone`
 --
 
-INSERT INTO `telefone` (`id_dono`, `tipo_tel`, `tipo_dono`, `telefone`) VALUES
-(0, 1, 'null', '(62) 44124-3784'),
-(0, 1, 'null', '(79) 30307-6901'),
-(0, 4, 'null', '(85) 43382-0062'),
-(0, 3, 'null', '(21) 10482-0060'),
-(0, 2, 'null', '(34) 80083-4239');
+INSERT INTO `telefone` (`id_tel`, `id_dono`, `tipo_tel`, `tipo_dono`, `telefone`) VALUES
+(1, 0, 1, 'null', '(62) 44124-3784'),
+(2, 0, 1, 'null', '(79) 30307-6901'),
+(3, 0, 4, 'null', '(85) 43382-0062'),
+(4, 0, 3, 'null', '(21) 10482-0060'),
+(5, 0, 2, 'null', '(34) 80083-4239');
 
 --
 -- Dumping data for table `tipo_telefone`

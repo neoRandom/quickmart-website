@@ -60,16 +60,16 @@ class Categoria extends Model {
     // ========================= Object-scoped Methods =========================
 
     public function create(): bool {
-        $sql = "INSERT INTO categoria (cod_cate, cod_promo_cate, descricao)
-                VALUES (:cod_cate, :cod_promo_cate, :descricao)";
+        $sql = "INSERT INTO categoria (cod_promo_cate, descricao)
+                VALUES (:cod_promo_cate, :descricao)";
 
         $result = database\Connection::executeDML(
             $sql, 
             [
-            ':cod_cate' => $this->getCodCate(),
-            ':cod_promo_cate' => $this->getCodPromoCate(),
-            ':descricao' => $this->getDescricao()
-        ]);
+                ':cod_promo_cate' => $this->getCodPromoCate(),
+                ':descricao' => $this->getDescricao()
+            ]
+        );
 
         if ($result == true) {
             $this->setCodCate(database\Connection::getInstance()->lastInsertId());

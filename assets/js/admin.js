@@ -41,7 +41,6 @@ function calculateTableSize(tableMetadata) {
     for (let rowData of tableMetadata) {
         if (rowData.Type.includes("char") || rowData.Type.includes("binary")) {
             let columnSize = parseInt((_b = (_a = rowData.Type.split("(")[1]) === null || _a === void 0 ? void 0 : _a.split(")")[0]) !== null && _b !== void 0 ? _b : "1");
-            console.log(columnSize / 15);
             let gridCols = Math.floor(columnSize / 12);
             sizes.columns.push(gridCols);
             sizes.total += gridCols;
@@ -68,7 +67,6 @@ function loadTable(id) {
             tableData = yield payload.json();
             tableData.metadata.sizes = calculateTableSize(tableData.metadata);
             tablesMetadataCache[id] = tableData;
-            console.log(tableData);
         }
         const menuItens = sideMenu.querySelectorAll("div > ul > li");
         menuItens.forEach((e, i) => {
@@ -103,7 +101,12 @@ function loadTable(id) {
             tagName: "button", innerText: "Novo Registro",
             attributes: {
                 type: "button",
-                class: "text-white font-bold px-8 py-2 rounded-md bg-primary hover:bg-primary-dark"
+                class: `
+                    text-white font-bold 
+                    px-8 py-2 
+                    rounded-md 
+                    bg-primary hover:bg-primary-dark
+                `
             }
         }));
         const searchBar = renderTag("div", renderElement({
@@ -167,12 +170,17 @@ function loadTable(id) {
             }
         })));
         const tableRows = renderElement({
-            tagName: "div",
+            tagName: "ol",
             attributes: {
-                class: "flex flex-col *:h-8 *:*:px-2 *:my-2 *:[&>input]:bg-neutral-100 *:[&>input]:rounded-md"
+                class: `
+                flex flex-col 
+                *:h-8 *:*:px-2 *:my-2 
+                *:[&>input]:bg-neutral-100 *:[&>input]:rounded-md
+                *:*:px-2
+            `
             }
         }, ...tableData.rows.map((row) => renderElement({
-            tagName: "div",
+            tagName: "li",
             attributes: {
                 class: "grid gap-x-2",
                 style: `grid-template-columns: repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr));`
@@ -186,35 +194,102 @@ function loadTable(id) {
                 style: `grid-column: span ${tableData.metadata.sizes.columns[i]} / span ${tableData.metadata.sizes.columns[i]};`
             }
         })))));
+        const actionButtons = renderElement({
+            tagName: "div",
+            attributes: {
+                class: `flex flex-col *:my-2`
+            }
+        }, ...tableData.rows.map((_) => renderElement({
+            tagName: "div",
+            innerText: "",
+            attributes: {
+                class: "relative"
+            }
+        }, renderElement({
+            tagName: "button",
+            innerText: ":",
+            attributes: {
+                type: "button",
+                class: "admin-action-button"
+            },
+        }))));
+        let activeDropdown = null;
+        for (let container of actionButtons.children) {
+            const button = container.children[0];
+            button.addEventListener("click", (e) => {
+                e.stopPropagation();
+                if (activeDropdown) {
+                    activeDropdown.remove();
+                    activeDropdown = null;
+                    return;
+                }
+                activeDropdown = renderElement({
+                    tagName: "div",
+                    innerText: "",
+                    attributes: {
+                        class: "z-10 absolute top-10 right-0 p-2 bg-white rounded-md shadow-sm"
+                    }
+                }, renderElement({
+                    tagName: "button",
+                    innerText: "Editar",
+                    attributes: {
+                        type: "button",
+                        class: `
+                            text-white font-bold 
+                            p-2 
+                            rounded-md 
+                            bg-green-600 hover:bg-green-700
+                        `
+                    }
+                }), renderElement({
+                    tagName: "button",
+                    innerText: "Excluir",
+                    attributes: {
+                        type: "button",
+                        class: `
+                            text-white font-bold 
+                            p-2 
+                            rounded-md 
+                            bg-red-600 hover:bg-red-700
+                        `
+                    }
+                }));
+                let deleteFunction;
+                deleteFunction = (e) => {
+                    const target = e.target;
+                    if (activeDropdown && !activeDropdown.contains(target)) {
+                        activeDropdown.remove();
+                        activeDropdown = null;
+                        document.removeEventListener("click", deleteFunction);
+                    }
+                };
+                document.addEventListener("click", deleteFunction);
+                container.appendChild(activeDropdown);
+            });
+        }
         const tableActions = renderElement({
             tagName: "div",
             attributes: {
-                class: "flex flex-col items-center w-24 h-full pl-2 ml-2 border-l-2 border-neutral-200"
+                class: `
+                flex flex-col items-center 
+                w-24 h-full 
+                pl-2 ml-2 
+                border-l-2 
+                border-neutral-200
+            `
             }
         }, renderElement({
             tagName: "div",
             innerText: "Ação",
             attributes: {
-                class: "text-center w-full h-8 mb-2 border-b-2 border-neutral-200 opacity-75"
+                class: `
+                    text-center 
+                    w-full h-8 mb-2 
+                    border-b-2 border-neutral-200 
+                    opacity-75
+                `
             }
-        }), renderElement({
-            tagName: "div",
-            attributes: {
-                class: "*:block *:h-8 *:my-2 *:aspect-square *:rounded-full hover:*:bg-neutral-200 *:transition-colors"
-            }
-        }, renderElement({
-            tagName: "button",
-            innerText: ":",
-            attributes: { type: "button" }
-        }), renderElement({
-            tagName: "button",
-            innerText: ":",
-            attributes: { type: "button" }
-        }), renderElement({
-            tagName: "button",
-            innerText: ":",
-            attributes: { type: "button" }
-        })));
+        }), actionButtons);
         renderElement({
             container: crudBase,
             tagName: "div",

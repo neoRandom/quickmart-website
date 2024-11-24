@@ -60,7 +60,6 @@ function calculateTableSize(tableMetadata: SQLMetadata[]) {
     for (let rowData of tableMetadata) {
         if (rowData.Type.includes("char") || rowData.Type.includes("binary")) {
             let columnSize = parseInt(rowData.Type.split("(")[1]?.split(")")[0] ?? "1");
-            console.log(columnSize / 15);
             let gridCols = Math.floor(columnSize / 12);
             sizes.columns.push(gridCols);
             sizes.total += gridCols;
@@ -95,8 +94,6 @@ async function loadTable(id: number) {
         tableData = await payload.json();
         tableData.metadata.sizes = calculateTableSize(tableData.metadata);
         tablesMetadataCache[id] = tableData;
-
-        console.log(tableData);
     }
 
     // Make the clicked button have the different style
@@ -141,13 +138,19 @@ async function loadTable(id: number) {
             tagName: "button", innerText: "Novo Registro", 
             attributes: { 
                 type: "button", 
-                class: "text-white font-bold px-8 py-2 rounded-md bg-primary hover:bg-primary-dark" 
+                class: `
+                    text-white font-bold 
+                    px-8 py-2 
+                    rounded-md 
+                    bg-primary hover:bg-primary-dark
+                `
             }
         })
     )
 
     // Render the body
-    const searchBar = renderTag( 
+    const searchBar = 
+    renderTag( 
         "div", 
         renderElement ({
             tagName: "form", 
@@ -193,7 +196,8 @@ async function loadTable(id: number) {
         )
     );
 
-    const tableHeader = renderElement({
+    const tableHeader = 
+    renderElement({
         tagName: "div",
         attributes: {
             class: `
@@ -218,75 +222,156 @@ async function loadTable(id: number) {
         )
     );
 
-    const tableRows = renderElement({
-        tagName: "div",
+    const tableRows = 
+    renderElement({
+        tagName: "ol",
         attributes: {
-            class: "flex flex-col *:h-8 *:*:px-2 *:my-2 *:[&>input]:bg-neutral-100 *:[&>input]:rounded-md"
+            class: `
+                flex flex-col 
+                *:h-8 *:*:px-2 *:my-2 
+                *:[&>input]:bg-neutral-100 *:[&>input]:rounded-md
+                *:*:px-2
+            `
         }},
         ...tableData.rows.map((row: Record<string, any>) => 
             renderElement({ 
-                tagName: "div", 
+                tagName: "li", 
                 attributes: {
                     class: "grid gap-x-2",
                     style: `grid-template-columns: repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr));`
-                }
-            },
-            ...Object.keys(row).map((column: string, i: number) => 
-                renderElement({ 
-                    tagName: "div", 
-                    innerText: row[column], 
-                    attributes: {
-                        title: row[column],
-                        class: "truncate",
-                        style: `grid-column: span ${tableData.metadata.sizes.columns[i]} / span ${tableData.metadata.sizes.columns[i]};` 
-                    }
-                })
+                }},
+                ...Object.keys(row).map((column: string, i: number) => 
+                    renderElement({ 
+                        tagName: "div", 
+                        innerText: row[column], 
+                        attributes: {
+                            title: row[column],
+                            class: "truncate",
+                            style: `grid-column: span ${tableData.metadata.sizes.columns[i]} / span ${tableData.metadata.sizes.columns[i]};` 
+                        }
+                    })
+                )
             )
-        ))
+        )
     )
-        
 
-    const tableActions = renderElement({
+    const actionButtons = 
+    renderElement({
         tagName: "div",
         attributes: {
-            class: "flex flex-col items-center w-24 h-full pl-2 ml-2 border-l-2 border-neutral-200"
+            class: `flex flex-col *:my-2`
+        }},
+        ...tableData.rows.map((_: Record<string, any>) =>
+            renderElement({
+                tagName: "div",
+                innerText: "",
+                attributes: { 
+                    class: "relative"
+                }},
+                renderElement({
+                    tagName: "button",
+                    innerText: ":",
+                    attributes: { 
+                        type: "button",
+                        class: "admin-action-button"
+                    },
+                })
+            )
+        )
+    );
+
+    let activeDropdown: null | HTMLDivElement = null;
+    for (let container of actionButtons.children) {
+        const button = container.children[0] as HTMLButtonElement;
+
+        button.addEventListener("click", (e) => {
+            e.stopPropagation();
+
+            if (activeDropdown) {
+                activeDropdown.remove();
+                activeDropdown = null;
+                return;
+            }
+
+            activeDropdown = renderElement({
+                tagName: "div",
+                innerText: "",
+                attributes: { 
+                    class: "z-10 absolute top-10 right-0 p-2 bg-white rounded-md shadow-sm" 
+                }},
+                renderElement({
+                    tagName: "button",
+                    innerText: "Editar",
+                    attributes: { 
+                        type: "button",
+                        class: `
+                            text-white font-bold 
+                            p-2 
+                            rounded-md 
+                            bg-green-600 hover:bg-green-700
+                        `
+                    }}
+                ),
+                renderElement({
+                    tagName: "button",
+                    innerText: "Excluir",
+                    attributes: { 
+                        type: "button",
+                        class: `
+                            text-white font-bold 
+                            p-2 
+                            rounded-md 
+                            bg-red-600 hover:bg-red-700
+                        `
+                    }}
+                )
+            ) as HTMLDivElement;
+
+            let deleteFunction: (e: Event) => void;
+            
+            deleteFunction = (e: Event) => {
+                const target = e.target as HTMLElement;
+                if (activeDropdown && !activeDropdown.contains(target)) {
+                    activeDropdown.remove();
+                    activeDropdown = null;
+                    document.removeEventListener("click", deleteFunction);
+                }
+            };
+
+            document.addEventListener("click", deleteFunction);
+
+            container.appendChild(activeDropdown);
+        });
+    }
+        
+
+    const tableActions = 
+    renderElement({
+        tagName: "div",
+        attributes: {
+            class: `
+                flex flex-col items-center 
+                w-24 h-full 
+                pl-2 ml-2 
+                border-l-2 
+                border-neutral-200
+            `
         }},
         // Action header
         renderElement({
             tagName: "div",
             innerText: "Ação",
             attributes: {
-                class: "text-center w-full h-8 mb-2 border-b-2 border-neutral-200 opacity-75"
+                class: `
+                    text-center 
+                    w-full h-8 mb-2 
+                    border-b-2 border-neutral-200 
+                    opacity-75
+                `
             }
         }),
         // Action buttons
-        renderElement({
-            tagName: "div",
-            attributes: {
-                class: "*:block *:h-8 *:my-2 *:aspect-square *:rounded-full hover:*:bg-neutral-200 *:transition-colors"
-            }},
-            renderElement(
-                {
-                    tagName: "button",
-                    innerText: ":",
-                    attributes: { type: "button" }
-                }
-            ),
-            renderElement(
-                {
-                    tagName: "button",
-                    innerText: ":",
-                    attributes: { type: "button" }
-                }
-            ),
-            renderElement(
-                {
-                    tagName: "button",
-                    innerText: ":",
-                    attributes: { type: "button" }
-                }
-            )
-        )
+        actionButtons
     );
 
 

@@ -46,4 +46,13 @@
             transition-transform duration-300
         ;
     }
+    .admin-action-button {
+        @apply 
+            block 
+            h-8 aspect-square 
+            rounded-full 
+            hover:bg-neutral-100 active:bg-neutral-200
+            transition-colors
+        ;
+    }
 }

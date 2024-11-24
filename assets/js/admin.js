@@ -7,21 +7,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a, _b;
+var _a;
 import { renderElement, renderTag } from "./Render/index.js";
 const sideMenu = document.querySelector("#sidebar");
 const sideMenuItens = sideMenu.querySelectorAll("div > ul > li");
 const crudContainer = document.querySelector("#side-container");
 let tablesMetadataCache = [];
 window.addEventListener('load', function () {
-    document.body.classList.remove("hidden");
+    document.body.style.display = "block";
     loadTable(0);
 }, false);
-(_a = document.querySelector("#dropdown-menu-button")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
-    var _a;
-    (_a = document.querySelector("#dropdown-menu")) === null || _a === void 0 ? void 0 : _a.classList.toggle("hidden");
+const headerDropdownMenuButton = document.querySelector("#header-dropdown-menu-button");
+const headerDropdownMenu = document.querySelector("#header-dropdown-menu");
+headerDropdownMenuButton.addEventListener("click", () => {
+    headerDropdownMenu.classList.toggle("hidden");
 });
-(_b = sideMenu.querySelector("button")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => {
+document.addEventListener("click", (e) => {
+    const target = e.target;
+    if (headerDropdownMenuButton.contains(target) ||
+        headerDropdownMenu.contains(target)) {
+        return;
+    }
+    headerDropdownMenu.classList.add("hidden");
+});
+(_a = sideMenu.querySelector("button")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
     var _a;
     (_a = sideMenu.querySelector("button > svg")) === null || _a === void 0 ? void 0 : _a.classList.toggle("rotate-180");
     sideMenu.classList.toggle("-translate-x-full");
@@ -219,41 +228,53 @@ function loadTable(id) {
             button.addEventListener("click", (e) => {
                 e.stopPropagation();
                 if (activeDropdown) {
-                    activeDropdown.remove();
-                    activeDropdown = null;
-                    return;
+                    if (activeDropdown.previousElementSibling === button) {
+                        activeDropdown.remove();
+                        activeDropdown = null;
+                        return;
+                    }
+                    else {
+                        activeDropdown.remove();
+                        activeDropdown = null;
+                    }
                 }
                 activeDropdown = renderElement({
                     tagName: "div",
                     innerText: "",
                     attributes: {
-                        class: "z-10 absolute top-10 right-0 p-2 bg-white rounded-md shadow-sm"
+                        class: `
+                        z-10 absolute top-10 right-0 
+                        flex flex-col gap-1
+                        p-2 bg-white 
+                        border border-black-pure border-opacity-10
+                        rounded-md shadow-md
+
+                        *:flex *:items-center *:gap-4
+                        *:px-4 *:py-2
+                        *:rounded-md *:transition-colors
+                        hover:*:bg-neutral-200 
+                        active:*:bg-primary active:*:text-white
+                    `
                     }
                 }, renderElement({
                     tagName: "button",
+                    attributes: {
+                        type: "button"
+                    }
+                }, renderElement({
+                    tagName: "p",
                     innerText: "Editar",
-                    attributes: {
-                        type: "button",
-                        class: `
-                            text-white font-bold 
-                            p-2 
-                            rounded-md 
-                            bg-green-600 hover:bg-green-700
-                        `
-                    }
-                }), renderElement({
+                    attributes: {}
+                })), renderElement({
                     tagName: "button",
-                    innerText: "Excluir",
                     attributes: {
-                        type: "button",
-                        class: `
-                            text-white font-bold 
-                            p-2 
-                            rounded-md 
-                            bg-red-600 hover:bg-red-700
-                        `
+                        type: "button"
                     }
-                }));
+                }, renderElement({
+                    tagName: "p",
+                    innerText: "Excluir",
+                    attributes: {}
+                })));
                 let deleteFunction;
                 deleteFunction = (e) => {
                     const target = e.target;
@@ -272,7 +293,7 @@ function loadTable(id) {
             attributes: {
                 class: `
                 flex flex-col items-center 
-                w-24 h-full 
+                w-16 h-full 
                 pl-2 ml-2 
                 border-l-2 
                 border-neutral-200

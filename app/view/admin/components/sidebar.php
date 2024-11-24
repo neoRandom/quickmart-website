@@ -10,7 +10,7 @@ function generateSidebar(array $access) {
             opacity: 1;
         }
     </style>
-    <div id="sidebar" class="z-40 absolute top-0 left-0 w-64 h-full bg-white shadow-md transition-transform duration-700">
+    <div id="sidebar" class="z-40 absolute top-0 left-0 w-56 h-full bg-white shadow-md transition-transform duration-700">
         <button
             type="button" 
             class="absolute top-2 left-full p-0.5 pl-0 bg-primary rounded-r-md">

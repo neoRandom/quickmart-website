@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="/quickmart/assets/css/main.css">
     <link rel="stylesheet" href="/quickmart/assets/css/admin.css">
 </head>
-<body class="hidden bg-neutral-100">
+<body style="display: none;" class="bg-neutral-100">
     <div class="flex flex-col w-screen h-screen overflow-hidden">
         <?php generateHeader($username, $access) ?>
 
@@ -38,7 +38,7 @@
             <?php generateSidebar($access) ?>
 
             <!-- Table and stuff -->
-            <div id="side-container" class="absolute top-0 right-0 w-[calc(100%-16rem)] h-full p-8 transition-all duration-700">
+            <div id="side-container" class="absolute top-0 right-0 w-[calc(100%-14rem)] h-full p-4 transition-all duration-700">
                 <div class="flex flex-col gap-4 w-full h-full *:w-full *:bg-white *:rounded-md *:shadow-sm">
                     
                 </div>

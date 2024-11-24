@@ -22,16 +22,31 @@ let tablesMetadataCache: any[] = [];
 
 // Only shows the page when its fully loaded
 window.addEventListener('load', function () {
-    document.body.classList.remove("hidden");
+    document.body.style.display = "block";
     loadTable(0);
 }, false);
 
 
-// Dropdown menu
-document.querySelector("#dropdown-menu-button")
-?.addEventListener("click", () => {
-    document.querySelector("#dropdown-menu")?.classList.toggle("hidden");
+// Header Dropdown menu
+const headerDropdownMenuButton = document.querySelector("#header-dropdown-menu-button") as HTMLButtonElement;
+const headerDropdownMenu = document.querySelector("#header-dropdown-menu") as HTMLDivElement;
+
+headerDropdownMenuButton.addEventListener("click", () => {
+    headerDropdownMenu.classList.toggle("hidden");
 });
+
+document.addEventListener("click", (e: Event) => {
+    const target = e.target as HTMLElement;
+
+    if (
+        headerDropdownMenuButton.contains(target) || 
+        headerDropdownMenu.contains(target)
+    ) {
+        return;
+    }
+
+    headerDropdownMenu.classList.add("hidden");
+})
 
 
 // Side bar
@@ -280,6 +295,21 @@ async function loadTable(id: number) {
         )
     );
 
+    /**
+     * Render the action buttons on the table.
+     * 
+     * Each button on the list will have a dropdown menu with two options:
+     * - Edit
+     * - Delete
+     * - View
+     * 
+     * The buttons will be rendered in the same order as the rows in the table.
+     * 
+     * When a button is clicked, a dropdown menu will appear with the two options.
+     * If the user clicks outside the dropdown menu, it will be removed.
+     * 
+     * The function returns the action buttons container.
+     */
     let activeDropdown: null | HTMLDivElement = null;
     for (let container of actionButtons.children) {
         const button = container.children[0] as HTMLButtonElement;
@@ -288,42 +318,56 @@ async function loadTable(id: number) {
             e.stopPropagation();
 
             if (activeDropdown) {
-                activeDropdown.remove();
-                activeDropdown = null;
-                return;
+                if (activeDropdown.previousElementSibling === button) {
+                    activeDropdown.remove();
+                    activeDropdown = null;
+                    return;
+                }
+                else {
+                    activeDropdown.remove();
+                    activeDropdown = null;
+                }
             }
 
             activeDropdown = renderElement({
                 tagName: "div",
                 innerText: "",
                 attributes: { 
-                    class: "z-10 absolute top-10 right-0 p-2 bg-white rounded-md shadow-sm" 
+                    class: `
+                        z-10 absolute top-10 right-0 
+                        flex flex-col gap-1
+                        p-2 bg-white 
+                        border border-black-pure border-opacity-10
+                        rounded-md shadow-md
+
+                        *:flex *:items-center *:gap-4
+                        *:px-4 *:py-2
+                        *:rounded-md *:transition-colors
+                        hover:*:bg-neutral-200 
+                        active:*:bg-primary active:*:text-white
+                    `
                 }},
                 renderElement({
                     tagName: "button",
-                    innerText: "Editar",
-                    attributes: { 
-                        type: "button",
-                        class: `
-                            text-white font-bold 
-                            p-2 
-                            rounded-md 
-                            bg-green-600 hover:bg-green-700
-                        `
-                    }}
+                    attributes: {
+                        type: "button"
+                    }},
+                    renderElement({
+                        tagName: "p",
+                        innerText: "Editar",
+                        attributes: {}
+                    }),
                 ),
                 renderElement({
                     tagName: "button",
-                    innerText: "Excluir",
-                    attributes: { 
-                        type: "button",
-                        class: `
-                            text-white font-bold 
-                            p-2 
-                            rounded-md 
-                            bg-red-600 hover:bg-red-700
-                        `
-                    }}
+                    attributes: {
+                        type: "button"
+                    }},
+                    renderElement({
+                        tagName: "p",
+                        innerText: "Excluir",
+                        attributes: {}
+                    })
                 )
             ) as HTMLDivElement;
 
@@ -351,7 +395,7 @@ async function loadTable(id: number) {
         attributes: {
             class: `
                 flex flex-col items-center 
-                w-24 h-full 
+                w-16 h-full 
                 pl-2 ml-2 
                 border-l-2 
                 border-neutral-200

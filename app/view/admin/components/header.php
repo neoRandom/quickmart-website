@@ -28,21 +28,29 @@ function generateHeader(string $username, array $access) {
             </div>
             <div class="relative">
                 <button 
-                    id="dropdown-menu-button"
+                    id="header-dropdown-menu-button"
                     type="button" 
                     class="block h-10 aspect-square"
                     >
                     <img src="/quickmart/assets/images/icon.png" alt="user" width="100%" height="100%">
                 </button>
 
-                <div id="dropdown-menu" class="hidden absolute top-16 right-0 h-fit w-fit p-2 bg-white rounded-md shadow-md">
+                <div 
+                    id="header-dropdown-menu" 
+                    class="
+                        hidden absolute top-16 right-0 
+                        h-fit w-fit p-2 bg-white 
+                        border border-black-pure border-opacity-10 
+                        rounded-md shadow-md
+                    ">
                     <ul class="flex flex-col gap-2">
                         <li>
                             <a href="/quickmart/public/admin/logout">
                                 <div class="
                                         flex items-center gap-4
                                         px-4 py-2
-                                        rounded-md hover:bg-neutral-200
+                                        rounded-md transition-colors
+                                        hover:bg-neutral-200
                                     ">
                                     <div class="w-4 aspect-square">
                                         <img src="/quickmart/assets/images/logout.png" alt="" width="100%" height="100%">

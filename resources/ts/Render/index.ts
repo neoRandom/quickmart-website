@@ -3,7 +3,7 @@ import type {
     RenderElementWoContainer, 
     RenderElementWoInnerText, 
     RenderElementWoInnerTextAndContainer
-} from './types.ts';
+} from '../types/render.js';
 
 
 /**

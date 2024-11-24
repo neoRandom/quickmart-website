@@ -46,8 +46,6 @@
         </main>
     </div>
 
-    <!-- To import JavaScript files that require other JavaScript files, specify the type (module) and the type (text/javascript) -->
-    <!-- Im not sure why I need to type the same thing twice, but it works anyway -->
-    <script type="module" type="text/javascript" src="/quickmart/assets/js/admin.js"></script>
+    <script type="module" src="/quickmart/assets/js/admin/index.js"></script>
 </body>
 </html>

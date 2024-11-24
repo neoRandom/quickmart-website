@@ -1,78 +1,36 @@
-// For some unkown reason, the import doesn't work with normal imports ("./Render" or "./Render/index.ts")
 import { 
     renderElement,
     renderTag
-} from "./Render/index.js";  
+} from "../Render/index.js";  
 
-type SQLMetadata = {
-    Field: string,
-    Type: string,
-    Null: string,
-    Key: string,
-    Default: any,
-    Extra: string
-}
+import type {
+    SQLMetadata,
+    TableMetadata,
+    TableData
+} from "../types/admin.js";
 
 const sideMenu = document.querySelector("#sidebar") as HTMLDivElement;
-const sideMenuItens = sideMenu.querySelectorAll("div > ul > li") as NodeListOf<HTMLLIElement>;
 const crudContainer = document.querySelector("#side-container") as HTMLDivElement;
 
-let tablesMetadataCache: any[] = [];
+let tablesMetadataCache: TableData[] = [];
 
-
-// Only shows the page when its fully loaded
-window.addEventListener('load', function () {
-    document.body.style.display = "block";
-    loadTable(0);
-}, false);
-
-
-// Header Dropdown menu
-const headerDropdownMenuButton = document.querySelector("#header-dropdown-menu-button") as HTMLButtonElement;
-const headerDropdownMenu = document.querySelector("#header-dropdown-menu") as HTMLDivElement;
-
-headerDropdownMenuButton.addEventListener("click", () => {
-    headerDropdownMenu.classList.toggle("hidden");
-});
-
-document.addEventListener("click", (e: Event) => {
-    const target = e.target as HTMLElement;
-
-    if (
-        headerDropdownMenuButton.contains(target) || 
-        headerDropdownMenu.contains(target)
-    ) {
-        return;
-    }
-
-    headerDropdownMenu.classList.add("hidden");
-})
-
-
-// Side bar
-sideMenu.querySelector("button")
-?.addEventListener("click", () => {
-    sideMenu.querySelector("button > svg")?.classList.toggle("rotate-180");
-    sideMenu.classList.toggle("-translate-x-full");
-    crudContainer.classList.toggle("w-full");
-});
-
-
-// Side bar buttons
-sideMenuItens.forEach((e, i) => {
-    e.addEventListener("click", () => {
-        loadTable(i);
-    });
-});
-
-
-function calculateTableSize(tableMetadata: SQLMetadata[]) {
+/**
+ * Calculate the total size of a table and the size of each column
+ * given the metadata of the table.
+ * 
+ * @param tableMetadata The metadata of the table.
+ * 
+ * @returns An object with the `total` property set to the total size of
+ * the table and the `columns` property set to an array of the size of
+ * each column.
+ */
+function calculateTableSize(tableMetadata: TableMetadata) {
     let sizes: { total: number, columns: number[] } = {
         total: 0,
         columns: []
     };
 
-    for (let rowData of tableMetadata) {
+    for (let rowData of tableMetadata.rows) {
         if (rowData.Type.includes("char") || rowData.Type.includes("binary")) {
             let columnSize = parseInt(rowData.Type.split("(")[1]?.split(")")[0] ?? "1");
             let gridCols = Math.floor(columnSize / 12);
@@ -89,37 +47,7 @@ function calculateTableSize(tableMetadata: SQLMetadata[]) {
 }
 
 
-// Function to the side bar load table button
-async function loadTable(id: number) {
-    let tableData;
-
-    // Check if the metadata is cached
-    if (tablesMetadataCache[id]) {
-        tableData = tablesMetadataCache[id];
-    }
-    // If is not cached, fetch metadata from the server
-    else {
-        let payload = await fetch(`get_table?id=${id}`);
-
-        if (payload.status !== 200) {
-            alert("Não foi possível carregar a tabela.");
-            return;
-        }
-    
-        tableData = await payload.json();
-        tableData.metadata.sizes = calculateTableSize(tableData.metadata);
-        tablesMetadataCache[id] = tableData;
-    }
-
-    // Make the clicked button have the different style
-    const menuItens = sideMenu.querySelectorAll("div > ul > li");
-    menuItens.forEach((e, i) => {
-        if (i === id)
-            e.classList.add("selected-item");  // Custom CSS class
-        else
-            e.classList.remove("selected-item");
-    });
-
+function renderTable(tableData: TableData) {
     // Removing all child Nodes from tableBase element
     const crudBase = crudContainer.children[0] as HTMLDivElement;
 
@@ -224,7 +152,7 @@ async function loadTable(id: number) {
             `,
             style: `grid-template-columns: repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr));`
         }},
-        ...tableData.metadata.map((row: SQLMetadata, i: number) => 
+        ...tableData.metadata.rows.map((row: SQLMetadata, i: number) => 
             renderElement({ 
                 tagName: "div", 
                 innerText: row.Field, 
@@ -454,6 +382,46 @@ async function loadTable(id: number) {
             }
         })
     );
+}
+
+
+// Function to the side bar load table button
+async function loadTable(id: number) {
+    let tableData;
+
+    // Check if the metadata is cached
+    if (tablesMetadataCache[id]) {
+        tableData = tablesMetadataCache[id];
+    }
+    // If is not cached, fetch metadata from the server
+    else {
+        let payload = await fetch(`get_table?id=${id}`);
+
+        if (payload.status !== 200) {
+            alert("Não foi possível carregar a tabela.");
+            return;
+        }
+    
+        tableData = await payload.json();
+        let temp = tableData.metadata;
+        tableData.metadata = {};
+        tableData.metadata.rows = temp;
+        tableData.metadata.sizes = calculateTableSize(tableData.metadata);
+        tablesMetadataCache[id] = tableData;
+    }
+
+    // Make the clicked button have the different style
+    const menuItens = sideMenu.querySelectorAll("div > ul > li");
+    menuItens.forEach((e, i) => {
+        if (i === id)
+            e.classList.add("selected-item");  // Custom CSS class
+        else
+            e.classList.remove("selected-item");
+    });
+
+    renderTable(tableData);
 
     crudContainer.classList.remove("hidden");  // Show the CRUD container
-}
+};
+
+export default loadTable;

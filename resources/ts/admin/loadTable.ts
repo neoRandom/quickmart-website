@@ -12,25 +12,23 @@ import type {
 const sideMenu = document.querySelector("#sidebar") as HTMLDivElement;
 const crudContainer = document.querySelector("#side-container") as HTMLDivElement;
 
-let tablesMetadataCache: TableData[] = [];
+let tablesMetadataCache: TableMetadata[] = [];
+
 
 /**
- * Calculate the total size of a table and the size of each column
- * given the metadata of the table.
- * 
- * @param tableMetadata The metadata of the table.
- * 
- * @returns An object with the `total` property set to the total size of
- * the table and the `columns` property set to an array of the size of
- * each column.
+ * Calculates the total size of a table based on its metadata.
+ * The size of a column is based on the type of the column. If the type is char or binary,
+ * the size is the length of the column divided by 12. Otherwise, the size is 1.
+ * @param metadataSQL The metadata of the table to calculate the size of.
+ * @returns The total size of the table.
  */
-function calculateTableSize(tableMetadata: TableMetadata) {
+function calculateTableSize(metadataSQL: SQLMetadata[]) {
     let sizes: { total: number, columns: number[] } = {
         total: 0,
         columns: []
     };
 
-    for (let rowData of tableMetadata.rows) {
+    for (let rowData of metadataSQL) {
         if (rowData.Type.includes("char") || rowData.Type.includes("binary")) {
             let columnSize = parseInt(rowData.Type.split("(")[1]?.split(")")[0] ?? "1");
             let gridCols = Math.floor(columnSize / 12);
@@ -47,7 +45,7 @@ function calculateTableSize(tableMetadata: TableMetadata) {
 }
 
 
-function renderTable(tableData: TableData) {
+function renderTable(metadata: TableMetadata, data: TableData) {
     // Removing all child Nodes from tableBase element
     const crudBase = crudContainer.children[0] as HTMLDivElement;
 
@@ -73,7 +71,7 @@ function renderTable(tableData: TableData) {
                 }
             }),
             renderElement({
-                tagName: "span", innerText: tableData.name, 
+                tagName: "span", innerText: metadata.name, 
                 attributes: {}
             })
         ),
@@ -150,16 +148,16 @@ function renderTable(tableData: TableData) {
                 border-b-2 border-neutral-200 
                 *:px-2
             `,
-            style: `grid-template-columns: repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr));`
+            style: `grid-template-columns: repeat(${metadata.sizes.total}, minmax(0, 1fr));`
         }},
-        ...tableData.metadata.rows.map((row: SQLMetadata, i: number) => 
+        ...metadata.rows.map((column: SQLMetadata, i: number) => 
             renderElement({ 
                 tagName: "div", 
-                innerText: row.Field, 
+                innerText: column.Field, 
                 attributes: { 
-                    title: row.Field,
+                    title: column.Field,
                     class: "truncate",
-                    style: `grid-column: span ${tableData.metadata.sizes.columns[i]} / span ${tableData.metadata.sizes.columns[i]};` 
+                    style: `grid-column: span ${metadata.sizes.columns[i]} / span ${metadata.sizes.columns[i]};` 
                 }
             })
         )
@@ -176,12 +174,12 @@ function renderTable(tableData: TableData) {
                 *:*:px-2
             `
         }},
-        ...tableData.rows.map((row: Record<string, any>) => 
+        ...data.map((row: Record<string, any>) => 
             renderElement({ 
                 tagName: "li", 
                 attributes: {
                     class: "grid gap-x-2",
-                    style: `grid-template-columns: repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr));`
+                    style: `grid-template-columns: repeat(${metadata.sizes.total}, minmax(0, 1fr));`
                 }},
                 ...Object.keys(row).map((column: string, i: number) => 
                     renderElement({ 
@@ -190,7 +188,7 @@ function renderTable(tableData: TableData) {
                         attributes: {
                             title: row[column],
                             class: "truncate",
-                            style: `grid-column: span ${tableData.metadata.sizes.columns[i]} / span ${tableData.metadata.sizes.columns[i]};` 
+                            style: `grid-column: span ${metadata.sizes.columns[i]} / span ${metadata.sizes.columns[i]};` 
                         }
                     })
                 )
@@ -204,7 +202,7 @@ function renderTable(tableData: TableData) {
         attributes: {
             class: `flex flex-col *:my-2`
         }},
-        ...tableData.rows.map((_: Record<string, any>) =>
+        ...data.map((_: Record<string, any>) =>
             renderElement({
                 tagName: "div",
                 innerText: "",
@@ -387,28 +385,35 @@ function renderTable(tableData: TableData) {
 
 // Function to the side bar load table button
 async function loadTable(id: number) {
-    let tableData;
+    let metadata: TableMetadata;
+    let data: TableData;
 
     // Check if the metadata is cached
     if (tablesMetadataCache[id]) {
-        tableData = tablesMetadataCache[id];
+        metadata = tablesMetadataCache[id];
     }
     // If is not cached, fetch metadata from the server
     else {
-        let payload = await fetch(`get_table?id=${id}`);
+        let payload = await fetch(`get_metadata?id=${id}`);
 
         if (payload.status !== 200) {
             alert("Não foi possível carregar a tabela.");
             return;
         }
     
-        tableData = await payload.json();
-        let temp = tableData.metadata;
-        tableData.metadata = {};
-        tableData.metadata.rows = temp;
-        tableData.metadata.sizes = calculateTableSize(tableData.metadata);
-        tablesMetadataCache[id] = tableData;
+        metadata = await payload.json();
+        metadata.sizes = calculateTableSize(metadata.rows);
+        tablesMetadataCache[id] = metadata;
     }
+
+    // Fetch the data (registers) from the server
+    const payload = await fetch(`get_registers?id=${id}`);
+    if (payload.status !== 200) {
+        alert("Não foi possível carregar os dados da tabela.");
+        return;
+    }
+
+    data = await payload.json();
 
     // Make the clicked button have the different style
     const menuItens = sideMenu.querySelectorAll("div > ul > li");
@@ -419,9 +424,11 @@ async function loadTable(id: number) {
             e.classList.remove("selected-item");
     });
 
-    renderTable(tableData);
+    // Render the HTML
+    renderTable(metadata, data);
 
-    crudContainer.classList.remove("hidden");  // Show the CRUD container
+    // Show the CRUD container
+    crudContainer.classList.remove("hidden");  
 };
 
 export default loadTable;

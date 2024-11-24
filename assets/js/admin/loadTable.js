@@ -11,13 +11,13 @@ import { renderElement, renderTag } from "../Render/index.js";
 const sideMenu = document.querySelector("#sidebar");
 const crudContainer = document.querySelector("#side-container");
 let tablesMetadataCache = [];
-function calculateTableSize(tableMetadata) {
+function calculateTableSize(metadataSQL) {
     var _a, _b;
     let sizes = {
         total: 0,
         columns: []
     };
-    for (let rowData of tableMetadata.rows) {
+    for (let rowData of metadataSQL) {
         if (rowData.Type.includes("char") || rowData.Type.includes("binary")) {
             let columnSize = parseInt((_b = (_a = rowData.Type.split("(")[1]) === null || _a === void 0 ? void 0 : _a.split(")")[0]) !== null && _b !== void 0 ? _b : "1");
             let gridCols = Math.floor(columnSize / 12);
@@ -31,7 +31,7 @@ function calculateTableSize(tableMetadata) {
     }
     return sizes;
 }
-function renderTable(tableData) {
+function renderTable(metadata, data) {
     const crudBase = crudContainer.children[0];
     while (crudBase.firstChild) {
         crudBase.removeChild(crudBase.firstChild);
@@ -52,7 +52,7 @@ function renderTable(tableData) {
             class: "opacity-80 mr-2"
         }
     }), renderElement({
-        tagName: "span", innerText: tableData.name,
+        tagName: "span", innerText: metadata.name,
         attributes: {}
     })), renderElement({
         tagName: "button", innerText: "Novo Registro",
@@ -115,15 +115,15 @@ function renderTable(tableData) {
                 border-b-2 border-neutral-200 
                 *:px-2
             `,
-            style: `grid-template-columns: repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr));`
+            style: `grid-template-columns: repeat(${metadata.sizes.total}, minmax(0, 1fr));`
         }
-    }, ...tableData.metadata.rows.map((row, i) => renderElement({
+    }, ...metadata.rows.map((column, i) => renderElement({
         tagName: "div",
-        innerText: row.Field,
+        innerText: column.Field,
         attributes: {
-            title: row.Field,
+            title: column.Field,
             class: "truncate",
-            style: `grid-column: span ${tableData.metadata.sizes.columns[i]} / span ${tableData.metadata.sizes.columns[i]};`
+            style: `grid-column: span ${metadata.sizes.columns[i]} / span ${metadata.sizes.columns[i]};`
         }
     })));
     const tableRows = renderElement({
@@ -136,11 +136,11 @@ function renderTable(tableData) {
                 *:*:px-2
             `
         }
-    }, ...tableData.rows.map((row) => renderElement({
+    }, ...data.map((row) => renderElement({
         tagName: "li",
         attributes: {
             class: "grid gap-x-2",
-            style: `grid-template-columns: repeat(${tableData.metadata.sizes.total}, minmax(0, 1fr));`
+            style: `grid-template-columns: repeat(${metadata.sizes.total}, minmax(0, 1fr));`
         }
     }, ...Object.keys(row).map((column, i) => renderElement({
         tagName: "div",
@@ -148,7 +148,7 @@ function renderTable(tableData) {
         attributes: {
             title: row[column],
             class: "truncate",
-            style: `grid-column: span ${tableData.metadata.sizes.columns[i]} / span ${tableData.metadata.sizes.columns[i]};`
+            style: `grid-column: span ${metadata.sizes.columns[i]} / span ${metadata.sizes.columns[i]};`
         }
     })))));
     const actionButtons = renderElement({
@@ -156,7 +156,7 @@ function renderTable(tableData) {
         attributes: {
             class: `flex flex-col *:my-2`
         }
-    }, ...tableData.rows.map((_) => renderElement({
+    }, ...data.map((_) => renderElement({
         tagName: "div",
         innerText: "",
         attributes: {
@@ -285,23 +285,27 @@ function renderTable(tableData) {
 }
 function loadTable(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        let tableData;
+        let metadata;
+        let data;
         if (tablesMetadataCache[id]) {
-            tableData = tablesMetadataCache[id];
+            metadata = tablesMetadataCache[id];
         }
         else {
-            let payload = yield fetch(`get_table?id=${id}`);
+            let payload = yield fetch(`get_metadata?id=${id}`);
             if (payload.status !== 200) {
                 alert("Não foi possível carregar a tabela.");
                 return;
             }
-            tableData = yield payload.json();
-            let temp = tableData.metadata;
-            tableData.metadata = {};
-            tableData.metadata.rows = temp;
-            tableData.metadata.sizes = calculateTableSize(tableData.metadata);
-            tablesMetadataCache[id] = tableData;
+            metadata = yield payload.json();
+            metadata.sizes = calculateTableSize(metadata.rows);
+            tablesMetadataCache[id] = metadata;
         }
+        const payload = yield fetch(`get_registers?id=${id}`);
+        if (payload.status !== 200) {
+            alert("Não foi possível carregar os dados da tabela.");
+            return;
+        }
+        data = yield payload.json();
         const menuItens = sideMenu.querySelectorAll("div > ul > li");
         menuItens.forEach((e, i) => {
             if (i === id)
@@ -309,7 +313,7 @@ function loadTable(id) {
             else
                 e.classList.remove("selected-item");
         });
-        renderTable(tableData);
+        renderTable(metadata, data);
         crudContainer.classList.remove("hidden");
     });
 }

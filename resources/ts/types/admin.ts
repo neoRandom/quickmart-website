@@ -8,6 +8,7 @@ type SQLMetadata = {
 }
 
 type TableMetadata = {
+    name: string,
     rows: SQLMetadata[],
     sizes: {
         total: number,
@@ -15,11 +16,7 @@ type TableMetadata = {
     }
 };
 
-type TableData = {
-    name: string,
-    metadata: TableMetadata,
-    rows: any[]
-}
+type TableData = Record<string, any>[];
 
 export {
     SQLMetadata,

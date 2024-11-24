@@ -60,7 +60,7 @@ class AdminController
      * If any of the verifications fail, the method returns an appropriate
      * HTTP status code and an error message.
      */
-    public static function getTable() {
+    public static function getMetadata() {
         // Ensure the request method is GET
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
             http_response_code(405);
@@ -104,10 +104,55 @@ class AdminController
 
             // Fetch metadata for the specified table
             $payload['name'] = $tableName;
-            $payload['metadata'] = Connection::getTableMetadata($tableName);
-            $payload['rows'] = Connection::getTableRowsJSON($tableIndex);
+            $payload['rows'] = Connection::getTableMetadata($tableName);
 
             // Return the metadata as a JSON response
+            header('Content-Type: application/json');
+            echo json_encode($payload);
+        } catch (\PDOException $e) {
+            error_log("PDOException: " . $e->getMessage());
+            http_response_code(500);
+            echo 'Internal Server Error';
+        }
+    }
+
+    /**
+     * Retrieves and returns the table rows as a JSON response based on the provided table index.
+     *
+     * Ensures the request method is GET, validates the presence and numeric nature of the 'id' parameter.
+     * If validation fails, an appropriate HTTP response code and message are returned.
+     * In case of a database error during retrieval, logs the error and returns a 500 Internal Server Error.
+     *
+     * @return void
+     */
+    public static function getRegisters() {
+        // Ensure the request method is GET
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+            http_response_code(405);
+            echo 'Method Not Allowed';
+            exit;
+        }
+
+        // Validate admin identity
+        // if (!Authentication::validateAdmin()) {
+        //     http_response_code(401);
+        //     echo 'Unauthorized';
+        //     exit;
+        // }
+
+        // Verify and sanitize the 'id' parameter
+        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+            http_response_code(400);
+            echo 'Bad Request';
+            exit;
+        }
+
+        $tableIndex = (int) $_GET['id'];
+
+        try {
+            $payload = Connection::getTableRowsJSON($tableIndex);
+
+            // Return the registers as a JSON response
             header('Content-Type: application/json');
             echo json_encode($payload);
         } catch (\PDOException $e) {

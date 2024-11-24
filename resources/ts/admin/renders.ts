@@ -390,7 +390,7 @@ function renderTableActionsButtons(data: TableData) {
                         *:px-4 *:py-2
                         *:rounded-md *:transition-colors
                         hover:*:bg-neutral-200 
-                        active:*:bg-primary active:*:text-white
+                        active:*:bg-primary active:*:text-white active:*:transition-none
                     `
                 }},
                 renderElement({
@@ -412,6 +412,17 @@ function renderTableActionsButtons(data: TableData) {
                     renderElement({
                         tagName: "p",
                         innerText: "Excluir",
+                        attributes: {}
+                    })
+                ),
+                renderElement({
+                    tagName: "button",
+                    attributes: {
+                        type: "button"
+                    }},
+                    renderElement({
+                        tagName: "p",
+                        innerText: "Detalhes",
                         attributes: {}
                     })
                 )

@@ -3,6 +3,37 @@ use database\Connection;
 
 require_once __DIR__ . "/../autoload.php";
 
+// Util (move to another file later)
+function objectToArray($d) 
+{
+    if (is_object($d)) {
+        // Gets the properties of the given object
+        // with get_object_vars function
+        $d = get_object_vars($d);
+    }
+
+    if (is_array($d)) {
+        /*
+        * Return array converted to object
+        * Using __FUNCTION__ (Magic constant)
+        * for recursive call
+        */
+        return array_map(__FUNCTION__, $d);
+    } else {
+        // Return array
+        return $d;
+    }
+}
+
+function getPostData() {
+    $data = file_get_contents('php://input');
+    $data = json_decode($data, true);
+    $data = objectToArray($data);
+
+    return $data;
+}
+
+
 class AdminController
 {
     public static function loadAdmin()
@@ -16,7 +47,76 @@ class AdminController
         require_once __DIR__ . "/../view/admin/admin.php";
     }
 
-    public static function postInsert() { /* ... */ }
+    private static function handleRequest(string $requestMethod = "POST", callable $logic): void
+    {
+        // Check if the request method is $requestMethod
+        if ($_SERVER['REQUEST_METHOD'] !== $requestMethod) {
+            http_response_code(405); // Method Not Allowed
+            header('Content-Type: application/json');
+            echo json_encode(['error' => "Method Not Allowed. Only $requestMethod requests are allowed."]);
+            return;
+        }
+
+        // Validate admin identity
+        // if (!Authentication::validateAdmin()) {
+        //     http_response_code(401);
+        //     echo 'Unauthorized';
+        //     exit;
+        // }
+
+        // Execute the logic function
+        try {
+            $response = $logic();
+
+            // Check the result of the logic
+            if (isset($response['status'])) {
+                http_response_code($response['status']);
+            }
+            if (isset($response['header'])) {
+                header($response['header']);
+            }
+            if (isset($response['body'])) {
+                echo $response['body'];
+            }
+        } catch (Exception $e) {
+            // Catch any exceptions and return an error response
+            http_response_code(500); // Internal Server Error
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'An unexpected error occurred.', 'details' => $e->getMessage()]);
+        }
+    }
+
+    public static function postInsert() {
+        self::handleRequest("POST", function () {
+            $data = getPostData();
+
+            $tableIndex = (int) $data['id'];
+            $tableClass = Connection::getTables()[$tableIndex];
+            $register = new $tableClass();
+
+            if (!$register->fromArray($data)) {
+                return [
+                    "status" => 400,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode(["error" => "Failed to insert data."])
+                ];
+            }
+
+            if (!$register->create()) {
+                return [
+                    "status" => 400,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode(["error" => "Failed to insert data."])
+                ];
+            }
+            return [
+                "status" => 200,
+                "header" => "Content-Type: application/json",
+                "body" => json_encode(["success" => "Data inserted successfully."])
+            ];
+        });
+    }
+
     public static function postUpdate() { /* ... */ }
     public static function postDelete() { /* ... */ }
 
@@ -61,59 +161,57 @@ class AdminController
      * HTTP status code and an error message.
      */
     public static function getMetadata() {
-        // Ensure the request method is GET
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-            http_response_code(405);
-            echo 'Method Not Allowed';
-            exit;
-        }
+        self::handleRequest("GET", function () {
+            // Verify and sanitize the 'id' parameter
+            if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+                return [
+                    "status" => 400,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode(["error" => "Bad Request"])
+                ];
+            }
 
-        // Validate admin identity
-        // if (!Authentication::validateAdmin()) {
-        //     http_response_code(401);
-        //     echo 'Unauthorized';
-        //     exit;
-        // }
+            $tableIndex = (int) $_GET['id'];
 
-        // Verify and sanitize the 'id' parameter
-        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-            http_response_code(400);
-            echo 'Bad Request';
-            exit;
-        }
+            // error_log("Table index: $tableIndex");
 
-        $tableIndex = (int) $_GET['id'];
+            // Retrieve the table names
+            $tableNames = Connection::getTables();
+            // error_log("Table names: " . json_encode($tableNames));
+            if (!isset($tableNames[$tableIndex])) {
+                return [
+                    "status" => 404,
+                    "header" => "Content-Type: text/plain",
+                    "body" => "Table Not Found"
+                ];
+            }
 
-        // error_log("Table index: $tableIndex");
+            $tableName = $tableNames[$tableIndex]::TABLE_NAME;
 
-        // Retrieve the table names
-        $tableNames = Connection::getTables();
-        // error_log("Table names: " . json_encode($tableNames));
-        if (!isset($tableNames[$tableIndex])) {
-            http_response_code(404);
-            echo 'Table Not Found';
-            exit;
-        }
+            // error_log("Table name: $tableName");
 
-        $tableName = $tableNames[$tableIndex]::TABLE_NAME;
+            try {
+                $payload = [];
 
-        // error_log("Table name: $tableName");
+                // Fetch metadata for the specified table
+                $payload['name'] = $tableName;
+                $payload['rows'] = Connection::getTableMetadata($tableName);
 
-        try {
-            $payload = [];
-
-            // Fetch metadata for the specified table
-            $payload['name'] = $tableName;
-            $payload['rows'] = Connection::getTableMetadata($tableName);
-
-            // Return the metadata as a JSON response
-            header('Content-Type: application/json');
-            echo json_encode($payload);
-        } catch (\PDOException $e) {
-            error_log("PDOException: " . $e->getMessage());
-            http_response_code(500);
-            echo 'Internal Server Error';
-        }
+                // Return the metadata as a JSON response
+                return [
+                    "status" => 200,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode($payload)
+                ];
+            } catch (\PDOException $e) {
+                // error_log("PDOException: " . $e->getMessage());
+                return [
+                    "status" => 500,
+                    "header" => "Content-Type: text/plain",
+                    "body" => "Internal Server Error"
+                ];
+            }
+        });
     }
 
     /**

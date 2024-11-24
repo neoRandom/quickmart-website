@@ -55,6 +55,39 @@ class Produto extends Model {
         ];
     }
 
+    /**
+     * Sets the properties of the current Produto instance from an array.
+     * The array must contain the following keys:
+     * - cod_prod
+     * - cod_cate
+     * - cod_promo_prod
+     * - cod_classific
+     * - id_fabric
+     * - nome
+     * - descricao
+     * - estoque
+     * - preco
+     *
+     * @param array $data An array containing the data to set
+     */
+    public function fromArray(array $data): bool {
+        try {
+            $this->setCodProd($data["cod_prod"] ?? 0);
+            $this->setCodCate($data["cod_cate"]);
+            $this->setCodPromoProd($data["cod_promo_prod"]);
+            $this->setCodClassific($data["cod_classific"]);
+            $this->setIdFabric($data["id_fabric"]);
+            $this->setNome($data["nome"]);
+            $this->setDescricao($data["descricao"] ?? "");
+            $this->setEstoque($data["estoque"]);
+            $this->setPreco($data["preco"]);
+            return true;
+        }
+        catch (\Exception $e) {
+            return false;
+        }
+    }
+
     // ================================================== Getters and Setters ==================================================
 
     public function getCodProd(): int {

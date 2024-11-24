@@ -29,6 +29,28 @@ class Categoria extends Model {
         ];
     }
 
+    /**
+     * Sets the properties of the current Categoria instance from an array.
+     * The array must contain the following keys:
+     * - cod_cate
+     * - cod_promo_cate
+     * - descricao
+     *
+     * @param array $data An array containing the data to set
+     *
+     * @return bool true if the data is successfully set, false if an exception is thrown
+     */
+    public function fromArray(array $data): bool {
+        try {
+            $this->setCodCate($data["cod_cate"] ?? 0);
+            $this->setCodPromoCate($data["cod_promo_cate"]);
+            $this->setDescricao($data["descricao"]);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     // ================================================== Getters and Setters ==================================================
 
     public function getCodCate(): int {

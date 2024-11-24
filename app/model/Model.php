@@ -15,6 +15,8 @@ abstract class Model {
 
     public abstract function toArray(): array;
 
+    public abstract function fromArray(array $data): bool;
+
     // ================================================== Getters and Setters ==================================================
 
     /* ... */

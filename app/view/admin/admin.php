@@ -38,11 +38,7 @@
             <?php generateSidebar($access) ?>
 
             <!-- Table and stuff -->
-            <div id="side-container" class="absolute top-0 right-0 w-[calc(100%-14rem)] h-full p-4 transition-all duration-700">
-                <div class="flex flex-col gap-4 w-full h-full *:w-full *:bg-white *:rounded-md *:shadow-sm">
-                    
-                </div>
-            </div>
+            <div id="side-container" class="absolute top-0 right-0 w-[calc(100%-14rem)] h-full p-4 transition-all duration-700"></div>
         </main>
     </div>
 

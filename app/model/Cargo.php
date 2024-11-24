@@ -29,6 +29,17 @@ class Cargo extends Model {
         ];
     }
 
+    public function fromArray(array $data): bool {
+        try {
+            $this->setCodCargo($data["cod_cargo"] ?? 0);
+            $this->setDescricao($data["descricao"]);
+            $this->setSalario($data["salario"]);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
     // ================================================== Getters and Setters ==================================================
 
     public function getCodCargo(): int {

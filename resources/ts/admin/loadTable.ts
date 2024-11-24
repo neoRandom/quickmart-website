@@ -16,6 +16,68 @@ let tablesMetadataCache: TableMetadata[] = [];
 
 
 /**
+ * Loads a table based on the given id.
+ * 
+ * It first checks if the metadata of the table is cached. If it is, it uses the cached metadata.
+ * If not, it fetches the metadata from the server and caches it.
+ * 
+ * Then, it fetches the data (registers) of the table from the server.
+ * 
+ * After that, it makes the clicked button have the different style.
+ * 
+ * Finally, it renders the table and shows the CRUD container.
+ * 
+ * @param id - The id of the table to load.
+ */
+async function loadTable(id: number) {
+    let metadata: TableMetadata;
+    let data: TableData;
+
+    // Check if the metadata is cached
+    if (tablesMetadataCache[id]) {
+        metadata = tablesMetadataCache[id];
+    }
+    // If is not cached, fetch metadata from the server
+    else {
+        let payload = await fetch(`get_metadata?id=${id}`);
+
+        if (payload.status !== 200) {
+            alert("Não foi possível carregar a tabela.");
+            return;
+        }
+    
+        metadata = await payload.json();
+        metadata.sizes = calculateTableSize(metadata.rows);
+        tablesMetadataCache[id] = metadata;
+    }
+
+    // Fetch the data (registers) from the server
+    const payload = await fetch(`get_registers?id=${id}`);
+    if (payload.status !== 200) {
+        alert("Não foi possível carregar os dados da tabela.");
+        return;
+    }
+
+    data = await payload.json();
+
+    // Make the clicked button have the different style
+    const menuItens = sideMenu.querySelectorAll("div > ul > li");
+    menuItens.forEach((e, i) => {
+        if (i === id)
+            e.classList.add("selected-item");  // Custom CSS class
+        else
+            e.classList.remove("selected-item");
+    });
+
+    // Render the HTML
+    renderTable(metadata, data);
+
+    // Show the CRUD container
+    crudContainer.classList.remove("hidden");  
+};
+
+
+/**
  * Calculates the total size of a table based on its metadata.
  * The size of a column is based on the type of the column. If the type is char or binary,
  * the size is the length of the column divided by 12. Otherwise, the size is 1.
@@ -45,6 +107,14 @@ function calculateTableSize(metadataSQL: SQLMetadata[]) {
 }
 
 
+/**
+ * Renders a table based on the given metadata and data.
+ * 
+ * It removes all content from the given container and adds the rendered table to it.
+ * 
+ * @param metadata The metadata of the table to render.
+ * @param data The data of the table, used to populate the table rows.
+ */
 function renderTable(metadata: TableMetadata, data: TableData) {
     // Removing all child Nodes from tableBase element
     const crudBase = crudContainer.children[0] as HTMLDivElement;
@@ -54,8 +124,23 @@ function renderTable(metadata: TableMetadata, data: TableData) {
     }
 
     // Render the header
+    renderUpperHeader(metadata, crudBase);
+
+    // Render the body
+    renderBody(metadata, data, crudBase);
+}
+
+
+/**
+ * Renders the upper header of the table with the name of the table and a button to
+ * add a new register.
+ * 
+ * @param metadata The metadata of the table to render the header for.
+ * @param container The container element to add the upper header to.
+ */
+function renderUpperHeader(metadata: TableMetadata, container: HTMLDivElement) {
     renderElement({ 
-        container: crudBase,  tagName: "header", 
+        container: container,  tagName: "header", 
         attributes: {
             class: "flex justify-between items-center px-4 py-2"
         }},
@@ -87,11 +172,51 @@ function renderTable(metadata: TableMetadata, data: TableData) {
                 `
             }
         })
-    )
+    );
+}
 
-    // Render the body
-    const searchBar = 
-    renderTag( 
+
+/**
+ * Renders the body of a table, including a search bar, table content, 
+ * and a footer for pagination.
+ * 
+ * @param metadata The metadata of the table used for rendering the table content.
+ * @param data The data of the table, used to populate the table rows.
+ * @param container The container element to which the rendered body will be added.
+ */
+function renderBody(metadata: TableMetadata, data: TableData, container: HTMLDivElement) {
+    const searchBar = renderSearchBar();
+
+    const table = renderBodyTable(metadata, data);
+
+    renderElement({
+        container: container, 
+        tagName: "div", 
+        attributes: {
+            class: "flex-1 flex flex-col p-4 *:w-full"
+        }},
+        searchBar,
+        table,
+        // Footer to move through pages
+        renderElement({
+            tagName: "div",
+            innerText: "Page 1 of N",
+            attributes: {
+                class: "mt-2"
+            }
+        })
+    );
+}
+
+
+/**
+ * Renders a search bar based on the given metadata.
+ * 
+ * @returns The rendered search bar.
+ */
+function renderSearchBar() {
+    // TODO: Connect with the metadata and create a function to search
+    const searchBar = renderTag( 
         "div", 
         renderElement ({
             tagName: "form", 
@@ -137,8 +262,51 @@ function renderTable(metadata: TableMetadata, data: TableData) {
         )
     );
 
-    const tableHeader = 
-    renderElement({
+    return searchBar;
+}
+
+
+function renderBodyTable(metadata: TableMetadata, data: TableData) {
+    const tableHeader = renderTableHeader(metadata);
+
+    const tableRows = renderTableRows(metadata, data);
+    
+    const tableActions = renderTableActions(data);
+
+    const table = renderElement({
+        tagName: "div", 
+        attributes: {
+            class: "flex flex-1 mt-8"
+        }},
+        // Render the table body
+        renderElement({
+            tagName: "div",
+            attributes: {
+                class: "flex flex-col flex-1 h-full"
+            }},
+            tableHeader,
+            tableRows
+        ),
+        // Render the action column
+        tableActions
+    );
+
+    return table;
+}
+
+
+/**
+ * Renders the header of the table with the given metadata.
+ * 
+ * It renders all columns of the table as a grid, with the Field of the column
+ * as the text of the element. The style of the elements is set so that they
+ * are evenly distributed in the grid and have the same width as the column.
+ * 
+ * @param metadata The metadata of the table to render the header for.
+ * @returns The rendered header element.
+ */
+function renderTableHeader(metadata: TableMetadata) {
+    const header = renderElement({
         tagName: "div",
         attributes: {
             class: `
@@ -163,8 +331,23 @@ function renderTable(metadata: TableMetadata, data: TableData) {
         )
     );
 
-    const tableRows = 
-    renderElement({
+    return header;
+}
+
+
+/**
+ * Renders the rows of a table based on the given metadata and data.
+ * 
+ * Each row is represented as a list item, with each cell inside the row
+ * rendered as a grid item. The cells are styled to be evenly distributed
+ * according to the column sizes specified in the metadata.
+ * 
+ * @param metadata The metadata of the table, used to determine the grid layout.
+ * @param data The data of the table, each entry representing a row.
+ * @returns The rendered rows element.
+ */
+function renderTableRows(metadata: TableMetadata, data: TableData) {
+    const rows = renderElement({
         tagName: "ol",
         attributes: {
             class: `
@@ -194,10 +377,68 @@ function renderTable(metadata: TableMetadata, data: TableData) {
                 )
             )
         )
-    )
+    );
 
-    const actionButtons = 
-    renderElement({
+    return rows;
+}
+
+
+function renderTableActions(data: TableData) {
+/**
+ * Renders the action column for a table, which includes action buttons for each row.
+ *
+ * The action column is styled with a border and contains a header labeled "Ação".
+ * Below the header, action buttons are rendered for each row of the table. These
+ * buttons trigger additional actions when interacted with.
+ *
+ * @param data - The data of the table, each entry representing a row.
+ * @returns The rendered actions element containing the action buttons.
+ */
+    const actionButtons = renderTableActionsButtons(data);
+
+    const actions = renderElement({
+        tagName: "div",
+        attributes: {
+            class: `
+                flex flex-col items-center 
+                w-16 h-full 
+                pl-2 ml-2 
+                border-l-2 
+                border-neutral-200
+            `
+        }},
+        // Action header
+        renderElement({
+            tagName: "div",
+            innerText: "Ação",
+            attributes: {
+                class: `
+                    text-center 
+                    w-full h-8 mb-2 
+                    border-b-2 border-neutral-200 
+                    opacity-75
+                `
+            }
+        }),
+        actionButtons
+    );
+
+    return actions;
+}
+
+
+/**
+ * Renders action buttons for each row in the table.
+ * 
+ * Each action button, when clicked, displays a dropdown menu with options
+ * such as "Edit" and "Delete". The dropdown menu is positioned relative
+ * to the button and can be dismissed by clicking outside of it.
+ * 
+ * @param data - The data of the table, each entry representing a row.
+ * @returns The container element holding the action buttons.
+ */
+function renderTableActionsButtons(data: TableData) {
+    const buttons = renderElement({
         tagName: "div",
         attributes: {
             class: `flex flex-col *:my-2`
@@ -237,7 +478,7 @@ function renderTable(metadata: TableMetadata, data: TableData) {
      * The function returns the action buttons container.
      */
     let activeDropdown: null | HTMLDivElement = null;
-    for (let container of actionButtons.children) {
+    for (let container of buttons.children) {
         const button = container.children[0] as HTMLButtonElement;
 
         button.addEventListener("click", (e) => {
@@ -313,122 +554,9 @@ function renderTable(metadata: TableMetadata, data: TableData) {
             container.appendChild(activeDropdown);
         });
     }
-        
 
-    const tableActions = 
-    renderElement({
-        tagName: "div",
-        attributes: {
-            class: `
-                flex flex-col items-center 
-                w-16 h-full 
-                pl-2 ml-2 
-                border-l-2 
-                border-neutral-200
-            `
-        }},
-        // Action header
-        renderElement({
-            tagName: "div",
-            innerText: "Ação",
-            attributes: {
-                class: `
-                    text-center 
-                    w-full h-8 mb-2 
-                    border-b-2 border-neutral-200 
-                    opacity-75
-                `
-            }
-        }),
-        // Action buttons
-        actionButtons
-    );
-
-
-    renderElement({
-        container: crudBase, 
-        tagName: "div", 
-        attributes: {
-            class: "flex-1 flex flex-col p-4 *:w-full"
-        }},
-        searchBar,
-
-        // Render the table
-        renderElement({
-            tagName: "div", 
-            attributes: {
-                class: "flex flex-1 mt-8"
-            }},
-            // Render the table body
-            renderElement({
-                tagName: "div",
-                attributes: {
-                    class: "flex flex-col flex-1 h-full"
-                }},
-                tableHeader,
-                tableRows
-            ),
-            // Render the action column
-            tableActions
-        ),
-        // Footer to move through pages
-        renderElement({
-            tagName: "div",
-            innerText: "Page 1 of N",
-            attributes: {
-                class: "mt-2"
-            }
-        })
-    );
+    return buttons;
 }
 
-
-// Function to the side bar load table button
-async function loadTable(id: number) {
-    let metadata: TableMetadata;
-    let data: TableData;
-
-    // Check if the metadata is cached
-    if (tablesMetadataCache[id]) {
-        metadata = tablesMetadataCache[id];
-    }
-    // If is not cached, fetch metadata from the server
-    else {
-        let payload = await fetch(`get_metadata?id=${id}`);
-
-        if (payload.status !== 200) {
-            alert("Não foi possível carregar a tabela.");
-            return;
-        }
-    
-        metadata = await payload.json();
-        metadata.sizes = calculateTableSize(metadata.rows);
-        tablesMetadataCache[id] = metadata;
-    }
-
-    // Fetch the data (registers) from the server
-    const payload = await fetch(`get_registers?id=${id}`);
-    if (payload.status !== 200) {
-        alert("Não foi possível carregar os dados da tabela.");
-        return;
-    }
-
-    data = await payload.json();
-
-    // Make the clicked button have the different style
-    const menuItens = sideMenu.querySelectorAll("div > ul > li");
-    menuItens.forEach((e, i) => {
-        if (i === id)
-            e.classList.add("selected-item");  // Custom CSS class
-        else
-            e.classList.remove("selected-item");
-    });
-
-    // Render the HTML
-    renderTable(metadata, data);
-
-    // Show the CRUD container
-    crudContainer.classList.remove("hidden");  
-};
 
 export default loadTable;

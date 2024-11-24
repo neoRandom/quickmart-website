@@ -3,7 +3,6 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 24, 2024 at 04:31 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -152,6 +151,7 @@ CREATE TABLE `funcionario` (
 --
 
 CREATE TABLE `itens` (
+  `cod_item` int(10) UNSIGNED NOT NULL,
   `cod_lote` int(11) UNSIGNED NOT NULL,
   `cod_compra` int(11) UNSIGNED NOT NULL,
   `quantidade` int(11) UNSIGNED NOT NULL
@@ -244,6 +244,7 @@ CREATE TABLE `promocao_produto` (
 --
 
 CREATE TABLE `telefone` (
+  `id_tel` int(10) UNSIGNED NOT NULL,
   `id_dono` int(10) UNSIGNED NOT NULL,
   `tipo_tel` int(10) UNSIGNED NOT NULL,
   `tipo_dono` varchar(32) NOT NULL,
@@ -321,6 +322,12 @@ ALTER TABLE `funcionario`
   ADD PRIMARY KEY (`id_func`);
 
 --
+-- Indexes for table `itens`
+--
+ALTER TABLE `itens`
+  ADD PRIMARY KEY (`cod_item`);
+
+--
 -- Indexes for table `lote`
 --
 ALTER TABLE `lote`
@@ -355,6 +362,12 @@ ALTER TABLE `promocao_categoria`
 --
 ALTER TABLE `promocao_produto`
   ADD PRIMARY KEY (`cod_promo_prod`);
+
+--
+-- Indexes for table `telefone`
+--
+ALTER TABLE `telefone`
+  ADD PRIMARY KEY (`id_tel`);
 
 --
 -- Indexes for table `tipo_telefone`
@@ -415,6 +428,12 @@ ALTER TABLE `funcionario`
   MODIFY `id_func` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `itens`
+--
+ALTER TABLE `itens`
+  MODIFY `cod_item` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `lote`
 --
 ALTER TABLE `lote`
@@ -451,11 +470,17 @@ ALTER TABLE `promocao_produto`
   MODIFY `cod_promo_prod` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `telefone`
+--
+ALTER TABLE `telefone`
+  MODIFY `id_tel` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `tipo_telefone`
 --
 ALTER TABLE `tipo_telefone`
   MODIFY `id_tipo` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

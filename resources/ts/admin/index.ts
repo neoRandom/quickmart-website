@@ -51,6 +51,11 @@ document.addEventListener("click", (e: Event) => {
     headerDropdownMenu.classList.add("hidden");
 })
 
+const helpButton = document.querySelector("#header-dropdown-menu-help-button") as HTMLButtonElement;
+helpButton.addEventListener("click", () => {
+    renderNotification("Under construction", NotificationType.Warning);
+});
+
 
 // Side bar
 sideMenu.querySelector("button")

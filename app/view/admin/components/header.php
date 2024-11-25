@@ -43,7 +43,24 @@ function generateHeader(string $username, array $access) {
                         border border-black-pure border-opacity-10 
                         rounded-md shadow-md
                     ">
-                    <ul class="flex flex-col gap-2">
+                    <ul class="flex flex-col gap-2 *:w-full *:*:w-full">
+                        <li>
+                            <button type="button" id="header-dropdown-menu-help-button">
+                                <div class="
+                                        flex items-center gap-4
+                                        px-4 py-2
+                                        rounded-md transition-colors
+                                        hover:bg-neutral-200
+                                    ">
+                                    <div class="w-4 aspect-square">
+                                        <img src="/quickmart/assets/images/logout.png" alt="" width="100%" height="100%">
+                                    </div>
+                                    <p>
+                                        Ajuda
+                                    </p>
+                                </div>
+                            </button>
+                        </li>
                         <li>
                             <a href="/quickmart/public/admin/logout">
                                 <div class="

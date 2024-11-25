@@ -33,6 +33,10 @@ document.addEventListener("click", (e) => {
     }
     headerDropdownMenu.classList.add("hidden");
 });
+const helpButton = document.querySelector("#header-dropdown-menu-help-button");
+helpButton.addEventListener("click", () => {
+    renderNotification("Under construction", NotificationType.Warning);
+});
 (_a = sideMenu.querySelector("button")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
     var _a;
     (_a = sideMenu.querySelector("button > svg")) === null || _a === void 0 ? void 0 : _a.classList.toggle("rotate-180");

@@ -67,7 +67,6 @@ function renderTag(tagName: string, ...children: HTMLElement[]): HTMLElement {
 }
 
 
-
 /**
  * Renders a notification message in the bottom right corner of the screen.
  * The notification is removed after a given timeout.
@@ -76,41 +75,67 @@ function renderTag(tagName: string, ...children: HTMLElement[]): HTMLElement {
  * @param timeout The time in milliseconds to wait before removing the notification.
  *                Defaults to 5000 (5 seconds).
  */
-function renderNotification(message: string, type: NotificationType, timeout: number = 5000) {
-    const notification = renderElement(
+function renderNotification(message: string, type: NotificationType, timeout: number = 4000) {
+    let notification = renderElement(
         {
-            container: document.body,
             tagName: "div",
             innerText: message,
             attributes: {
                 class: `
-                    absolute bottom-10 right-10
-                    px-4 py-2 rounded-md
-                    text-white cursor-pointer
+                    z-50 translate-x-full
+                    pl-2 pr-4 py-2 border-l-8 rounded-sm shadow-md
+                    text-white cursor-pointer select-none
+                    transition-all duration-1000
                 `
             },
             events: {
-                click: () => {
-                    notification.remove();
-                }
+                click: removeNotification
             }
         }
-    )
+    ) as HTMLDivElement;
+
+    let container = renderElement(
+        {
+            container: document.body,
+            tagName: "div",
+            attributes: {
+                class: `
+                    absolute bottom-10 right-10 overflow-hidden
+                `
+            }
+        }, 
+        notification
+    );
+
+    let active = true;
 
     switch (type) {
         case NotificationType.Success:
-            notification.classList.add("bg-green-600");
+            notification.classList.add("bg-green-600", "border-green-700");
             break;
         case NotificationType.Error:
-            notification.classList.add("bg-red-600");
+            notification.classList.add("bg-red-600", "border-red-700");
             break;
         case NotificationType.Warning:
-            notification.classList.add("bg-yellow-600");
+            notification.classList.add("bg-yellow-600", "border-yellow-700");
             break;
     }
 
     setTimeout(() => {
-        notification.remove();
+        notification.classList.remove("translate-x-full");
+    }, 0);
+
+    function removeNotification() {
+        active = false;
+        notification.classList.add("translate-x-full");
+        setTimeout(() => {
+            container.remove();
+        }, 1000);
+    }
+
+    setTimeout(() => {
+        if (active)
+            removeNotification();
     }, timeout);
 }
 

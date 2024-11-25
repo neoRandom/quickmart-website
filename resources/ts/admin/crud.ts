@@ -11,7 +11,8 @@ import {
 import {
     getRegister,
     generateCreateSection,
-    generateInput
+    generateInput,
+    generateModal
 } from "./utils.js";
 
 import renderContent from "./renderContent.js";
@@ -23,79 +24,6 @@ let metadata: TableMetadata;
 let editing: number = -1;
 let cachedLI: HTMLLIElement;
 let cachedDropdown: HTMLDivElement;
-
-
-/**
- * Creates a modal that can be used to show forms for creating or editing data.
- * 
- * @returns An object with two properties: `modal` and `deleteModal`.
- *  - `modal` is the HTML element of the modal.
- *  - `deleteModal` is a function that removes the modal from the DOM.
- */
-function createModal() {
-    /**
-     * Removes the modal from the DOM with a smooth transition.
-     */
-    function deleteModal() {
-        // Start transition to hide modal
-        modal.classList.remove("translate-y-0");
-        modal.classList.add("translate-y-[100vh]");
-        container.classList.remove("bg-opacity-50");
-        
-        // Remove the container after the transition ends
-        setTimeout(() => {
-            container.remove();
-        }, 500);
-    }
-
-    // Create the modal element with specified styles
-    const modal = renderElement({
-        tagName: "div",
-        attributes: {
-            class: `
-                flex flex-col
-                max-w-[80%] p-4 bg-white rounded-md 
-                shadow-md 
-                translate-y-[100vh] 
-                transition-transform duration-500
-            `,
-            style: "z-index: 101;"
-        }
-    });
-
-    // Create a container for the modal to manage its layout and background
-    const container = renderElement(
-        {
-            container: document.body,
-            tagName: "div",
-            attributes: {
-                class: `
-                    absolute top-0 left-0 
-                    flex items-center justify-center 
-                    w-full h-full 
-                    bg-black bg-opacity-0 
-                    overflow-hidden
-                    transition-colors duration-500
-                `,
-                style: "z-index: 100;"
-            }
-        },
-        modal
-    );
-
-    // Delay the transition to make the animation smoother
-    // For some reason, the setTimeout with 0 delay makes the animation smoother
-    setTimeout(() => {
-        modal.classList.add("translate-y-0");
-        modal.classList.remove("translate-y-[100vh]");
-        container.classList.add("bg-opacity-50");
-    }, 0);
-
-    return {
-        modal,
-        deleteModal
-    };
-}
 
 
 /**
@@ -112,7 +40,7 @@ function showCreate(new_metadata: TableMetadata) {
     let {
         modal,
         deleteModal
-    } = createModal();
+    } = generateModal();
 
     const cancelButton = renderElement({
         tagName: "button",
@@ -201,7 +129,7 @@ function showDetails(new_metadata: TableMetadata, data: TableData, key: number) 
     let {
         modal,
         deleteModal
-    } = createModal();
+    } = generateModal();
 
     const cancelButton = renderElement({
         tagName: "button",
@@ -392,7 +320,7 @@ function showDelete(new_metadata: TableMetadata, key: number) {
     let {
         modal,
         deleteModal
-    } = createModal();
+    } = generateModal();
 
     const acceptButton = renderElement({
         tagName: "button",

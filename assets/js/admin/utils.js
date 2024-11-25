@@ -1,4 +1,51 @@
 import { renderElement } from "../Render/index.js";
+function generateModal() {
+    function deleteModal() {
+        modal.classList.remove("translate-y-0");
+        modal.classList.add("translate-y-[100vh]");
+        container.classList.remove("bg-opacity-50");
+        setTimeout(() => {
+            container.remove();
+        }, 500);
+    }
+    const modal = renderElement({
+        tagName: "div",
+        attributes: {
+            class: `
+                flex flex-col
+                max-w-[80%] p-4 bg-white rounded-md 
+                shadow-md 
+                translate-y-[100vh] 
+                transition-transform duration-500
+            `,
+            style: "z-index: 101;"
+        }
+    });
+    const container = renderElement({
+        container: document.body,
+        tagName: "div",
+        attributes: {
+            class: `
+                    absolute top-0 left-0 
+                    flex items-center justify-center 
+                    w-full h-full 
+                    bg-black bg-opacity-0 
+                    overflow-hidden
+                    transition-colors duration-500
+                `,
+            style: "z-index: 100;"
+        }
+    }, modal);
+    setTimeout(() => {
+        modal.classList.add("translate-y-0");
+        modal.classList.remove("translate-y-[100vh]");
+        container.classList.add("bg-opacity-50");
+    }, 0);
+    return {
+        modal,
+        deleteModal
+    };
+}
 function generateCreateSection(column) {
     const label = renderElement({
         tagName: "label",
@@ -113,4 +160,4 @@ function getRegister(data, metadata, pk) {
     var _a;
     return (_a = data.find((row) => row[metadata.pk] == pk)) !== null && _a !== void 0 ? _a : {};
 }
-export { generateCreateSection, getRegister, generateInput };
+export { generateModal, generateCreateSection, getRegister, generateInput };

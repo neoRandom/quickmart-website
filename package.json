@@ -5,10 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "npx tailwindcss -i ./resources/css/input.css -o ./assets/css/main.css --minify",
+    "build:ts": "tsc",
+    "build:css": "npx tailwindcss -i ./resources/css/input.css -o ./assets/css/main.css",
+    "build": "tsc && npx tailwindcss -i ./resources/css/input.css -o ./assets/css/main.css --minify",
     "dev": "tsc && npm run build:css",
     "dev:l": "npm run dev && sudo ./config/load.sh",
-    "dev:w": "npm run dev && .\\config\\load.bat"
+    "dev:w": "npm run dev && .\\config\\load.bat",
+    "load:l": "sudo ./config/load.sh",
+    "load:w": ".\\config\\load.bat"
   },
   "repository": {
     "type": "git",

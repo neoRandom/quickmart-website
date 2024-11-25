@@ -33,7 +33,7 @@
     <div class="flex flex-col w-screen h-screen overflow-hidden">
         <?php generateHeader($username, $access) ?>
 
-        <main class="relative flex-1">
+        <main class="relative flex-1 flex overflow-hidden">
             <!-- Side Bar -->
             <?php generateSidebar($access) ?>
 

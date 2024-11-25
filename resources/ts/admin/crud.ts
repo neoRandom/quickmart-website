@@ -559,5 +559,6 @@ export {
     showCreate,
     showDetails,
     showEdit,
-    showDelete
+    showDelete,
+    hideEdit
 };

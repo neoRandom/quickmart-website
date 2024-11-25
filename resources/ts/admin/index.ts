@@ -10,6 +10,7 @@ import {
 } from "../Render/index.js";  
 
 import { 
+    hideEdit,
     showCreate
 } from "./crud.js";
 
@@ -108,6 +109,8 @@ async function loadPage(id: number) {
         else
             e.classList.remove("selected-item");
     });
+
+    hideEdit();
 
     // Render the structure (based on the metadata)
     while (crudContainer.firstChild) {
@@ -262,7 +265,7 @@ function renderContainer(container: HTMLDivElement) {
             {
                 tagName: "div", 
                 attributes: {
-                    class: "flex-1 flex flex-col p-4 *:w-full"
+                    class: "flex-1 flex flex-col p-4 overflow-hidden *:w-full"
                 }
             },
             renderSearchBar(),

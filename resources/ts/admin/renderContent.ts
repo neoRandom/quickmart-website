@@ -44,36 +44,46 @@ async function renderContent(container: HTMLElement, new_metadata: TableMetadata
         {
             tagName: "div",
             attributes: {
-                class: "flex flex-col gap-4 flex-1 mt-8"
+                class: "flex-1 flex flex-col mt-8 overflow-hidden"
             }
         },
         renderElement(
             {
+                tagName: "div",
+                attributes: {
+                    class: "flex gap-2 pr-3 border-b-2 border-neutral-200"
+                }
+            },
+            renderTableHeader(),
+            renderElement({
+                tagName: "div",
+                innerText: "Ação",
+                attributes: {
+                    class: `
+                        text-center 
+                        w-16 h-8
+                        opacity-75
+                        border-l-2 
+                        border-neutral-200
+                    `
+                }
+            }),
+        ),
+        renderElement(
+            {
                 tagName: "div", 
                 attributes: {
-                    class: "flex flex-1"
+                    class: "flex-1 flex divide-x h-full overflow-y-scroll *:h-full"
                 }
             },
             // Render the table body
-            renderElement(
-                {
-                    tagName: "div",
-                    attributes: {
-                        class: "flex flex-col flex-1 h-full"
-                    }
-                },
-                renderTableHeader(),
-                renderTableRows()
-            ),
+            renderTableRows(),
             // Render the action column
             renderTableActions()
         ),
         renderElement({
             tagName: "div",
-            innerText: "Page 1 of N",
-            attributes: {
-                class: "mt-2"
-            }
+            innerText: "Page 1 of N"
         })
     );
 
@@ -100,9 +110,7 @@ function renderTableHeader() {
             attributes: {
                 class: `
                     text-sm text-black-pure/75
-                    grid gap-x-2
-                    h-8 mb-2 
-                    border-b-2 border-neutral-200 
+                    flex-1 grid gap-x-2 h-8 
                     *:px-2
                 `,
                 style: `grid-template-columns: repeat(${metadata.sizes.total}, minmax(0, 1fr));`
@@ -156,8 +164,8 @@ function renderTableRows() {
             tagName: "ol",
             attributes: {
                 class: `
-                    flex flex-col 
-                    *:h-8 *:*:px-2 *:my-2 
+                    flex-1 flex flex-col divide-y
+                    *:h-12 *:*:px-2 *:py-2
                     *:*:px-2
                     [&_input]:bg-neutral-100 [&_input]:rounded-md
                 `
@@ -208,28 +216,9 @@ function renderTableActions() {
         {
             tagName: "div",
             attributes: {
-                class: `
-                    flex flex-col items-center 
-                    w-16 h-full 
-                    pl-2 ml-2 
-                    border-l-2 
-                    border-neutral-200
-                `
+                class: `flex flex-col items-center w-16 pl-2 ml-2`
             }
         },
-        // Action header
-        renderElement({
-            tagName: "div",
-            innerText: "Ação",
-            attributes: {
-                class: `
-                    text-center 
-                    w-full h-8 mb-2 
-                    border-b-2 border-neutral-200 
-                    opacity-75
-                `
-            }
-        }),
         actionButtons
     );
 

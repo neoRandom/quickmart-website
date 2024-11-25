@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a;
 import { renderElement, renderNotification, renderTag } from "../Render/index.js";
-import { showCreate } from "./crud.js";
+import { hideEdit, showCreate } from "./crud.js";
 import renderContent from "./renderContent.js";
 import { NotificationType } from "../enum/render.js";
 const sideMenu = document.querySelector("#sidebar");
@@ -60,6 +60,7 @@ function loadPage(id) {
             else
                 e.classList.remove("selected-item");
         });
+        hideEdit();
         while (crudContainer.firstChild) {
             crudContainer.removeChild(crudContainer.firstChild);
         }
@@ -158,7 +159,7 @@ function renderContainer(container) {
     })), renderElement({
         tagName: "div",
         attributes: {
-            class: "flex-1 flex flex-col p-4 *:w-full"
+            class: "flex-1 flex flex-col p-4 overflow-hidden *:w-full"
         }
     }, renderSearchBar(), renderElement({
         tagName: "div",

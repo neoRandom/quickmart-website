@@ -363,4 +363,4 @@ function postDelete(deleteModal, key) {
         }
     });
 }
-export { showCreate, showDetails, showEdit, showDelete };
+export { showCreate, showDetails, showEdit, showDelete, hideEdit };

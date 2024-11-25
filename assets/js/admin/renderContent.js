@@ -242,7 +242,6 @@ function renderTableActionsButtons() {
             let posY = e.clientY;
             if (posY >= 720) {
                 posY -= dropdown.offsetHeight + 25;
-                console.log(container.getBoundingClientRect());
             }
             dropdown.style.left = `${posX - 340}px`;
             dropdown.style.top = `${posY - 50}px`;

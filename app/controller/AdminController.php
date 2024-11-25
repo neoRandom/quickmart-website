@@ -117,7 +117,36 @@ class AdminController
         });
     }
 
-    public static function postUpdate() { /* ... */ }
+    public static function postUpdate() {
+        self::handleRequest("POST", function () {
+            $data = getPostData();
+
+            $tableIndex = (int) $data['id'];
+            $tableClass = Connection::getTables()[$tableIndex];
+            $register = new $tableClass();
+
+            if (!$register->fromArray($data)) {
+                return [
+                    "status" => 400,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode(["error" => "Failed to update data."])
+                ];
+            }
+
+            if (!$register->update()) {
+                return [
+                    "status" => 400,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode(["error" => "Failed to update data."])
+                ];
+            }
+            return [
+                "status" => 200,
+                "header" => "Content-Type: application/json",
+                "body" => json_encode(["success" => "Data updated successfully."])
+            ];
+        });
+    }
 
     public static function postDelete() {
         self::handleRequest("POST", function () {

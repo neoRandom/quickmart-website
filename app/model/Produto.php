@@ -255,7 +255,6 @@ class Produto extends Model {
      */
     public function update(): bool {
         $sql = "UPDATE produto SET
-                    // Update the fields of the produto table
                     cod_cate = :cod_cate,
                     cod_promo_prod = :cod_promo_prod,
                     cod_classific = :cod_classific,

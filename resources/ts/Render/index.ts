@@ -1,4 +1,5 @@
-import type {
+import { NotificationType } from '../enum/render.js';
+import {
     RenderElement
 } from '../types/render.js';
 
@@ -66,7 +67,56 @@ function renderTag(tagName: string, ...children: HTMLElement[]): HTMLElement {
 }
 
 
+
+/**
+ * Renders a notification message in the bottom right corner of the screen.
+ * The notification is removed after a given timeout.
+ * 
+ * @param message The message to display in the notification.
+ * @param timeout The time in milliseconds to wait before removing the notification.
+ *                Defaults to 5000 (5 seconds).
+ */
+function renderNotification(message: string, type: NotificationType, timeout: number = 5000) {
+    const notification = renderElement(
+        {
+            container: document.body,
+            tagName: "div",
+            innerText: message,
+            attributes: {
+                class: `
+                    absolute bottom-10 right-10
+                    px-4 py-2 rounded-md
+                    text-white cursor-pointer
+                `
+            },
+            events: {
+                click: () => {
+                    notification.remove();
+                }
+            }
+        }
+    )
+
+    switch (type) {
+        case NotificationType.Success:
+            notification.classList.add("bg-green-600");
+            break;
+        case NotificationType.Error:
+            notification.classList.add("bg-red-600");
+            break;
+        case NotificationType.Warning:
+            notification.classList.add("bg-yellow-600");
+            break;
+    }
+
+    setTimeout(() => {
+        notification.remove();
+    }, timeout);
+}
+
+
 export {
     renderElement,
-    renderTag
+    renderTag,
+    renderNotification
 };

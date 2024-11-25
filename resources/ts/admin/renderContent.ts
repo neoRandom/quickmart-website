@@ -5,13 +5,16 @@ import type {
 } from "../types/admin.js";
 
 import {
-    renderElement
+    renderElement,
+    renderNotification
 } from "../Render/index.js";
 
 import {
     showDelete,
-    showDetails
+    showDetails,
+    showEdit
 } from "./crud.js";
+import { NotificationType } from "../enum/render.js";
 
 
 let data: TableData;
@@ -24,12 +27,12 @@ async function renderContent(container: HTMLElement, new_metadata: TableMetadata
     // Fetch the data (registers) from the server
     const payload = await fetch(`get_registers/?id=${metadata.index}`);
     if (payload.status !== 200) {
-        alert("Não foi possível carregar os dados da tabela.");
+        renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
         return false;
     }
 
     data = await payload.json().catch((_) => {
-        alert("Não foi possível carregar os dados da tabela.");
+        renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
         return false;
     });
 
@@ -105,16 +108,32 @@ function renderTableHeader() {
                 style: `grid-template-columns: repeat(${metadata.sizes.total}, minmax(0, 1fr));`
             }
         },
-        ...metadata.rows.map((column: SQLMetadata, i: number) => 
-            renderElement({ 
-                tagName: "div", 
-                innerText: column.Field, 
-                attributes: { 
-                    title: column.Field,
-                    class: "truncate",
-                    style: `grid-column: span ${metadata.sizes.columns[i]} / span ${metadata.sizes.columns[i]};` 
+        ...metadata.rows.map((column: SQLMetadata, i: number) => {
+                let innerText = column.Field;
+                let title = column.Field;
+
+                if (column.Null === "NO") {
+                    innerText += " *";
+                    title += " (Obrigatório)";
                 }
-            })
+
+                if (column.Key === "PRI") {
+                    if (column.Extra === "auto_increment") 
+                        title += " (Chave primária, Auto increment)";
+                    else
+                        title += " (Chave primária)";
+                }
+
+                return renderElement({ 
+                    tagName: "div", 
+                    innerText: innerText, 
+                    attributes: { 
+                        title: title,
+                        class: "truncate",
+                        style: `grid-column: span ${metadata.sizes.columns[i]} / span ${metadata.sizes.columns[i]};` 
+                    }
+                });
+            }
         )
     );
 
@@ -139,8 +158,8 @@ function renderTableRows() {
                 class: `
                     flex flex-col 
                     *:h-8 *:*:px-2 *:my-2 
-                    *:[&>input]:bg-neutral-100 *:[&>input]:rounded-md
                     *:*:px-2
+                    [&_input]:bg-neutral-100 [&_input]:rounded-md
                 `
             }
         },
@@ -149,6 +168,7 @@ function renderTableRows() {
                 { 
                     tagName: "li", 
                     attributes: {
+                        id: `row-id-${row[metadata.pk]}`,
                         class: "grid gap-x-2",
                         style: `grid-template-columns: repeat(${metadata.sizes.total}, minmax(0, 1fr));`
                     }
@@ -159,7 +179,7 @@ function renderTableRows() {
                         innerText: row[column], 
                         attributes: {
                             title: row[column],
-                            class: "truncate",
+                            class: "flex items-center truncate",
                             style: `grid-column: span ${metadata.sizes.columns[i]} / span ${metadata.sizes.columns[i]};` 
                         }
                     })
@@ -270,124 +290,97 @@ function renderTableActionsButtons() {
      * 
      * The function returns the action buttons container.
      */
-    let activeDropdown: null | HTMLDivElement = null;
     for (let container of buttons.children) {
         const button = container.children[0] as HTMLButtonElement;
 
-        button.addEventListener("click", (e) => {
-            e.stopPropagation();
+        // creating the buttons
+        const editButton = renderElement(
+            {
+                tagName: "button",
+                attributes: {
+                    type: "button"
+                },
+                events: {
+                    "click": () => {
+                        showEdit(
+                            metadata, 
+                            data,
+                            dropdown,
+                            button.getAttribute("key") as unknown as number
+                        );
+                        dropdown.classList.add("hidden");
+                    }
+                }
+            },
+            renderElement({
+                tagName: "p",
+                innerText: "Editar"
+            }),
+        );
 
-            // Removes the dropdown menu if the button is clicked again
-            if (activeDropdown) {
-                if (activeDropdown.previousElementSibling === button) {
-                    activeDropdown.remove();
-                    activeDropdown = null;
-                    return;
+        const deleteButton = renderElement(
+            {
+                tagName: "button",
+                attributes: {
+                    type: "button"
+                },
+                events: {
+                    "click": () => showDelete(
+                        metadata, 
+                        button.getAttribute("key") as unknown as number
+                    )
                 }
-                else {
-                    activeDropdown.remove();
-                    activeDropdown = null;
+            },
+            renderElement({
+                tagName: "p",
+                innerText: "Excluir"
+            })
+        );
+
+        const detailsButton = renderElement(
+            {
+                tagName: "button",
+                attributes: {
+                    type: "button"
+                },
+                events: {
+                    "click": () => showDetails(
+                        metadata, 
+                        data, 
+                        button.getAttribute("key") as unknown as number
+                    )
                 }
+            },
+            renderElement({
+                tagName: "p",
+                innerText: "Detalhes"
+            })
+        );
+
+        // Creating the dropdown menu
+        const dropdown = renderElement(
+            {
+                tagName: "div",
+                attributes: { 
+                    class: "hidden admin-dropdown-menu"
+                }
+            },
+            editButton,
+            deleteButton,
+            detailsButton
+        ) as HTMLDivElement;
+
+        document.addEventListener("click", (e: Event) => {
+            const target = e.target as HTMLElement;
+            if (!container.children[1]?.contains(target) && target !== button) {
+                container.children[1]?.classList.add("hidden");
             }
+        });
 
-            // creating the buttons
-            const editButton = renderElement(
-                {
-                    tagName: "button",
-                    attributes: {
-                        type: "button"
-                    },
-                    events: {
-                        "click": (e: Event) => {
-                            e.stopPropagation();
-                        }
-                    }
-                },
-                renderElement({
-                    tagName: "p",
-                    innerText: "Editar"
-                }),
-            );
+        container.appendChild(dropdown);
 
-            const deleteButton = renderElement(
-                {
-                    tagName: "button",
-                    attributes: {
-                        type: "button"
-                    },
-                    events: {
-                        "click": () => showDelete(
-                            metadata, 
-                            button.getAttribute("key") as unknown as number
-                        )
-                    }
-                },
-                renderElement({
-                    tagName: "p",
-                    innerText: "Excluir"
-                })
-            );
-
-            const detailsButton = renderElement(
-                {
-                    tagName: "button",
-                    attributes: {
-                        type: "button"
-                    },
-                    events: {
-                        "click": () => showDetails(
-                            metadata, 
-                            data, 
-                            button.getAttribute("key") as unknown as number
-                        )
-                    }
-                },
-                renderElement({
-                    tagName: "p",
-                    innerText: "Detalhes"
-                })
-            );
-
-            // Creating the dropdown menu
-            activeDropdown = renderElement(
-                {
-                    tagName: "div",
-                    attributes: { 
-                        class: `
-                            z-10 absolute top-10 right-0 
-                            flex flex-col gap-1
-                            p-2 bg-white 
-                            border border-black-pure border-opacity-10
-                            rounded-md shadow-md
-
-                            *:flex *:items-center *:gap-4
-                            *:px-4 *:py-2
-                            *:rounded-md *:transition-colors
-                            hover:*:bg-neutral-200 
-                            active:*:bg-primary active:*:text-white active:*:transition-none
-                        `
-                    }
-                },
-                editButton,
-                deleteButton,
-                detailsButton
-            ) as HTMLDivElement;
-
-            // Creating the delete function for the dropdown (to delete if was clicked outside the dropdown)
-            let deleteFunction: (e: Event) => void;
-            
-            deleteFunction = (e: Event) => {
-                const target = e.target as HTMLElement;
-                if (activeDropdown && !activeDropdown.contains(target)) {
-                    activeDropdown.remove();
-                    activeDropdown = null;
-                    document.removeEventListener("click", deleteFunction);
-                }
-            };
-
-            document.addEventListener("click", deleteFunction);
-
-            container.appendChild(activeDropdown);
+        button.addEventListener("click", () => {
+            container.children[1]?.classList.toggle("hidden");
         });
     }
 

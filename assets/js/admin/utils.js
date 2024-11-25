@@ -1,6 +1,5 @@
 import { renderElement } from "../Render/index.js";
-function renderCreateSection(column) {
-    var _a;
+function generateCreateSection(column) {
     const label = renderElement({
         tagName: "label",
         innerText: column.Field,
@@ -18,19 +17,33 @@ function renderCreateSection(column) {
     if (column.Extra === "auto_increment") {
         label.innerText += ' (Auto increment)';
     }
-    const input = renderElement({
-        tagName: "input",
-        attributes: {
-            id: column.Field,
-            name: column.Field,
-            value: (column.Default === null) ? "" : column.Default,
-            class: `
+    const input = generateInput(column, {
+        id: column.Field,
+        name: column.Field,
+        value: (column.Default === null) ? "" : column.Default,
+        class: `
                 px-2 py-1.5 
                 bg-neutral-100 
                 border border-primary border-opacity-10 focus:border-opacity-100
                 rounded-md outline-none transition-colors
             `
+    });
+    if (input.getAttribute("type") === "text" && input.getAttribute("maxlength") !== null) {
+        label.innerText += ' (Tamanho máximo: ' + input.getAttribute("maxlength") + ')';
+    }
+    const section = renderElement({
+        tagName: "div",
+        attributes: {
+            class: "flex flex-col gap-1"
         }
+    }, label, input);
+    return section;
+}
+function generateInput(column, attributes) {
+    var _a;
+    const input = renderElement({
+        tagName: "input",
+        attributes: attributes
     });
     if (column.Null === "NO") {
         input.setAttribute("required", "true");
@@ -39,7 +52,7 @@ function renderCreateSection(column) {
         input.setAttribute("value", column.Default);
     }
     if (column.Extra === "auto_increment") {
-        input.setAttribute("disabled", "true");
+        input.setAttribute("readonly", "true");
         input.setAttribute("title", "Valor automático não pode ser alterado");
         input.classList.add("cursor-not-allowed");
         input.classList.add("bg-neutral-200");
@@ -74,7 +87,6 @@ function renderCreateSection(column) {
             let maxSize = (_a = column.Type.split("(")[1]) === null || _a === void 0 ? void 0 : _a.split(")")[0];
             if (maxSize)
                 input.setAttribute("maxlength", maxSize);
-            label.innerText += ' (Tamanho máximo: ' + maxSize + ')';
             break;
         case "datetime":
             input.setAttribute("type", "datetime-local");
@@ -95,16 +107,10 @@ function renderCreateSection(column) {
             input.setAttribute("type", "text");
             break;
     }
-    const section = renderElement({
-        tagName: "div",
-        attributes: {
-            class: "flex flex-col gap-1"
-        }
-    }, label, input);
-    return section;
+    return input;
 }
 function getRegister(data, metadata, pk) {
     var _a;
     return (_a = data.find((row) => row[metadata.pk] == pk)) !== null && _a !== void 0 ? _a : {};
 }
-export { renderCreateSection, getRegister };
+export { generateCreateSection, getRegister, generateInput };

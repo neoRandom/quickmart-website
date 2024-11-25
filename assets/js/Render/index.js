@@ -1,3 +1,4 @@
+import { NotificationType } from '../enum/render.js';
 function renderElement(element, ...children) {
     var _a, _b, _c;
     const newElement = document.createElement(element.tagName);
@@ -25,4 +26,37 @@ function renderTag(tagName, ...children) {
         newElement.appendChild(child);
     return newElement;
 }
-export { renderElement, renderTag };
+function renderNotification(message, type, timeout = 5000) {
+    const notification = renderElement({
+        container: document.body,
+        tagName: "div",
+        innerText: message,
+        attributes: {
+            class: `
+                    absolute bottom-10 right-10
+                    px-4 py-2 rounded-md
+                    text-white cursor-pointer
+                `
+        },
+        events: {
+            click: () => {
+                notification.remove();
+            }
+        }
+    });
+    switch (type) {
+        case NotificationType.Success:
+            notification.classList.add("bg-green-600");
+            break;
+        case NotificationType.Error:
+            notification.classList.add("bg-red-600");
+            break;
+        case NotificationType.Warning:
+            notification.classList.add("bg-yellow-600");
+            break;
+    }
+    setTimeout(() => {
+        notification.remove();
+    }, timeout);
+}
+export { renderElement, renderTag, renderNotification };

@@ -7,8 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { renderElement } from "../Render/index.js";
-import { showDelete, showDetails } from "./crud.js";
+import { renderElement, renderNotification } from "../Render/index.js";
+import { showDelete, showDetails, showEdit } from "./crud.js";
+import { NotificationType } from "../enum/render.js";
 let data;
 let metadata;
 function renderContent(container, new_metadata) {
@@ -17,11 +18,11 @@ function renderContent(container, new_metadata) {
         metadata = new_metadata;
         const payload = yield fetch(`get_registers/?id=${metadata.index}`);
         if (payload.status !== 200) {
-            alert("Não foi possível carregar os dados da tabela.");
+            renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
             return false;
         }
         data = yield payload.json().catch((_) => {
-            alert("Não foi possível carregar os dados da tabela.");
+            renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
             return false;
         });
         const placeholder = (_a = container.children[1]) === null || _a === void 0 ? void 0 : _a.children[1];
@@ -64,15 +65,29 @@ function renderTableHeader() {
                 `,
             style: `grid-template-columns: repeat(${metadata.sizes.total}, minmax(0, 1fr));`
         }
-    }, ...metadata.rows.map((column, i) => renderElement({
-        tagName: "div",
-        innerText: column.Field,
-        attributes: {
-            title: column.Field,
-            class: "truncate",
-            style: `grid-column: span ${metadata.sizes.columns[i]} / span ${metadata.sizes.columns[i]};`
+    }, ...metadata.rows.map((column, i) => {
+        let innerText = column.Field;
+        let title = column.Field;
+        if (column.Null === "NO") {
+            innerText += " *";
+            title += " (Obrigatório)";
         }
-    })));
+        if (column.Key === "PRI") {
+            if (column.Extra === "auto_increment")
+                title += " (Chave primária, Auto increment)";
+            else
+                title += " (Chave primária)";
+        }
+        return renderElement({
+            tagName: "div",
+            innerText: innerText,
+            attributes: {
+                title: title,
+                class: "truncate",
+                style: `grid-column: span ${metadata.sizes.columns[i]} / span ${metadata.sizes.columns[i]};`
+            }
+        });
+    }));
     return header;
 }
 function renderTableRows() {
@@ -82,13 +97,14 @@ function renderTableRows() {
             class: `
                     flex flex-col 
                     *:h-8 *:*:px-2 *:my-2 
-                    *:[&>input]:bg-neutral-100 *:[&>input]:rounded-md
                     *:*:px-2
+                    [&_input]:bg-neutral-100 [&_input]:rounded-md
                 `
         }
     }, ...data.map((row) => renderElement({
         tagName: "li",
         attributes: {
+            id: `row-id-${row[metadata.pk]}`,
             class: "grid gap-x-2",
             style: `grid-template-columns: repeat(${metadata.sizes.total}, minmax(0, 1fr));`
         }
@@ -97,7 +113,7 @@ function renderTableRows() {
         innerText: row[column],
         attributes: {
             title: row[column],
-            class: "truncate",
+            class: "flex items-center truncate",
             style: `grid-column: span ${metadata.sizes.columns[i]} / span ${metadata.sizes.columns[i]};`
         }
     })))));
@@ -153,89 +169,64 @@ function renderTableActionsButtons() {
             },
         }));
     }));
-    let activeDropdown = null;
     for (let container of buttons.children) {
         const button = container.children[0];
-        button.addEventListener("click", (e) => {
-            e.stopPropagation();
-            if (activeDropdown) {
-                if (activeDropdown.previousElementSibling === button) {
-                    activeDropdown.remove();
-                    activeDropdown = null;
-                    return;
-                }
-                else {
-                    activeDropdown.remove();
-                    activeDropdown = null;
+        const editButton = renderElement({
+            tagName: "button",
+            attributes: {
+                type: "button"
+            },
+            events: {
+                "click": () => {
+                    showEdit(metadata, data, dropdown, button.getAttribute("key"));
+                    dropdown.classList.add("hidden");
                 }
             }
-            const editButton = renderElement({
-                tagName: "button",
-                attributes: {
-                    type: "button"
-                },
-                events: {
-                    "click": (e) => {
-                        e.stopPropagation();
-                    }
-                }
-            }, renderElement({
-                tagName: "p",
-                innerText: "Editar"
-            }));
-            const deleteButton = renderElement({
-                tagName: "button",
-                attributes: {
-                    type: "button"
-                },
-                events: {
-                    "click": () => showDelete(metadata, button.getAttribute("key"))
-                }
-            }, renderElement({
-                tagName: "p",
-                innerText: "Excluir"
-            }));
-            const detailsButton = renderElement({
-                tagName: "button",
-                attributes: {
-                    type: "button"
-                },
-                events: {
-                    "click": () => showDetails(metadata, data, button.getAttribute("key"))
-                }
-            }, renderElement({
-                tagName: "p",
-                innerText: "Detalhes"
-            }));
-            activeDropdown = renderElement({
-                tagName: "div",
-                attributes: {
-                    class: `
-                            z-10 absolute top-10 right-0 
-                            flex flex-col gap-1
-                            p-2 bg-white 
-                            border border-black-pure border-opacity-10
-                            rounded-md shadow-md
-
-                            *:flex *:items-center *:gap-4
-                            *:px-4 *:py-2
-                            *:rounded-md *:transition-colors
-                            hover:*:bg-neutral-200 
-                            active:*:bg-primary active:*:text-white active:*:transition-none
-                        `
-                }
-            }, editButton, deleteButton, detailsButton);
-            let deleteFunction;
-            deleteFunction = (e) => {
-                const target = e.target;
-                if (activeDropdown && !activeDropdown.contains(target)) {
-                    activeDropdown.remove();
-                    activeDropdown = null;
-                    document.removeEventListener("click", deleteFunction);
-                }
-            };
-            document.addEventListener("click", deleteFunction);
-            container.appendChild(activeDropdown);
+        }, renderElement({
+            tagName: "p",
+            innerText: "Editar"
+        }));
+        const deleteButton = renderElement({
+            tagName: "button",
+            attributes: {
+                type: "button"
+            },
+            events: {
+                "click": () => showDelete(metadata, button.getAttribute("key"))
+            }
+        }, renderElement({
+            tagName: "p",
+            innerText: "Excluir"
+        }));
+        const detailsButton = renderElement({
+            tagName: "button",
+            attributes: {
+                type: "button"
+            },
+            events: {
+                "click": () => showDetails(metadata, data, button.getAttribute("key"))
+            }
+        }, renderElement({
+            tagName: "p",
+            innerText: "Detalhes"
+        }));
+        const dropdown = renderElement({
+            tagName: "div",
+            attributes: {
+                class: "hidden admin-dropdown-menu"
+            }
+        }, editButton, deleteButton, detailsButton);
+        document.addEventListener("click", (e) => {
+            var _a, _b;
+            const target = e.target;
+            if (!((_a = container.children[1]) === null || _a === void 0 ? void 0 : _a.contains(target)) && target !== button) {
+                (_b = container.children[1]) === null || _b === void 0 ? void 0 : _b.classList.add("hidden");
+            }
+        });
+        container.appendChild(dropdown);
+        button.addEventListener("click", () => {
+            var _a;
+            (_a = container.children[1]) === null || _a === void 0 ? void 0 : _a.classList.toggle("hidden");
         });
     }
     return buttons;

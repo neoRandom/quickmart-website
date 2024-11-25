@@ -55,4 +55,20 @@
             transition-colors
         ;
     }
+
+    .admin-dropdown-menu {
+        @apply 
+            z-10 absolute top-10 right-0 
+            flex flex-col gap-1
+            p-2 bg-white 
+            border border-black-pure border-opacity-10
+            rounded-md shadow-md
+
+            *:flex *:items-center *:gap-4
+            *:px-4 *:py-2
+            *:rounded-md *:transition-colors
+            hover:*:bg-neutral-200 
+            active:*:bg-primary active:*:text-white active:*:transition-none
+        ;
+    }
 }

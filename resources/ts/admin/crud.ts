@@ -4,30 +4,51 @@ import type {
 } from "../types/admin.js";
 
 import {
-    renderElement
+    renderElement,
+    renderNotification
 } from "../Render/index.js";
 
 import {
     getRegister,
-    renderCreateSection
+    generateCreateSection,
+    generateInput
 } from "./utils.js";
 
 import renderContent from "./renderContent.js";
+import { NotificationType } from "../enum/render.js";
 
 
 let metadata: TableMetadata;
 
+let editing: number = -1;
+let cachedLI: HTMLLIElement;
+let cachedDropdown: HTMLDivElement;
 
+
+/**
+ * Creates a modal that can be used to show forms for creating or editing data.
+ * 
+ * @returns An object with two properties: `modal` and `deleteModal`.
+ *  - `modal` is the HTML element of the modal.
+ *  - `deleteModal` is a function that removes the modal from the DOM.
+ */
 function createModal() {
+    /**
+     * Removes the modal from the DOM with a smooth transition.
+     */
     function deleteModal() {
+        // Start transition to hide modal
         modal.classList.remove("translate-y-0");
         modal.classList.add("translate-y-[100vh]");
         container.classList.remove("bg-opacity-50");
+        
+        // Remove the container after the transition ends
         setTimeout(() => {
             container.remove();
         }, 500);
     }
 
+    // Create the modal element with specified styles
     const modal = renderElement({
         tagName: "div",
         attributes: {
@@ -42,6 +63,7 @@ function createModal() {
         }
     });
 
+    // Create a container for the modal to manage its layout and background
     const container = renderElement(
         {
             container: document.body,
@@ -61,6 +83,7 @@ function createModal() {
         modal
     );
 
+    // Delay the transition to make the animation smoother
     // For some reason, the setTimeout with 0 delay makes the animation smoother
     setTimeout(() => {
         modal.classList.add("translate-y-0");
@@ -75,6 +98,14 @@ function createModal() {
 }
 
 
+/**
+ * Creates a modal for creating a new record in the table.
+ * 
+ * This function initializes a modal with a form populated with fields based on the table metadata.
+ * It includes a submit button to create the record and a cancel button to close the modal.
+ * 
+ * @param {TableMetadata} new_metadata - The metadata of the table for which a new record is being created.
+ */
 function showCreate(new_metadata: TableMetadata) {
     metadata = new_metadata;
 
@@ -135,7 +166,7 @@ function showCreate(new_metadata: TableMetadata) {
             }
         },
         ...metadata.rows.map((column) => {
-            return renderCreateSection(column);
+            return generateCreateSection(column);
         }),
         renderElement({
             tagName: "button",
@@ -155,10 +186,16 @@ function showCreate(new_metadata: TableMetadata) {
 }
 
 
+/**
+ * Creates a modal for showing details of a record.
+ * 
+ * @param {TableMetadata} new_metadata - The metadata of the table.
+ * @param {TableData} data - The data of the table.
+ * @param {number} key - The key of the record to be shown.
+ */
 function showDetails(new_metadata: TableMetadata, data: TableData, key: number) {
     metadata = new_metadata;
 
-    // Set the register as the row of the data that the key with value key is equal to key (idk anymore what im doing lmao)
     let register = getRegister(data, metadata, key);
 
     let {
@@ -240,11 +277,115 @@ function showDetails(new_metadata: TableMetadata, data: TableData, key: number) 
 }
 
 
-function showEdit(new_metadata: TableMetadata) {
+function showEdit(new_metadata: TableMetadata, data: TableData, dropdown: HTMLDivElement, key: number) {
     metadata = new_metadata;
+
+    if (editing !== -1)
+        hideEdit();
+    
+    editing = key;
+
+    let register = getRegister(data, metadata, key);
+
+    // Changing the table row from li to form and caching the li to restore it when the form is closed
+    let li = document.querySelector(`#row-id-${key}`) as HTMLLIElement;
+
+    const form = renderElement(
+        {
+            tagName: "form",
+            attributes: {
+                id: `edit-id-${key}`,
+                class: "grid gap-x-2",
+                style: `grid-template-columns: repeat(${metadata.sizes.total}, minmax(0, 1fr));`,
+                action: "",
+                method: "POST"
+            },
+            events: {
+                submit: postEdit
+            }
+        },
+        ...Object.keys(register).map((key, i) => 
+            generateInput(
+                metadata.rows[i]!,
+                {
+                    id: key,
+                    name: key,
+                    value: register[key],
+                    style: `grid-column: span ${metadata.sizes.columns[i]} / span ${metadata.sizes.columns[i]};` 
+                }
+            )
+        )
+    );
+    
+    li.replaceWith(form);
+    cachedLI = li;
+
+    // Changing the button container dropdown and caching the old to replace later
+    const newDropdown = renderElement(
+        {
+            tagName: "div",
+            attributes: { 
+                id: `dropdown-id-${key}`,
+                class: "hidden admin-dropdown-menu"
+            }
+        },
+        renderElement(
+            {
+                tagName: "input",
+                attributes: {
+                    type: "submit",
+                    form: `edit-id-${key}`,
+                    value: "Salvar",
+                    class: "cursor-pointer"
+                }
+            }
+        ),
+        renderElement(
+            {
+                tagName: "button",
+                attributes: {
+                    type: "button"
+                },
+                events: {
+                    "click": () => {
+                        hideEdit();
+                    }
+                }
+            },
+            renderElement({
+                tagName: "p",
+                innerText: "Cancelar"
+            })
+        )
+    ) as HTMLDivElement;
+
+    dropdown.replaceWith(newDropdown);
+    cachedDropdown = dropdown;
 }
 
 
+function hideEdit() {
+    if (editing === -1)
+        return;
+
+    let form = document.querySelector(`#edit-id-${editing}`) as HTMLFormElement;
+
+    form.replaceWith(cachedLI);
+
+    let dropdown = document.querySelector(`#dropdown-id-${editing}`) as HTMLDivElement;
+
+    dropdown.replaceWith(cachedDropdown);
+
+    editing = -1;
+}
+
+
+/**
+ * Creates a modal for the user to confirm the deletion of a record.
+ * 
+ * @param {TableMetadata} new_metadata - The metadata of the table.
+ * @param {number} key - The key of the record to be deleted.
+ */
 function showDelete(new_metadata: TableMetadata, key: number) {
     metadata = new_metadata;
 
@@ -320,6 +461,15 @@ function showDelete(new_metadata: TableMetadata, key: number) {
 
 // Functions to post to the server
 
+/**
+ * Sends a POST request to the server to insert a new record in the database.
+ * 
+ * @param {Event} e - The event that triggered the function.
+ * @param {() => void} deleteModal - A function that closes the modal.
+ * 
+ * @returns {Promise<boolean>} A promise that resolves to a boolean indicating
+ * whether the request was successful.
+ */
 async function postCreate(e: Event, deleteModal: () => void) {
     e.preventDefault();
 
@@ -352,26 +502,80 @@ async function postCreate(e: Event, deleteModal: () => void) {
         if (response.ok) {
             // const result = await response.json(); // Parse the JSON response
             // console.log('Success:', result);
-            alert('Dados registrados com sucesso!');
-            deleteModal();
             renderContent(document.querySelector("#structure") as HTMLElement, metadata);
+            renderNotification('Dados registrados com sucesso!', NotificationType.Success);
+            deleteModal();
         } else {
             // const error = await response.json();
             // console.error('Error:', error);
-            alert('Ocorreu um erro ao tentar inserir os dados.');
+            renderNotification('Ocorreu um erro ao tentar inserir os dados.', NotificationType.Error);
         }
     } catch (error) {
         console.error('Unexpected error:', error);
-        alert("Um erro inesperado ocorreu");
+        renderNotification("Um erro inesperado ocorreu", NotificationType.Error);
     }
 
     return false;
 }
 
 
-// async function postEdit() {}
+async function postEdit(e: Event) {
+    e.preventDefault();
+
+    const formData = new FormData(e.target as HTMLFormElement);
+
+    formData.append("id", metadata.index.toString());
+
+    const data: Record<string, string> = {};
+    formData.forEach((value, key) => {
+        if (typeof value === 'string') {
+            data[key] = value;
+        }
+    });
+
+    hideEdit();
+
+    try {
+        // Make the POST request
+        const response = await fetch(
+            'update/', // For some unholy reason, the URL must end with a slash
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // Specify JSON content type
+                },
+                body: JSON.stringify(data), // Convert data to JSON format
+            }
+        );
+
+        // Handle the response
+        if (response.ok) {
+            // const result = await response.json(); // Parse the JSON response
+            // console.log('Success:', result);
+            renderContent(document.querySelector("#structure") as HTMLElement, metadata);
+            renderNotification('Dados alterados com sucesso!', NotificationType.Success);
+        } else {
+            // const error = await response.json();
+            // console.error('Error:', error);
+            renderNotification('Ocorreu um erro ao tentar alterar os dados.', NotificationType.Error);
+        }
+    } catch (error) {
+        console.error('Unexpected error:', error);
+        renderNotification("Um erro inesperado ocorreu", NotificationType.Error);
+    }
+
+    return false;
+}
 
 
+/**
+ * Sends a POST request to the server to delete a record from the database.
+ *
+ * @param {() => void} deleteModal - A function that closes the modal.
+ * @param {number} key - The value of the primary key of the record to be deleted.
+ *
+ * @returns {Promise<void>} A promise that resolves when the request has finished.
+ */
 async function postDelete(deleteModal: () => void, key: number) {
     const formData = new FormData();
 
@@ -409,16 +613,16 @@ async function postDelete(deleteModal: () => void, key: number) {
         if (response.ok) {
             // const result = await response.json(); // Parse the JSON response
             // console.log('Success:', result);
-            alert('Dados deletados com sucesso!');
-            deleteModal();
             renderContent(document.querySelector("#structure") as HTMLElement, metadata);
+            renderNotification('Dados deletados com sucesso!', NotificationType.Success);
+            deleteModal();
         } else {
             // console.error('Error:', await response.text());
-            alert('Ocorreu um erro ao deletar os dados');
+            renderNotification('Ocorreu um erro ao deletar os dados', NotificationType.Error);
         }
     } catch (error) {
         // console.error('Error:', error);
-        alert('Ocorreu um erro ao deletar os dados');
+        renderNotification('Ocorreu um erro ao deletar os dados', NotificationType.Error);
     }
 }
 

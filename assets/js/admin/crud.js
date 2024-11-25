@@ -7,10 +7,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { renderElement } from "../Render/index.js";
-import { getRegister, renderCreateSection } from "./utils.js";
+import { renderElement, renderNotification } from "../Render/index.js";
+import { getRegister, generateCreateSection, generateInput } from "./utils.js";
 import renderContent from "./renderContent.js";
+import { NotificationType } from "../enum/render.js";
 let metadata;
+let editing = -1;
+let cachedLI;
+let cachedDropdown;
 function createModal() {
     function deleteModal() {
         modal.classList.remove("translate-y-0");
@@ -102,7 +106,7 @@ function showCreate(new_metadata) {
             submit: (e) => postCreate(e, deleteModal)
         }
     }, ...metadata.rows.map((column) => {
-        return renderCreateSection(column);
+        return generateCreateSection(column);
     }), renderElement({
         tagName: "button",
         innerText: "Criar",
@@ -176,8 +180,72 @@ function showDetails(new_metadata, data, key) {
         }
     }))));
 }
-function showEdit(new_metadata) {
+function showEdit(new_metadata, data, dropdown, key) {
     metadata = new_metadata;
+    if (editing !== -1)
+        hideEdit();
+    editing = key;
+    let register = getRegister(data, metadata, key);
+    let li = document.querySelector(`#row-id-${key}`);
+    const form = renderElement({
+        tagName: "form",
+        attributes: {
+            id: `edit-id-${key}`,
+            class: "grid gap-x-2",
+            style: `grid-template-columns: repeat(${metadata.sizes.total}, minmax(0, 1fr));`,
+            action: "",
+            method: "POST"
+        },
+        events: {
+            submit: postEdit
+        }
+    }, ...Object.keys(register).map((key, i) => generateInput(metadata.rows[i], {
+        id: key,
+        name: key,
+        value: register[key],
+        style: `grid-column: span ${metadata.sizes.columns[i]} / span ${metadata.sizes.columns[i]};`
+    })));
+    li.replaceWith(form);
+    cachedLI = li;
+    const newDropdown = renderElement({
+        tagName: "div",
+        attributes: {
+            id: `dropdown-id-${key}`,
+            class: "hidden admin-dropdown-menu"
+        }
+    }, renderElement({
+        tagName: "input",
+        attributes: {
+            type: "submit",
+            form: `edit-id-${key}`,
+            value: "Salvar",
+            class: "cursor-pointer"
+        }
+    }), renderElement({
+        tagName: "button",
+        attributes: {
+            type: "button"
+        },
+        events: {
+            "click": () => {
+                hideEdit();
+            }
+        }
+    }, renderElement({
+        tagName: "p",
+        innerText: "Cancelar"
+    })));
+    dropdown.replaceWith(newDropdown);
+    cachedDropdown = dropdown;
+}
+function hideEdit() {
+    if (editing === -1)
+        return;
+    let form = document.querySelector(`#edit-id-${editing}`);
+    form.replaceWith(cachedLI);
+    let dropdown = document.querySelector(`#dropdown-id-${editing}`);
+    dropdown.replaceWith(cachedDropdown);
+    editing = -1;
 }
 function showDelete(new_metadata, key) {
     metadata = new_metadata;
@@ -254,17 +322,52 @@ function postCreate(e, deleteModal) {
                 body: JSON.stringify(data),
             });
             if (response.ok) {
-                alert('Dados registrados com sucesso!');
-                deleteModal();
                 renderContent(document.querySelector("#structure"), metadata);
+                renderNotification('Dados registrados com sucesso!', NotificationType.Success);
+                deleteModal();
             }
             else {
-                alert('Ocorreu um erro ao tentar inserir os dados.');
+                renderNotification('Ocorreu um erro ao tentar inserir os dados.', NotificationType.Error);
             }
         }
         catch (error) {
             console.error('Unexpected error:', error);
-            alert("Um erro inesperado ocorreu");
+            renderNotification("Um erro inesperado ocorreu", NotificationType.Error);
+        }
+        return false;
+    });
+}
+function postEdit(e) {
+    return __awaiter(this, void 0, void 0, function* () {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        formData.append("id", metadata.index.toString());
+        const data = {};
+        formData.forEach((value, key) => {
+            if (typeof value === 'string') {
+                data[key] = value;
+            }
+        });
+        hideEdit();
+        try {
+            const response = yield fetch('update/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            if (response.ok) {
+                renderContent(document.querySelector("#structure"), metadata);
+                renderNotification('Dados alterados com sucesso!', NotificationType.Success);
+            }
+            else {
+                renderNotification('Ocorreu um erro ao tentar alterar os dados.', NotificationType.Error);
+            }
+        }
+        catch (error) {
+            console.error('Unexpected error:', error);
+            renderNotification("Um erro inesperado ocorreu", NotificationType.Error);
         }
         return false;
     });
@@ -294,16 +397,16 @@ function postDelete(deleteModal, key) {
                 body: JSON.stringify(data),
             });
             if (response.ok) {
-                alert('Dados deletados com sucesso!');
-                deleteModal();
                 renderContent(document.querySelector("#structure"), metadata);
+                renderNotification('Dados deletados com sucesso!', NotificationType.Success);
+                deleteModal();
             }
             else {
-                alert('Ocorreu um erro ao deletar os dados');
+                renderNotification('Ocorreu um erro ao deletar os dados', NotificationType.Error);
             }
         }
         catch (error) {
-            alert('Ocorreu um erro ao deletar os dados');
+            renderNotification('Ocorreu um erro ao deletar os dados', NotificationType.Error);
         }
     });
 }

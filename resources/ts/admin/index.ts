@@ -5,6 +5,7 @@ import type {
 
 import { 
     renderElement,
+    renderNotification,
     renderTag
 } from "../Render/index.js";  
 
@@ -13,6 +14,7 @@ import {
 } from "./crud.js";
 
 import renderContent from "./renderContent.js";
+import { NotificationType } from "../enum/render.js";
 
 
 const sideMenu = document.querySelector("#sidebar") as HTMLDivElement;
@@ -137,7 +139,7 @@ async function fetchMetadata(id: number) {
         let payload = await fetch(`get_metadata/?id=${id}`);
 
         if (payload.status !== 200) {
-            alert("Não foi possível carregar a tabela.");
+            renderNotification("Não foi possível carregar a tabela.", NotificationType.Warning);
             return false;
         }
     

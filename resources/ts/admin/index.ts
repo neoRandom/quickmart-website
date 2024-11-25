@@ -39,7 +39,7 @@ window.addEventListener('load', function () {
 
 // Setting the per page value
 if (localStorage.getItem("per_page") === null) {
-    localStorage.setItem("per_page", "15");
+    localStorage.setItem("per_page", "12");
 }
 
 // Header Dropdown menu

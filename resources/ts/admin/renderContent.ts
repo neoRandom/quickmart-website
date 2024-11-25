@@ -31,7 +31,7 @@ async function renderContent(container: HTMLElement, new_metadata: TableMetadata
 
     let per_page = undefined;
     if (localStorage.getItem("per_page") !== null)
-        per_page = parseInt(localStorage.getItem("per_page") ?? "15");
+        per_page = parseInt(localStorage.getItem("per_page") ?? "12");
 
     if (search !== undefined) url += `&value=${search}`;
     if (page !== undefined) {
@@ -473,7 +473,7 @@ function renderPagination(container: HTMLElement) {
                     type: "number",
                     min: "1",
                     max: "100",
-                    value: `${localStorage.getItem("per_page") ?? 15}`,
+                    value: `${localStorage.getItem("per_page") ?? 12}`,
                     class: "w-16 px-1 py-0.5 border border-primary-dark border-opacity-10 rounded-md outline-none focus:border-opacity-100"
                 },
                 events: {

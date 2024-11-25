@@ -20,12 +20,28 @@ import { NotificationType } from "../enum/render.js";
 let data: TableData;
 let metadata: TableMetadata;
 
+let cached_page: number = 0;
 
-async function renderContent(container: HTMLElement, new_metadata: TableMetadata) {
+
+async function renderContent(container: HTMLElement, new_metadata: TableMetadata, page?: number, search?: string) {
     metadata = new_metadata;
 
     // Fetch the data (registers) from the server
-    const payload = await fetch(`get_registers/?id=${metadata.index}`);
+    let url = `get_registers/?id=${metadata.index}`;
+
+    let per_page = undefined;
+    if (localStorage.getItem("per_page") !== null)
+        per_page = parseInt(localStorage.getItem("per_page") ?? "15");
+
+    if (search !== undefined) url += `&value=${search}`;
+    if (page !== undefined) {
+        url += `&limit=${per_page}`;
+        if (per_page !== undefined) {
+            url += `&offset=${page * per_page}`;
+        }
+    }
+
+    const payload = await fetch(url);
     if (payload.status !== 200) {
         renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
         return false;
@@ -35,6 +51,14 @@ async function renderContent(container: HTMLElement, new_metadata: TableMetadata
         renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
         return false;
     });
+
+    if (data.length === 0) {
+        renderNotification("Nenhum dado encontrado.", NotificationType.Warning);
+        return false;
+    }
+
+    if (page !== undefined)
+        cached_page = page;
 
     // Setting the placeholder
     const placeholder = container.children[1]?.children[1] as HTMLElement;
@@ -73,7 +97,7 @@ async function renderContent(container: HTMLElement, new_metadata: TableMetadata
             {
                 tagName: "div", 
                 attributes: {
-                    class: "flex-1 flex divide-x h-full overflow-y-scroll *:h-full"
+                    class: "flex-1 flex h-full overflow-y-scroll"
                 }
             },
             // Render the table body
@@ -81,10 +105,7 @@ async function renderContent(container: HTMLElement, new_metadata: TableMetadata
             // Render the action column
             renderTableActions()
         ),
-        renderElement({
-            tagName: "div",
-            innerText: "Page 1 of N"
-        })
+        renderPagination(container)
     );
 
     // Replacing the old table with the new one
@@ -165,7 +186,7 @@ function renderTableRows() {
             attributes: {
                 class: `
                     flex-1 flex flex-col divide-y
-                    *:h-12 *:*:px-2 *:py-2
+                    *:min-h-12 *:*:px-2 *:py-2
                     *:*:px-2
                     [&_input]:bg-neutral-100 [&_input]:rounded-md
                 `
@@ -240,7 +261,7 @@ function renderTableActionsButtons() {
         {
             tagName: "div",
             attributes: {
-                class: `flex flex-col *:my-2`
+                class: `flex flex-col mt-2`
             }
         },
         ...data.map((row: Record<string, any>) =>
@@ -248,7 +269,7 @@ function renderTableActionsButtons() {
                 {
                     tagName: "div",
                     attributes: { 
-                        class: "relative"
+                        class: "relative h-12"
                     }
                 },
                 renderElement({
@@ -374,6 +395,93 @@ function renderTableActionsButtons() {
     }
 
     return buttons;
+}
+
+
+/**
+ * Renders the pagination buttons on the table.
+ * 
+ * The rendered container will have the following structure:
+ * 
+ * - A paragraph with the current page number.
+ * - A button to go to the previous page.
+ * - A button to go to the next page.
+ * - A container with an input field to set the number of records per page.
+ * 
+ * The container will be rendered in the bottom of the table.
+ * 
+ * The function returns the rendered container.
+ */
+function renderPagination(container: HTMLElement) {
+    return renderElement(
+        {
+            tagName: "div",
+            attributes: {
+                class: "flex items-center gap-4 p-2 border-t"
+            }
+        },
+        renderElement({
+            tagName: "p",
+            innerText: `Página ${cached_page + 1}`,
+            attributes: {
+                class: "text-sm text-black-pure/75 w-16"
+            }
+        }),
+        renderElement({
+            tagName: "button",
+            innerText: "Previous",
+            attributes: {
+                type: "button",
+                class: "hover:underline"
+            },
+            events: {
+                click: () => {
+                    if (cached_page > 0) {
+                        renderContent(container, metadata, cached_page - 1);
+                    }
+                }
+            }
+        }),
+        renderElement({
+            tagName: "button",
+            innerText: "Next",
+            attributes: {
+                type: "button",
+                class: "hover:underline"
+            },
+            events: {
+                click: () => renderContent(container, metadata, cached_page + 1)
+            }
+        }),
+        renderElement(
+            {
+                tagName: "div",
+                attributes: {
+                    class: "flex items-center gap-2 ml-auto"
+                }
+            },
+            renderElement({
+                tagName: "label",
+                innerText: "Registros por página",
+                attributes: {
+                    class: "text-sm text-black-pure/75"
+                } 
+            }),
+            renderElement({
+                tagName: "input",
+                attributes: {
+                    type: "number",
+                    min: "1",
+                    max: "100",
+                    value: `${localStorage.getItem("per_page") ?? 15}`,
+                    class: "w-16 px-1 py-0.5 border border-primary-dark border-opacity-10 rounded-md outline-none focus:border-opacity-100"
+                },
+                events: {
+                    input: (e) => localStorage.setItem("per_page", (e.target as HTMLInputElement).value)
+                }
+            })
+        )
+    );
 }
 
 export default renderContent;

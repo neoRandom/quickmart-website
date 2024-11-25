@@ -12,11 +12,24 @@ import { showDelete, showDetails, showEdit } from "./crud.js";
 import { NotificationType } from "../enum/render.js";
 let data;
 let metadata;
-function renderContent(container, new_metadata) {
+let cached_page = 0;
+function renderContent(container, new_metadata, page, search) {
     return __awaiter(this, void 0, void 0, function* () {
-        var _a;
+        var _a, _b;
         metadata = new_metadata;
-        const payload = yield fetch(`get_registers/?id=${metadata.index}`);
+        let url = `get_registers/?id=${metadata.index}`;
+        let per_page = undefined;
+        if (localStorage.getItem("per_page") !== null)
+            per_page = parseInt((_a = localStorage.getItem("per_page")) !== null && _a !== void 0 ? _a : "15");
+        if (search !== undefined)
+            url += `&value=${search}`;
+        if (page !== undefined) {
+            url += `&limit=${per_page}`;
+            if (per_page !== undefined) {
+                url += `&offset=${page * per_page}`;
+            }
+        }
+        const payload = yield fetch(url);
         if (payload.status !== 200) {
             renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
             return false;
@@ -25,7 +38,13 @@ function renderContent(container, new_metadata) {
             renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
             return false;
         });
-        const placeholder = (_a = container.children[1]) === null || _a === void 0 ? void 0 : _a.children[1];
+        if (data.length === 0) {
+            renderNotification("Nenhum dado encontrado.", NotificationType.Warning);
+            return false;
+        }
+        if (page !== undefined)
+            cached_page = page;
+        const placeholder = (_b = container.children[1]) === null || _b === void 0 ? void 0 : _b.children[1];
         const table = renderElement({
             tagName: "div",
             attributes: {
@@ -51,12 +70,9 @@ function renderContent(container, new_metadata) {
         })), renderElement({
             tagName: "div",
             attributes: {
-                class: "flex-1 flex divide-x h-full overflow-y-scroll *:h-full"
+                class: "flex-1 flex h-full overflow-y-scroll"
             }
-        }, renderTableRows(), renderTableActions()), renderElement({
-            tagName: "div",
-            innerText: "Page 1 of N"
-        }));
+        }, renderTableRows(), renderTableActions()), renderPagination(container));
         placeholder.replaceWith(table);
         return true;
     });
@@ -103,7 +119,7 @@ function renderTableRows() {
         attributes: {
             class: `
                     flex-1 flex flex-col divide-y
-                    *:h-12 *:*:px-2 *:py-2
+                    *:min-h-12 *:*:px-2 *:py-2
                     *:*:px-2
                     [&_input]:bg-neutral-100 [&_input]:rounded-md
                 `
@@ -140,14 +156,14 @@ function renderTableActionsButtons() {
     const buttons = renderElement({
         tagName: "div",
         attributes: {
-            class: `flex flex-col *:my-2`
+            class: `flex flex-col mt-2`
         }
     }, ...data.map((row) => {
         var _a, _b, _c;
         return renderElement({
             tagName: "div",
             attributes: {
-                class: "relative"
+                class: "relative h-12"
             }
         }, renderElement({
             tagName: "button",
@@ -220,5 +236,67 @@ function renderTableActionsButtons() {
         });
     }
     return buttons;
+}
+function renderPagination(container) {
+    var _a;
+    return renderElement({
+        tagName: "div",
+        attributes: {
+            class: "flex items-center gap-4 p-2 border-t"
+        }
+    }, renderElement({
+        tagName: "p",
+        innerText: `Página ${cached_page + 1}`,
+        attributes: {
+            class: "text-sm text-black-pure/75 w-16"
+        }
+    }), renderElement({
+        tagName: "button",
+        innerText: "Previous",
+        attributes: {
+            type: "button",
+            class: "hover:underline"
+        },
+        events: {
+            click: () => {
+                if (cached_page > 0) {
+                    renderContent(container, metadata, cached_page - 1);
+                }
+            }
+        }
+    }), renderElement({
+        tagName: "button",
+        innerText: "Next",
+        attributes: {
+            type: "button",
+            class: "hover:underline"
+        },
+        events: {
+            click: () => renderContent(container, metadata, cached_page + 1)
+        }
+    }), renderElement({
+        tagName: "div",
+        attributes: {
+            class: "flex items-center gap-2 ml-auto"
+        }
+    }, renderElement({
+        tagName: "label",
+        innerText: "Registros por página",
+        attributes: {
+            class: "text-sm text-black-pure/75"
+        }
+    }), renderElement({
+        tagName: "input",
+        attributes: {
+            type: "number",
+            min: "1",
+            max: "100",
+            value: `${(_a = localStorage.getItem("per_page")) !== null && _a !== void 0 ? _a : 15}`,
+            class: "w-16 px-1 py-0.5 border border-primary-dark border-opacity-10 rounded-md outline-none focus:border-opacity-100"
+        },
+        events: {
+            input: (e) => localStorage.setItem("per_page", e.target.value)
+        }
+    })));
 }
 export default renderContent;

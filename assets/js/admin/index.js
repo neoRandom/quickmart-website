@@ -17,9 +17,18 @@ const sideMenuItens = sideMenu.querySelectorAll("div > ul > li");
 const crudContainer = document.querySelector("#side-container");
 let metadata;
 window.addEventListener('load', function () {
+    var _a;
     document.body.style.display = "block";
-    loadPage(0);
+    if (localStorage.getItem("last_table") === null) {
+        loadPage(0);
+    }
+    else {
+        loadPage(parseInt((_a = localStorage.getItem("last_table")) !== null && _a !== void 0 ? _a : "0"));
+    }
 }, false);
+if (localStorage.getItem("per_page") === null) {
+    localStorage.setItem("per_page", "15");
+}
 const headerDropdownMenuButton = document.querySelector("#header-dropdown-menu-button");
 const headerDropdownMenu = document.querySelector("#header-dropdown-menu");
 headerDropdownMenuButton.addEventListener("click", () => {
@@ -45,6 +54,7 @@ helpButton.addEventListener("click", () => {
 });
 sideMenuItens.forEach((e, i) => {
     e.addEventListener("click", () => {
+        localStorage.setItem("last_table", i.toString());
         loadPage(i);
     });
 });
@@ -65,7 +75,7 @@ function loadPage(id) {
             crudContainer.removeChild(crudContainer.firstChild);
         }
         const structure = renderContainer(crudContainer);
-        if (!(yield renderContent(structure, metadata)))
+        if (!(yield renderContent(structure, metadata, 0)))
             return;
         crudContainer.classList.remove("hidden");
     });

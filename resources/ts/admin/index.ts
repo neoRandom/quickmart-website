@@ -27,9 +27,20 @@ let metadata: TableMetadata;
 // Only shows the page when its fully loaded
 window.addEventListener('load', function () {
     document.body.style.display = "block";
-    loadPage(0);
+
+    if (localStorage.getItem("last_table") === null) {
+        loadPage(0);
+    }
+    else {
+        loadPage(parseInt(localStorage.getItem("last_table") ?? "0"));
+    }
 }, false);
 
+
+// Setting the per page value
+if (localStorage.getItem("per_page") === null) {
+    localStorage.setItem("per_page", "15");
+}
 
 // Header Dropdown menu
 const headerDropdownMenuButton = document.querySelector("#header-dropdown-menu-button") as HTMLButtonElement;
@@ -70,6 +81,7 @@ sideMenu.querySelector("button")
 // Side bar buttons
 sideMenuItens.forEach((e, i) => {
     e.addEventListener("click", () => {
+        localStorage.setItem("last_table", i.toString());
         loadPage(i);
     });
 });
@@ -119,7 +131,7 @@ async function loadPage(id: number) {
     const structure = renderContainer(crudContainer);
 
     // Render the content (based on the data)
-    if (!await renderContent(structure, metadata))
+    if (!await renderContent(structure, metadata, 0))
         return;
 
     // Show the CRUD container

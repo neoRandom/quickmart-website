@@ -31,6 +31,7 @@ type SQLMetadata = {
 type TableMetadata = {
     index: number;
     name: string;
+    pk: string;
     rows: SQLMetadata[];
     sizes: {
         total: number;

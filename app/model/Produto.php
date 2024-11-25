@@ -72,15 +72,33 @@ class Produto extends Model {
      */
     public function fromArray(array $data): bool {
         try {
-            $this->setCodProd($data["cod_prod"] ?? 0);
-            $this->setCodCate($data["cod_cate"]);
-            $this->setCodPromoProd($data["cod_promo_prod"]);
-            $this->setCodClassific($data["cod_classific"]);
-            $this->setIdFabric($data["id_fabric"]);
-            $this->setNome($data["nome"]);
-            $this->setDescricao($data["descricao"] ?? "");
-            $this->setEstoque($data["estoque"]);
-            $this->setPreco($data["preco"]);
+            if (isset($data["cod_prod"])) {
+                $this->setCodProd($data["cod_prod"]);
+            }
+            if (isset($data["cod_cate"])) {
+                $this->setCodCate($data["cod_cate"]);
+            }
+            if (isset($data["cod_promo_prod"])) {
+                $this->setCodPromoProd($data["cod_promo_prod"]);
+            }
+            if (isset($data["cod_classific"])) {
+                $this->setCodClassific($data["cod_classific"]);
+            }
+            if (isset($data["id_fabric"])) {
+                $this->setIdFabric($data["id_fabric"]);
+            }
+            if (isset($data["nome"])) {
+                $this->setNome($data["nome"]);
+            }
+            if (isset($data["descricao"])) {
+                $this->setDescricao($data["descricao"] ?? "");
+            }
+            if (isset($data["estoque"])) {
+                $this->setEstoque($data["estoque"]);
+            }
+            if (isset($data["preco"])) {
+                $this->setPreco($data["preco"]);
+            }
             return true;
         }
         catch (\Exception $e) {

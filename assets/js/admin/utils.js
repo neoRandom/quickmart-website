@@ -103,4 +103,8 @@ function renderCreateSection(column) {
     }, label, input);
     return section;
 }
-export { renderCreateSection };
+function getRegister(data, metadata, pk) {
+    var _a;
+    return (_a = data.find((row) => row[metadata.pk] == pk)) !== null && _a !== void 0 ? _a : {};
+}
+export { renderCreateSection, getRegister };

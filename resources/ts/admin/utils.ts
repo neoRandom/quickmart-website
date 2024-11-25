@@ -1,5 +1,7 @@
 import type {
     SQLMetadata,
+    TableData,
+    TableMetadata,
 } from "../types/admin.js";
 
 import {
@@ -148,6 +150,12 @@ function renderCreateSection(column: SQLMetadata) {
     return section;
 }
 
+
+function getRegister(data: TableData, metadata: TableMetadata, pk: number) {
+    return data.find((row: Record<string, any>) => row[metadata.pk] == pk) ?? {};
+}
+
 export {
-    renderCreateSection
+    renderCreateSection,
+    getRegister
 };

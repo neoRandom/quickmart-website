@@ -1,4 +1,5 @@
 import type { 
+    TableData,
     TableMetadata 
 } from "../types/admin.js";
 
@@ -7,6 +8,7 @@ import {
 } from "../Render/index.js";
 
 import {
+    getRegister,
     renderCreateSection
 } from "./utils.js";
 
@@ -31,7 +33,7 @@ function createModal() {
         attributes: {
             class: `
                 flex flex-col
-                p-4 bg-white rounded-md 
+                max-w-[80%] p-4 bg-white rounded-md 
                 shadow-md 
                 translate-y-[100vh] 
                 transition-transform duration-500
@@ -87,10 +89,13 @@ function showCreate(new_metadata: TableMetadata) {
         attributes: {
             type: "button",
             class: "py-2 hover:underline",
+        },
+        events: {
+            click: deleteModal
         }
     });
 
-    modal.classList.add("h-4/5", "min-w-[640px]");
+    modal.classList.add("max-h-[80%]", "min-w-[640px]");
 
     // Header
     renderElement(
@@ -106,7 +111,7 @@ function showCreate(new_metadata: TableMetadata) {
             }
         },
         renderElement({
-            tagName: "h1",
+            tagName: "h2",
             innerText: `Criar ${metadata.name}`,
             attributes: {
                 class: "text-2xl"
@@ -121,7 +126,7 @@ function showCreate(new_metadata: TableMetadata) {
             container: modal,
             tagName: "form",
             attributes: {
-                class: "flex-1 flex flex-col gap-4 p-4 overflow-auto",
+                class: "flex-1 flex flex-col gap-4 p-4 overflow-y-auto",
                 action: "",
                 method: "POST"
             },
@@ -147,14 +152,91 @@ function showCreate(new_metadata: TableMetadata) {
             }
         })
     );
-
-    // Cancel button logic
-    cancelButton.addEventListener("click", deleteModal);
 }
 
 
-function showDetails(new_metadata: TableMetadata) {
+function showDetails(new_metadata: TableMetadata, data: TableData, key: number) {
     metadata = new_metadata;
+
+    // Set the register as the row of the data that the key with value key is equal to key (idk anymore what im doing lmao)
+    let register = getRegister(data, metadata, key);
+
+    let {
+        modal,
+        deleteModal
+    } = createModal();
+
+    const cancelButton = renderElement({
+        tagName: "button",
+        innerText: "Cancelar",
+        attributes: {
+            type: "button",
+            class: "py-2 hover:underline",
+        },
+        events: {
+            click: deleteModal
+        }
+    });
+
+    modal.classList.add("max-h-[80%]", "min-w-[640px]");
+
+    // Header
+    renderElement(
+        {
+            container: modal,
+            tagName: "div",
+            attributes: {
+                class: `
+                    flex items-center justify-between 
+                    w-full h-fit px-4 py-2
+                    border-b-2 border-primary-dark border-opacity-50
+                `
+            }
+        },
+        renderElement({
+            tagName: "h2",
+            innerText: `Detalhes do registro ${key}`,
+            attributes: {
+                class: "text-2xl"
+            }
+        }),
+        cancelButton
+    );
+
+    // Body
+    renderElement(
+        {
+            container: modal,
+            tagName: "div",
+            attributes: {
+                class: "flex-1 flex flex-col divide-y p-4 overflow-y-auto"
+            }
+        },
+        ...metadata.rows.map((column) => 
+            renderElement(
+                {
+                    tagName: "div",
+                    attributes: {
+                        class: "flex flex-col gap-2 py-2"
+                    }
+                },
+                renderElement({
+                    tagName: "span",
+                    innerText: `${column.Field}:`,
+                    attributes: {
+                        class: "opacity-50 text-sm"
+                    }
+                }),
+                renderElement({
+                    tagName: "p",
+                    innerText: register[column.Field],
+                    attributes: {
+                        class: "text-sm text-wrap break-all"
+                    }
+                })
+            )
+        )
+    );
 }
 
 
@@ -163,8 +245,76 @@ function showEdit(new_metadata: TableMetadata) {
 }
 
 
-function showDelete(new_metadata: TableMetadata) {
+function showDelete(new_metadata: TableMetadata, key: number) {
     metadata = new_metadata;
+
+    let {
+        modal,
+        deleteModal
+    } = createModal();
+
+    const acceptButton = renderElement({
+        tagName: "button",
+        innerText: "Deletar",
+        attributes: {
+            type: "button",
+            class: `
+                text-white 
+                px-2 py-1
+                bg-red-600 hover:bg-red-700
+                rounded-md transition-colors
+            `
+        },
+        events: {
+            click: () => postDelete(deleteModal, key)
+        }
+    });
+
+    const cancelButton = renderElement({
+        tagName: "button",
+        innerText: "Cancelar",
+        attributes: {
+            type: "button",
+            class: "px-2 py-1 hover:underline",
+        },
+        events: {
+            click: deleteModal
+        }
+    });
+
+    renderElement(
+        {
+            container: modal,
+            tagName: "div",
+            attributes: {
+                class: `flex flex-col gap-4 w-fit`
+            }
+        },
+        renderElement({
+            tagName: "h2",
+            innerText: `Deletar ${metadata.name}`,
+            attributes: {
+                class: "text-center text-2xl pb-2 border-b-2 border-secondary border-opacity-50"
+            }
+        }),
+        renderElement({
+            tagName: "p",
+            innerText: `Você realmente deseja deletar o registro ${key}?`,
+            attributes: {
+                class: "text-center"
+            }
+        }),
+        renderElement(
+            {
+                tagName: "div",
+                attributes: {
+                    class: "flex gap-4 *:flex-1"
+                }
+            },
+            acceptButton,
+            cancelButton
+        )
+    );
 }
 
 
@@ -219,10 +369,58 @@ async function postCreate(e: Event, deleteModal: () => void) {
 }
 
 
-// function postEdit() {}
+// async function postEdit() {}
 
 
-// function postDelete() {}
+async function postDelete(deleteModal: () => void, key: number) {
+    const formData = new FormData();
+
+    formData.append("id", metadata.index.toString());
+
+    for (let column of metadata.rows) {
+        if (column.Key === "PRI") {
+            formData.append(`${column.Field}`, key.toString());
+            break;
+        }
+    }
+
+    // Convert FormData to a plain object
+    const data: Record<string, string> = {};
+    formData.forEach((value, key) => {
+        if (typeof value === 'string') {
+            data[key] = value;
+        }
+    });
+
+    try {
+        // Make the POST request
+        const response = await fetch(
+            'delete/', // For some unholy reason, the URL must end with a slash
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // Specify JSON content type
+                },
+                body: JSON.stringify(data), // Convert data to JSON format
+            }
+        );
+
+        // Handle the response
+        if (response.ok) {
+            // const result = await response.json(); // Parse the JSON response
+            // console.log('Success:', result);
+            alert('Dados deletados com sucesso!');
+            deleteModal();
+            renderContent(document.querySelector("#structure") as HTMLElement, metadata);
+        } else {
+            // console.error('Error:', await response.text());
+            alert('Ocorreu um erro ao deletar os dados');
+        }
+    } catch (error) {
+        // console.error('Error:', error);
+        alert('Ocorreu um erro ao deletar os dados');
+    }
+}
 
 
 export {
@@ -230,4 +428,4 @@ export {
     showDetails,
     showEdit,
     showDelete
-}
+};

@@ -67,6 +67,7 @@ function loadPage(id) {
 ;
 function fetchMetadata(id) {
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         if (tablesMetadataCache[id]) {
             metadata = tablesMetadataCache[id];
         }
@@ -79,6 +80,7 @@ function fetchMetadata(id) {
             metadata = yield payload.json();
             metadata.index = id;
             metadata.sizes = calculateTableSize(metadata.rows);
+            metadata.pk = (_b = (_a = metadata.rows.find(row => row.Key === "PRI")) === null || _a === void 0 ? void 0 : _a.Field) !== null && _b !== void 0 ? _b : "";
             tablesMetadataCache[id] = metadata;
         }
         return true;

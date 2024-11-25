@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { renderElement } from "../Render/index.js";
+import { showDelete, showDetails } from "./crud.js";
 let data;
 let metadata;
 function renderContent(container, new_metadata) {
@@ -135,19 +136,23 @@ function renderTableActionsButtons() {
         attributes: {
             class: `flex flex-col *:my-2`
         }
-    }, ...data.map((_) => renderElement({
-        tagName: "div",
-        attributes: {
-            class: "relative"
-        }
-    }, renderElement({
-        tagName: "button",
-        innerText: ":",
-        attributes: {
-            type: "button",
-            class: "admin-action-button"
-        },
-    }))));
+    }, ...data.map((row) => {
+        var _a, _b, _c;
+        return renderElement({
+            tagName: "div",
+            attributes: {
+                class: "relative"
+            }
+        }, renderElement({
+            tagName: "button",
+            innerText: ":",
+            attributes: {
+                key: (_c = row[(_b = (_a = metadata.rows[0]) === null || _a === void 0 ? void 0 : _a.Field) !== null && _b !== void 0 ? _b : 0]) !== null && _c !== void 0 ? _c : 0,
+                type: "button",
+                class: "admin-action-button"
+            },
+        }));
+    }));
     let activeDropdown = null;
     for (let container of buttons.children) {
         const button = container.children[0];
@@ -184,9 +189,7 @@ function renderTableActionsButtons() {
                     type: "button"
                 },
                 events: {
-                    "click": (e) => {
-                        e.stopPropagation();
-                    }
+                    "click": () => showDelete(metadata, button.getAttribute("key"))
                 }
             }, renderElement({
                 tagName: "p",
@@ -198,9 +201,7 @@ function renderTableActionsButtons() {
                     type: "button"
                 },
                 events: {
-                    "click": (e) => {
-                        e.stopPropagation();
-                    }
+                    "click": () => showDetails(metadata, data, button.getAttribute("key"))
                 }
             }, renderElement({
                 tagName: "p",

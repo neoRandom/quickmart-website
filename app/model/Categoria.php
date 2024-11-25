@@ -42,9 +42,15 @@ class Categoria extends Model {
      */
     public function fromArray(array $data): bool {
         try {
-            $this->setCodCate($data["cod_cate"] ?? 0);
-            $this->setCodPromoCate($data["cod_promo_cate"]);
-            $this->setDescricao($data["descricao"]);
+            if (isset($data["cod_cate"])) {
+                $this->setCodCate($data["cod_cate"]);
+            }
+            if (isset($data["cod_promo_cate"])) {
+                $this->setCodPromoCate($data["cod_promo_cate"]);
+            }
+            if (isset($data["descricao"])) {
+                $this->setDescricao($data["descricao"]);
+            }
             return true;
         } catch (\Exception $e) {
             return false;

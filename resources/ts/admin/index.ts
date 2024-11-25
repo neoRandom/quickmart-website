@@ -9,7 +9,7 @@ import {
 } from "../Render/index.js";  
 
 import { 
-    showCreate 
+    showCreate
 } from "./crud.js";
 
 import renderContent from "./renderContent.js";
@@ -144,6 +144,7 @@ async function fetchMetadata(id: number) {
         metadata = await payload.json();
         metadata.index = id;
         metadata.sizes = calculateTableSize(metadata.rows);
+        metadata.pk = metadata.rows.find(row => row.Key === "PRI")?.Field ?? "";
         tablesMetadataCache[id] = metadata;
     }
     return true;

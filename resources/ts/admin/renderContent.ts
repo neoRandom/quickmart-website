@@ -8,6 +8,11 @@ import {
     renderElement
 } from "../Render/index.js";
 
+import {
+    showDelete,
+    showDetails
+} from "./crud.js";
+
 
 let data: TableData;
 let metadata: TableMetadata;
@@ -229,7 +234,7 @@ function renderTableActionsButtons() {
                 class: `flex flex-col *:my-2`
             }
         },
-        ...data.map((_: Record<string, any>) =>
+        ...data.map((row: Record<string, any>) =>
             renderElement(
                 {
                     tagName: "div",
@@ -241,6 +246,7 @@ function renderTableActionsButtons() {
                     tagName: "button",
                     innerText: ":",
                     attributes: { 
+                        key: row[metadata.rows[0]?.Field ?? 0] ?? 0,
                         type: "button",
                         class: "admin-action-button"
                     },
@@ -310,9 +316,10 @@ function renderTableActionsButtons() {
                         type: "button"
                     },
                     events: {
-                        "click": (e: Event) => {
-                            e.stopPropagation();
-                        }
+                        "click": () => showDelete(
+                            metadata, 
+                            button.getAttribute("key") as unknown as number
+                        )
                     }
                 },
                 renderElement({
@@ -328,9 +335,11 @@ function renderTableActionsButtons() {
                         type: "button"
                     },
                     events: {
-                        "click": (e: Event) => {
-                            e.stopPropagation();
-                        }
+                        "click": () => showDetails(
+                            metadata, 
+                            data, 
+                            button.getAttribute("key") as unknown as number
+                        )
                     }
                 },
                 renderElement({

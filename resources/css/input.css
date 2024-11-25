@@ -58,7 +58,7 @@
 
     .admin-dropdown-menu {
         @apply 
-            z-10 absolute top-10 right-0 
+            z-50 absolute
             flex flex-col gap-1
             p-2 bg-white 
             border border-black-pure border-opacity-10

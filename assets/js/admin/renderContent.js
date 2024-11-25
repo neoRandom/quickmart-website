@@ -20,7 +20,7 @@ function renderContent(container, new_metadata, page, search) {
         let url = `get_registers/?id=${metadata.index}`;
         let per_page = undefined;
         if (localStorage.getItem("per_page") !== null)
-            per_page = parseInt((_a = localStorage.getItem("per_page")) !== null && _a !== void 0 ? _a : "15");
+            per_page = parseInt((_a = localStorage.getItem("per_page")) !== null && _a !== void 0 ? _a : "12");
         if (search !== undefined)
             url += `&value=${search}`;
         if (page !== undefined) {
@@ -163,7 +163,7 @@ function renderTableActionsButtons() {
         return renderElement({
             tagName: "div",
             attributes: {
-                class: "relative h-12"
+                class: "h-12"
             }
         }, renderElement({
             tagName: "button",
@@ -184,8 +184,8 @@ function renderTableActionsButtons() {
             },
             events: {
                 "click": () => {
-                    showEdit(metadata, data, dropdown, button.getAttribute("key"));
-                    dropdown.classList.add("hidden");
+                    showEdit(metadata, data, newDropdown, button.getAttribute("key"));
+                    newDropdown.classList.add("hidden");
                 }
             }
         }, renderElement({
@@ -216,23 +216,36 @@ function renderTableActionsButtons() {
             tagName: "p",
             innerText: "Detalhes"
         }));
-        const dropdown = renderElement({
+        const newDropdown = renderElement({
             tagName: "div",
             attributes: {
                 class: "hidden admin-dropdown-menu"
             }
         }, editButton, deleteButton, detailsButton);
         document.addEventListener("click", (e) => {
-            var _a, _b;
             const target = e.target;
-            if (!((_a = container.children[1]) === null || _a === void 0 ? void 0 : _a.contains(target)) && target !== button) {
-                (_b = container.children[1]) === null || _b === void 0 ? void 0 : _b.classList.add("hidden");
+            let dropdown = container.children[1];
+            if (!dropdown.contains(target) && target !== button) {
+                dropdown.classList.add("hidden");
             }
         });
-        container.appendChild(dropdown);
-        button.addEventListener("click", () => {
-            var _a;
-            (_a = container.children[1]) === null || _a === void 0 ? void 0 : _a.classList.toggle("hidden");
+        container.appendChild(newDropdown);
+        button.addEventListener("click", (e) => {
+            let dropdown = container.querySelector(".admin-dropdown-menu");
+            if (!dropdown) {
+                console.error("Dropdown not found");
+                return;
+            }
+            dropdown.classList.toggle("hidden");
+            dropdown.setAttribute("aria-hidden", dropdown.classList.contains("hidden").toString());
+            let posX = e.clientX;
+            let posY = e.clientY;
+            if (posY >= 720) {
+                posY -= dropdown.offsetHeight + 25;
+                console.log(container.getBoundingClientRect());
+            }
+            dropdown.style.left = `${posX - 340}px`;
+            dropdown.style.top = `${posY - 50}px`;
         });
     }
     return buttons;
@@ -291,7 +304,7 @@ function renderPagination(container) {
             type: "number",
             min: "1",
             max: "100",
-            value: `${(_a = localStorage.getItem("per_page")) !== null && _a !== void 0 ? _a : 15}`,
+            value: `${(_a = localStorage.getItem("per_page")) !== null && _a !== void 0 ? _a : 12}`,
             class: "w-16 px-1 py-0.5 border border-primary-dark border-opacity-10 rounded-md outline-none focus:border-opacity-100"
         },
         events: {

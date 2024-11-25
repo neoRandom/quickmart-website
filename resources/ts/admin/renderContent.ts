@@ -269,7 +269,7 @@ function renderTableActionsButtons() {
                 {
                     tagName: "div",
                     attributes: { 
-                        class: "relative h-12"
+                        class: "h-12"
                     }
                 },
                 renderElement({
@@ -315,10 +315,10 @@ function renderTableActionsButtons() {
                         showEdit(
                             metadata, 
                             data,
-                            dropdown,
+                            newDropdown,
                             button.getAttribute("key") as unknown as number
                         );
-                        dropdown.classList.add("hidden");
+                        newDropdown.classList.add("hidden");
                     }
                 }
             },
@@ -368,7 +368,7 @@ function renderTableActionsButtons() {
         );
 
         // Creating the dropdown menu
-        const dropdown = renderElement(
+        const newDropdown = renderElement(
             {
                 tagName: "div",
                 attributes: { 
@@ -382,15 +382,36 @@ function renderTableActionsButtons() {
 
         document.addEventListener("click", (e: Event) => {
             const target = e.target as HTMLElement;
-            if (!container.children[1]?.contains(target) && target !== button) {
-                container.children[1]?.classList.add("hidden");
+            let dropdown = container.children[1] as HTMLDivElement;
+
+            if (!dropdown.contains(target) && target !== button) {
+                dropdown.classList.add("hidden");
             }
         });
 
-        container.appendChild(dropdown);
+        container.appendChild(newDropdown);
 
-        button.addEventListener("click", () => {
-            container.children[1]?.classList.toggle("hidden");
+        button.addEventListener("click", (e) => {
+            let dropdown = container.querySelector(".admin-dropdown-menu") as HTMLDivElement;
+            if (!dropdown) {
+                console.error("Dropdown not found");
+                return;
+            }
+
+            dropdown.classList.toggle("hidden");
+            dropdown.setAttribute("aria-hidden", dropdown.classList.contains("hidden").toString());
+
+            let posX = e.clientX;
+            let posY = e.clientY;
+
+            // Prevent overflow
+            if (posY >= 720) {
+                posY -= dropdown.offsetHeight + 25;
+            }
+
+            // For some (unholy) reason, these values are off by a few pixels
+            dropdown.style.left = `${posX - 340}px`;
+            dropdown.style.top = `${posY - 50}px`;
         });
     }
 

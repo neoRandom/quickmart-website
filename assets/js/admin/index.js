@@ -27,7 +27,7 @@ window.addEventListener('load', function () {
     }
 }, false);
 if (localStorage.getItem("per_page") === null) {
-    localStorage.setItem("per_page", "15");
+    localStorage.setItem("per_page", "12");
 }
 const headerDropdownMenuButton = document.querySelector("#header-dropdown-menu-button");
 const headerDropdownMenu = document.querySelector("#header-dropdown-menu");

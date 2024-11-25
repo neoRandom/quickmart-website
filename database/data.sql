@@ -83,11 +83,11 @@ INSERT INTO `compra` (`cod_compra`, `id_func`, `id_cliente`, `data_compra`, `met
 --
 
 INSERT INTO `credenciais` (`usuario`, `hash`, `salt`, `cod_acesso`) VALUES
-('admin', '1234', 0, 1),
-('carlos', 'ijkl', 0, 2),
-('joao', 'abcd', 0, 2),
-('maria', 'efgh', 0, 2),
-('supervisor', '5678', 0, 1);
+('admin', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 3721619912, 1),
+('carlos', '005c19658919186b85618c5870463eec8d9b8c1a9d00208a5352891ba5bbe086', 346033364, 2),
+('joao', '88d4266fd4e6338d13b845fcf289579d209c897823b9217da3e161936f031589', 1518285939, 2),
+('maria', 'e5e088a0b66163a0a26a5e053d2a4496dc16ab6e0e3dd1adf2d16aa84a078c9d', 1852754427, 2),
+('supervisor', 'f8638b979b2f4f793ddb6dbd197e0ee25a7a6ea32b0ae22f5e3c5d119d839e75', 3976280539, 1);
 
 --
 -- Dumping data for table `expediente`

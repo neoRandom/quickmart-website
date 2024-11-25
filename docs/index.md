@@ -23,6 +23,12 @@
 
 - Criar um arquivo de variáveis de ambiente na pasta `config/` chamado `.env`, seguindo o exemplo do arquivo `config/.env.example`.
 
-- Rodar o script `npm run dev` (se estiver usando LAMPP), ou compilar o arquivo CSS com `npm run build:css` e colocar o caminho da pasta do projeto no servidor (se não estiver usando LAMPP).
+- Instalar os módulos necessários com o comando `npm install`
+
+- Rodar o script `npm run dev:l` (se estiver usando LAMPP), ou `npm run dev:w` (se estiver usando WAMPP).
 
 - Abrir o projeto no seu navegador favorito.
+
+# Notas
+
+- o administrador `admin` tem a senha `1234` e o caixa `joao` tem a senha `abcd`

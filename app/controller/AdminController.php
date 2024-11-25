@@ -1,56 +1,53 @@
 <?php
+
+use utilities\Authentication;
+use utilities\Post;
 use database\Connection;
 
 require_once __DIR__ . "/../autoload.php";
 
-// Util (move to another file later)
-function objectToArray($d) 
-{
-    if (is_object($d)) {
-        // Gets the properties of the given object
-        // with get_object_vars function
-        $d = get_object_vars($d);
-    }
-
-    if (is_array($d)) {
-        /*
-        * Return array converted to object
-        * Using __FUNCTION__ (Magic constant)
-        * for recursive call
-        */
-        return array_map(__FUNCTION__, $d);
-    } else {
-        // Return array
-        return $d;
-    }
-}
-
-function getPostData() {
-    $data = file_get_contents('php://input');
-    $data = json_decode($data, true);
-    $data = objectToArray($data);
-
-    return $data;
-}
-
 
 class AdminController
 {
-    public static function loadAdmin()
+    /**
+     * Loads the login process based on the request method.
+     *
+     * If the request method is POST, it processes the login attempt.
+     * Otherwise, it loads the login view.
+     *
+     * @return void
+     */
+    public static function loadLogin()
     {
-        // TODO: Remove this comment before launch
-        // if (!Authentication::validateAdmin()) {
-        //     header("HTTP/1.1 401 Unauthorized");
-        //     Authentication::redirectLogin("admin/login");
-        // }
-
-        require_once __DIR__ . "/../view/admin/admin.php";
+        if (strtoupper($_SERVER["REQUEST_METHOD"]) === "POST") {
+            self::postLogin();
+        }
+        else {
+            self::getLogin();
+        }
     }
 
+    
+    /**
+     * Handles a request by validating the request method and admin identity.
+     *
+     * It checks if the request method matches the given $requestMethod and if the admin is authenticated.
+     * If the request method is invalid or the admin is not authenticated, it sets the appropriate HTTP status code and returns an error response.
+     *
+     * It then executes the given $logic function and checks the result.
+     * If the result contains a 'status' key, it sets the HTTP status code to that value.
+     * If the result contains a 'header' key, it sets the given header.
+     * If the result contains a 'body' key, it outputs the given body.
+     *
+     * If any exceptions are thrown while executing the $logic function, it catches them and returns an error response.
+     *
+     * @param string $requestMethod The request method to validate. Default is "POST".
+     * @param callable $logic The logic function to execute after validation.
+     */
     private static function handleRequest(string $requestMethod = "POST", callable $logic): void
     {
         // Check if the request method is $requestMethod
-        if ($_SERVER['REQUEST_METHOD'] !== $requestMethod) {
+        if (strtoupper($_SERVER['REQUEST_METHOD']) !== strtoupper($requestMethod)) {
             http_response_code(405); // Method Not Allowed
             header('Content-Type: application/json');
             echo json_encode(['error' => "Method Not Allowed. Only $requestMethod requests are allowed."]);
@@ -58,11 +55,12 @@ class AdminController
         }
 
         // Validate admin identity
-        // if (!Authentication::validateAdmin()) {
-        //     http_response_code(401);
-        //     echo 'Unauthorized';
-        //     exit;
-        // }
+        if (!Authentication::validateAdmin()) {
+            http_response_code(401);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Unauthorized']);
+            return;
+        }
 
         // Execute the logic function
         try {
@@ -86,9 +84,59 @@ class AdminController
         }
     }
 
-    public static function postInsert() {
+    
+
+    /**
+     * Loads the admin login view.
+     */
+    private static function getLogin() {
+        require_once __DIR__ . "/../view/admin/login.php";
+    }
+
+
+    private static function postLogin() { /* ... */ }
+
+
+    /**
+     * Loads the admin view.
+     *
+     * This method is responsible for rendering the admin view. It uses the
+     * handleRequest method to validate the request and execute the logic
+     * of loading the view. The view is loaded from the admin.php file in the
+     * view/admin directory.
+     *
+     * @return void
+     */
+    public static function loadAdmin()
+    {
+        self::handleRequest("GET", function () {
+            ob_start();
+            require_once __DIR__ . "/../view/admin/admin.php";
+            $content = ob_get_clean(); 
+
+            return [
+                "status" => 200,
+                "header" => "Content-Type: text/html",
+                "body" => $content
+            ];
+        });
+    }
+
+
+    /**
+     * Handles the POST request to insert a new record into the database.
+     *
+     * This method retrieves the data from the POST request, determines the target table
+     * based on the provided table index, and attempts to create a new record. If the data
+     * cannot be converted into the appropriate format or the record creation fails, it
+     * responds with an error. Otherwise, it confirms the successful insertion of the data.
+     *
+     * @return void
+     */
+    public static function postInsert() 
+    {
         self::handleRequest("POST", function () {
-            $data = getPostData();
+            $data = Post::getPostData();
 
             $tableIndex = (int) $data['id'];
             $tableClass = Connection::getTables()[$tableIndex];
@@ -117,9 +165,21 @@ class AdminController
         });
     }
 
-    public static function postUpdate() {
+
+    /**
+     * Handles the POST request to update an existing record in the database.
+     *
+     * This method retrieves the data from the POST request, determines the target table
+     * based on the provided table index, and attempts to update the existing record. If the
+     * data cannot be converted into the appropriate format or the record update fails, it
+     * responds with an error. Otherwise, it confirms the successful update of the data.
+     *
+     * @return void
+     */
+    public static function postUpdate() 
+    {
         self::handleRequest("POST", function () {
-            $data = getPostData();
+            $data = Post::getPostData();
 
             $tableIndex = (int) $data['id'];
             $tableClass = Connection::getTables()[$tableIndex];
@@ -148,9 +208,21 @@ class AdminController
         });
     }
 
-    public static function postDelete() {
+
+    /**
+     * Handles the POST request to delete a record from the database.
+     *
+     * This method retrieves the data from the POST request, determines the target table
+     * based on the provided table index, and attempts to delete the record. If the data
+     * cannot be converted into the appropriate format or the record deletion fails, it
+     * responds with an error. Otherwise, it confirms the successful deletion of the data.
+     *
+     * @return void
+     */
+    public static function postDelete() 
+    {
         self::handleRequest("POST", function () {
-            $data = getPostData();
+            $data = Post::getPostData();
 
             $tableIndex = (int) $data['id'];
             $tableClass = Connection::getTables()[$tableIndex];
@@ -181,34 +253,6 @@ class AdminController
 
 
     /**
-     * Loads the login process based on the request method.
-     *
-     * If the request method is POST, it processes the login attempt.
-     * Otherwise, it loads the login view.
-     *
-     * @return void
-     */
-    public static function loadLogin()
-    {
-        if (strtoupper($_SERVER["REQUEST_METHOD"]) === "POST") {
-            self::postLogin();
-        }
-        else {
-            self::getLogin();
-        }
-    }
-
-    /**
-     * Loads the admin login view.
-     */
-    private static function getLogin() {
-        require_once __DIR__ . "/../view/admin/login.php";
-    }
-
-    private static function postLogin() { /* ... */ }
-
-
-    /**
      * Handle a GET request to retrieve the data and metadata of a table
      *
      * This method verifies that the request method is GET and that the
@@ -219,7 +263,8 @@ class AdminController
      * If any of the verifications fail, the method returns an appropriate
      * HTTP status code and an error message.
      */
-    public static function getMetadata() {
+    public static function getMetadata() 
+    {
         self::handleRequest("GET", function () {
             // Verify and sanitize the 'id' parameter
             if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -273,6 +318,7 @@ class AdminController
         });
     }
 
+
     /**
      * Retrieves and returns the table rows as a JSON response based on the provided table index.
      *
@@ -282,7 +328,8 @@ class AdminController
      *
      * @return void
      */
-    public static function getRegisters() {
+    public static function getRegisters() 
+    {
         self::handleRequest("GET", function () {
             // Verify and sanitize the 'id' parameter
             if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {

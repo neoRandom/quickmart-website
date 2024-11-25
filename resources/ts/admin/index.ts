@@ -177,7 +177,7 @@ function calculateTableSize(metadataSQL: SQLMetadata[]) {
     for (let rowData of metadataSQL) {
         if (rowData.Type.includes("char") || rowData.Type.includes("binary")) {
             let columnSize = parseInt(rowData.Type.split("(")[1]?.split(")")[0] ?? "1");
-            let gridCols = Math.floor(columnSize / 12);
+            let gridCols = Math.min(Math.ceil(columnSize / 12), 4);
             sizes.columns.push(gridCols);
             sizes.total += gridCols;
         }

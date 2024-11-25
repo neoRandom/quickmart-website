@@ -132,9 +132,15 @@ class Connection extends \PDO
 
         // New method
         return [
-            model\Produto::class,
+            model\Cargo::class,
             model\Categoria::class,
-            model\Cargo::class
+            model\Classificacao::class,
+            model\Cliente::class,
+            model\Compra::class,
+            model\Credenciais::class,
+            model\Expediente::class,
+            model\Funcionario::class,
+            model\Produto::class
         ];
     }
 

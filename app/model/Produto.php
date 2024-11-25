@@ -308,35 +308,32 @@ class Produto extends Model {
      * @param string $value The value to search for in the name
      * @return array An array of Produto instances
      */
-    public static function getAll(string $value = ""): array {
+    public static function getAll(string $value = "", int $limit = 0, int $offset = 0): array {
+        $sql = "SELECT * FROM produto";
+        $params = [];
+    
         if ($value !== "") {
-            $sql = "SELECT * FROM produto WHERE nome LIKE :nome";
-
-            $stmt = database\Connection::executeDQL(
-                $sql, 
-                [':nome' => "%$value%"]
-            );
+            $sql .= " WHERE nome LIKE :value";
+            $params[':value'] = '%' . $value . '%';
         }
-        else {
-            $sql = "SELECT * FROM produto";
-
-            $stmt = database\Connection::executeDQL(
-                $sql
-            );
+    
+        if ($limit > 0) {
+            $sql .= " LIMIT " . intval($limit);
         }
-
+        if ($offset > 0) {
+            $sql .= " OFFSET " . intval($offset);
+        }
+    
+        $stmt = database\Connection::executeDQL($sql, $params);
+    
         if ($stmt === null) {
             throw new \PDOException("Erro ao executar a consulta SQL");
         }
-
+    
         $produtos = [];
-
-        // For each register found, create a new Produto instance
+    
+        // Process each record
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            if ($row === false) {
-                throw new \PDOException("Erro ao ler o registro da consulta SQL");
-            }
-
             $produtos[] = new Produto(
                 cod_cate: $row['cod_cate'],
                 cod_promo_prod: $row['cod_promo_prod'],
@@ -349,9 +346,9 @@ class Produto extends Model {
                 cod_prod: $row['cod_prod']
             );
         }
-
+    
         return $produtos;
-    }
+    }    
 }
 
 ?>

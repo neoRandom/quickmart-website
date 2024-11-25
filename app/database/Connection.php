@@ -164,11 +164,11 @@ class Connection extends \PDO
         }
     }
 
-    public static function getTableRowsJSON(int $tableID): array
+    public static function getTableRowsJSON(int $tableID, string $value, int $limit, int $offset): array
     {
         $table = self::getTables()[$tableID];
 
-        $rows = $table::getAll();
+        $rows = $table::getAll($value, $limit, $offset);
 
         foreach ($rows as $key => $row) {
             $rows[$key] = $row->toArray();

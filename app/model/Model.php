@@ -35,7 +35,7 @@ abstract class Model {
 
     // ========================= Table-scoped Methods =========================
 
-    public abstract static function getAll(string $value = ""): array;
+    public abstract static function getAll(string $value, int $limit, int $offset): array;
 }
 
 ?>

@@ -178,21 +178,24 @@ class Categoria extends Model {
 
     // ========================= Table-scoped Methods =========================
 
-    public static function getAll(string $value = ""): array {
+    public static function getAll(string $value = "", int $limit = 0, int $offset = 0): array {
+        $sql = "SELECT * FROM categoria";
+        $params = [];
+    
         if ($value !== "") {
-            $sql = "SELECT * FROM categoria WHERE descricao LIKE :descricao";
-            $stmt = database\Connection::executeDQL(
-                $sql,
-                [':descricao' => "%$value%"]
-            );
+            $sql .= " WHERE descricao LIKE :value";
+            $params[':value'] = '%' . $value . '%';
         }
-        else {
-            $sql = "SELECT * FROM categoria";
-            $stmt = database\Connection::executeDQL(
-                $sql
-            );
+    
+        if ($limit > 0) {
+            $sql .= " LIMIT " . intval($limit);
         }
-
+        if ($offset > 0) {
+            $sql .= " OFFSET " . intval($offset);
+        }
+    
+        $stmt = database\Connection::executeDQL($sql, $params);
+    
         if ($stmt === null) {
             throw new \PDOException("Erro ao executar a consulta SQL");
         }
@@ -200,10 +203,6 @@ class Categoria extends Model {
         $categorias = [];
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            if ($row === false) {
-                throw new \PDOException("Erro ao ler o registro da consulta SQL");
-            }
-
             $categorias[] = new Categoria(
                 cod_cate: $row['cod_cate'],
                 cod_promo_cate: $row['cod_promo_cate'],

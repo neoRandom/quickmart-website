@@ -139,17 +139,23 @@ class Cargo extends Model {
         );
     }
 
-    public static function getAll(string $value = ""): array {
+    public static function getAll(string $value = "", int $limit = 0, int $offset = 0): array {
+        $sql = "SELECT * FROM cargo";
+        $params = [];
+    
         if ($value !== "") {
-            $sql = "SELECT * FROM cargo WHERE descricao LIKE :descricao";
-            $stmt = database\Connection::executeDQL(
-                $sql,
-                [':descricao' => "%$value%"]
-            );
-        } else {
-            $sql = "SELECT * FROM cargo";
-            $stmt = database\Connection::executeDQL($sql);
+            $sql .= " WHERE descricao LIKE :value";
+            $params[':value'] = '%' . $value . '%';
         }
+    
+        if ($limit > 0) {
+            $sql .= " LIMIT " . intval($limit);
+        }
+        if ($offset > 0) {
+            $sql .= " OFFSET " . intval($offset);
+        }
+    
+        $stmt = database\Connection::executeDQL($sql, $params);
 
         if ($stmt === null) {
             throw new \PDOException("Erro ao executar a consulta SQL");
@@ -158,10 +164,6 @@ class Cargo extends Model {
         $cargos = [];
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            if ($row === false) {
-                throw new \PDOException("Erro ao ler o registro da consulta SQL");
-            }
-
             $cargos[] = new Cargo(
                 cod_cargo: $row['cod_cargo'],
                 descricao: $row['descricao'],

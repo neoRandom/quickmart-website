@@ -283,40 +283,51 @@ class AdminController
      * @return void
      */
     public static function getRegisters() {
-        // Ensure the request method is GET
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-            http_response_code(405);
-            echo 'Method Not Allowed';
-            exit;
-        }
+        self::handleRequest("GET", function () {
+            // Verify and sanitize the 'id' parameter
+            if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+                return [
+                    "status" => 400,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode(["error" => "Bad Request"])
+                ];
+            }
 
-        // Validate admin identity
-        // if (!Authentication::validateAdmin()) {
-        //     http_response_code(401);
-        //     echo 'Unauthorized';
-        //     exit;
-        // }
+            $tableIndex = (int) $_GET['id'];
 
-        // Verify and sanitize the 'id' parameter
-        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-            http_response_code(400);
-            echo 'Bad Request';
-            exit;
-        }
+            $value = "";
+            if (isset($_GET["value"])) {
+                $value = $_GET["value"];
+            }
 
-        $tableIndex = (int) $_GET['id'];
+            $limit = 10;
+            if (isset($_GET["limit"]) && is_numeric($_GET["limit"])) {
+                $limit = (int) $_GET["limit"];
+            }
 
-        try {
-            $payload = Connection::getTableRowsJSON($tableIndex);
+            $offset = 0;
+            if (isset($_GET["offset"]) && is_numeric($_GET["offset"])) {
+                $offset = (int) $_GET["offset"];
+            }
 
-            // Return the registers as a JSON response
-            header('Content-Type: application/json');
-            echo json_encode($payload);
-        } catch (\PDOException $e) {
-            error_log("PDOException: " . $e->getMessage());
-            http_response_code(500);
-            echo 'Internal Server Error';
-        }
+            try {
+                $payload = Connection::getTableRowsJSON($tableIndex, $value, $limit, $offset);
+
+                // Return the registers as a JSON response
+                return [
+                    "status" => 200,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode($payload)
+                ];
+            } catch (\PDOException $e) {
+                error_log("PDOException: " . $e->getMessage());
+                return [
+                    "status" => 500,
+                    "header" => "Content-Type: text/plain",
+                    "body" => "Internal Server Error"
+                ];
+            }
+        });
     }
 }
 

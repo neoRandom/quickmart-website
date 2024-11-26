@@ -711,6 +711,10 @@ video {
   right: 2.5rem;
 }
 
+.right-4 {
+  right: 1rem;
+}
+
 .top-0 {
   top: 0px;
 }
@@ -890,12 +894,20 @@ video {
   width: 1rem;
 }
 
+.w-4\/5 {
+  width: 80%;
+}
+
 .w-56 {
   width: 14rem;
 }
 
 .w-6 {
   width: 1.5rem;
+}
+
+.w-\[680px\] {
+  width: 680px;
 }
 
 .w-\[calc\(100\%-14rem\)\] {
@@ -1069,6 +1081,10 @@ video {
 
 .text-wrap {
   text-wrap: wrap;
+}
+
+.break-words {
+  overflow-wrap: break-word;
 }
 
 .break-all {
@@ -1639,6 +1655,11 @@ video {
 .\*\:py-2 > * {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+}
+
+.\*\:py-4 > * {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .\*\:pt-1 > * {

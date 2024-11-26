@@ -44,8 +44,8 @@ function generateHeader(string $username, array $access) {
                         rounded-md shadow-md
                     ">
                     <ul class="flex flex-col gap-2 *:w-full *:*:w-full">
-                        <li class="hidden">
-                            <button type="button" id="header-dropdown-menu-help-button">
+                        <li>
+                            <button type="button" id="header-dropdown-menu-dev-button">
                                 <div class="
                                         flex items-center gap-4
                                         px-4 py-2
@@ -56,10 +56,27 @@ function generateHeader(string $username, array $access) {
                                         <img src="/quickmart/assets/images/logout.png" alt="" width="100%" height="100%">
                                     </div>
                                     <p>
-                                        Ajuda
+                                        Desenvolvedores
                                     </p>
                                 </div>
                             </button>
+                        </li>
+                        <li>
+                            <a href="/quickmart/public/admin/login">
+                                <div class="
+                                        flex items-center gap-4
+                                        px-4 py-2
+                                        rounded-md transition-colors
+                                        hover:bg-neutral-200
+                                    ">
+                                    <div class="w-4 aspect-square">
+                                        <img src="/quickmart/assets/images/logout.png" alt="" width="100%" height="100%">
+                                    </div>
+                                    <p>
+                                        Re-entrar
+                                    </p>
+                                </div>
+                            </a>
                         </li>
                         <li>
                             <a href="/quickmart/public/admin/logout">

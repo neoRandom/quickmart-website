@@ -76,7 +76,7 @@ devButton.addEventListener("click", () => {
         }
     }), cancelButton);
     let body = {
-        "Fellipe Leonardo Peixoto Cunha": "Sou atualmente um estudante de Desenvolvimento de Sistemas, apaixonado desde a infância por tecnologia.",
+        "Fellipe Leonardo Peixoto Cunha": "Atualmente um estudante de Desenvolvimento de Sistemas, mas apaixonado desde a infância por tecnologia.",
         "Bárbara Fernandes Rampazi": "Estudante do curso de DS, novata na área da tecnologia, mas aprimorando minhas habilidades.",
         "Enzo de Paulo Souto": "Sou um jovem estudante, desenvolvendo minhas habilidades em DS, buscando aprimorar meus conhecimentos."
     };

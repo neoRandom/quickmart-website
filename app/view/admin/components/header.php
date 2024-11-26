@@ -52,8 +52,8 @@ function generateHeader(string $username, array $access) {
                                         rounded-md transition-colors
                                         hover:bg-neutral-200
                                     ">
-                                    <div class="w-4 aspect-square">
-                                        <img src="/quickmart/assets/images/logout.png" alt="" width="100%" height="100%">
+                                    <div class="w-6 aspect-square">
+                                        <img src="/quickmart/assets/images/developer.svg" alt="" width="100%" height="100%">
                                     </div>
                                     <p>
                                         Desenvolvedores
@@ -69,7 +69,7 @@ function generateHeader(string $username, array $access) {
                                         rounded-md transition-colors
                                         hover:bg-neutral-200
                                     ">
-                                    <div class="w-4 aspect-square">
+                                    <div class="w-4 mr-2 aspect-square rotate-180">
                                         <img src="/quickmart/assets/images/logout.png" alt="" width="100%" height="100%">
                                     </div>
                                     <p>
@@ -86,7 +86,7 @@ function generateHeader(string $username, array $access) {
                                         rounded-md transition-colors
                                         hover:bg-neutral-200
                                     ">
-                                    <div class="w-4 aspect-square">
+                                    <div class="w-4 mr-2 aspect-square">
                                         <img src="/quickmart/assets/images/logout.png" alt="" width="100%" height="100%">
                                     </div>
                                     <p>

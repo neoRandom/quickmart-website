@@ -9,8 +9,24 @@
 </head>
 <body>
     <div class="flex items-center justify-center w-screen h-screen bg-gray-100">
-        <div class="absolute top-0 left-0 w-full px-5 py-2 bg-primary">
+        <div class="absolute top-0 left-0 flex items-center w-full px-5 py-2 bg-primary">
             <img src="/quickmart/assets/images/QuickMart.png" alt="">
+            <?php 
+                require_once __DIR__ . "/../../utilities/JWT.php";
+                try{
+                    if (!isset($_COOKIE["admin_token"])) {
+                        throw new Exception();
+                    }
+                    $payload = utilities\JWT::verifyJWT($_COOKIE["admin_token"]);
+
+                    ?>
+                    <div class="ml-auto text-white">
+                        Já logado como: <?php echo $payload["username"] ?>
+                    </div>
+                    <?php
+                }
+                catch(\Exception $e){}
+            ?>
         </div>
         <div class="bg-white border border-black-pute border-opacity-10 rounded-md shadow-md -translate-y-16">
             <div class="text-center bg-primary px-8 pb-2 pt-4 rounded-t-md">
@@ -56,6 +72,28 @@
                 </div>
             </form>
         </div>
+        <div class="absolute bottom-0 left-0 w-full px-5 py-2 bg-primary">
+            <p class="text-center text-white hover:*:underline">
+                © QuickMart 2024 | Criado por: 
+                <a href="https://github.com/neoRandom" target="_blank">Fellipe Leonardo</a>, Bárbara Fernandes e Enzo Souto
+            </p>
+        </div>
     </div>
+    <script>
+        const cookies = document.cookie.split("; ");
+        const stateCookie = cookies.find(cookie => cookie.startsWith("state="));
+        if (stateCookie) {
+            const stateValue = stateCookie.split("=")[1];
+            switch (stateValue) {
+                case "unauthorized":
+                    alert("Usuário sem permissão");
+                    break;
+                case "not-found":
+                    alert("Usuário não encontrado");
+                    break;
+            }
+            document.cookie = "state=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+        }
+    </script>
 </body>
 </html>

@@ -44,7 +44,7 @@ function generateHeader(string $username, array $access) {
                         rounded-md shadow-md
                     ">
                     <ul class="flex flex-col gap-2 *:w-full *:*:w-full">
-                        <li>
+                        <li class="hidden">
                             <button type="button" id="header-dropdown-menu-help-button">
                                 <div class="
                                         flex items-center gap-4

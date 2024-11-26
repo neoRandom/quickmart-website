@@ -687,6 +687,10 @@ video {
   left: -1rem;
 }
 
+.bottom-0 {
+  bottom: 0px;
+}
+
 .bottom-10 {
   bottom: 2.5rem;
 }
@@ -1705,6 +1709,10 @@ video {
 .hover\:\*\:\*\:text-black > * > *:hover {
   --tw-text-opacity: 1;
   color: rgb(32 32 32 / var(--tw-text-opacity, 1));
+}
+
+.hover\:\*\:underline > *:hover {
+  text-decoration-line: underline;
 }
 
 .focus\:border-secondary:focus {

@@ -123,7 +123,19 @@ class AdminController
 
         // Verificando as credenciais
         $user = new Credenciais($username);
-        $user->read();
+        if (!$user->read())
+        {
+            setcookie("state", "not-found", time() + 3600);
+            header('Location: ' . BASE_URL . 'admin/login');
+            exit;
+        }
+
+        if ($user->getCodAcesso() !== 1)
+        {
+            setcookie("state", "unauthorized", time() + 3600);
+            header('Location: ' . BASE_URL . 'admin/login');
+            exit;
+        }
 
         $result = Hash::verify($password, $user->getHash(), $user->getSalt());
 
@@ -140,10 +152,8 @@ class AdminController
             header('Location: ' . BASE_URL . 'admin');
         }
         else {
-            http_response_code(401);
             header('Location: ' . BASE_URL . 'admin/login');
-            header('Content-Type: application/json');
-            echo json_encode(['error' => 'Unauthorized']);
+            exit;
         }
     }
 

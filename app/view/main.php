@@ -193,7 +193,7 @@
         ">
         <div>
             <p class="text-center">
-                Made by: rakRandom, caramelPopp and EnzoSouto01 | QuickMart Project © 2024
+                Feito por: rakRandom, caramelPopp and EnzoSouto01 | QuickMart Project © 2024
             </p>
         </div>
     </footer>

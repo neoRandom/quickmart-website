@@ -281,11 +281,11 @@ function renderPagination(container) {
         tagName: "p",
         innerText: `Página ${cached_page + 1}`,
         attributes: {
-            class: "text-sm text-black-pure/75 w-16"
+            class: "text-sm text-black-pure/75 w-20"
         }
     }), renderElement({
         tagName: "button",
-        innerText: "Previous",
+        innerText: "Anterior",
         attributes: {
             type: "button",
             class: "hover:underline"
@@ -300,7 +300,7 @@ function renderPagination(container) {
         }
     }), renderElement({
         tagName: "button",
-        innerText: "Next",
+        innerText: "Próximo",
         attributes: {
             type: "button",
             class: "hover:underline"

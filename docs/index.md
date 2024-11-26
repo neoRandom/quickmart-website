@@ -3,8 +3,8 @@
 - `app`: Principais arquivos PHP, utiliza o modelo MVC
     - `controller`: Lógica principal
     - `database`: Lógica relacionada ao banco de dados
-    - `middleware`: Códigos a serem executados antes do `controller`
     - `model`: Classes de modelagem
+    - `utilities`: Códigos auxiliares
     - `view`: Templates das páginas
 - `assets`: Arquivos estáticos a serem usados pelas páginas
 - `config`: Arquivos de configuração para o projeto (variáveis de ambiente e scripts)

@@ -26,6 +26,12 @@ let cached_key: string = "";
 let cached_search: string = "";
 
 
+/* Notes:
+ * - If the key is not defined, it will use the cached one, if exists
+ * - If the search is not defined, it will use the cached one, if exists
+ * - If the key is defined but empty, the content will not be loaded with the key in the url
+ * - If the search is defined but empty, the content will not be loaded with the value in the url
+ */
 async function renderContent(container: HTMLElement, new_metadata: TableMetadata, page?: number, key?: string, search?: string) {
     metadata = new_metadata;
 

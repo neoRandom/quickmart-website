@@ -264,7 +264,6 @@ function renderTableActionsButtons() {
             let posX = e.clientX - ((_b = relativePos === null || relativePos === void 0 ? void 0 : relativePos.x) !== null && _b !== void 0 ? _b : 0);
             let posY = e.clientY - ((_c = relativePos === null || relativePos === void 0 ? void 0 : relativePos.y) !== null && _c !== void 0 ? _c : 0);
             posX -= dropdown.offsetWidth + 10;
-            console.log(window.innerHeight - dropdown.offsetHeight);
             if (e.clientY >= window.innerHeight - dropdown.offsetHeight) {
                 posY -= dropdown.offsetHeight + 10;
             }

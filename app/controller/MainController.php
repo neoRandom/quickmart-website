@@ -1,5 +1,8 @@
 <?php
-require_once __DIR__ . "/../middleware/Authentication.php";
+
+use utilities\Authentication;
+
+require_once __DIR__ . "/../autoload.php";
 
 class MainController
 {

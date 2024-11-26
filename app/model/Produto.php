@@ -308,12 +308,19 @@ class Produto extends Model {
      * @param string $value The value to search for in the name
      * @return array An array of Produto instances
      */
-    public static function getAll(string $value = "", int $limit = 0, int $offset = 0): array {
+    public static function getAll(string | null $key, string $value = "", int $limit = 0, int $offset = 0): array {
         $sql = "SELECT * FROM produto";
         $params = [];
+
+        if ($key !== "") {
+            $sanitizedKey = preg_replace('/[^a-zA-Z0-9_]/', '', $key);
+        }
+        else {
+            $sanitizedKey = "nome";
+        }
     
-        if ($value !== "") {
-            $sql .= " WHERE nome LIKE :value";
+        if ($value !== "" && isset($sanitizedKey)) {
+            $sql .= " WHERE $sanitizedKey LIKE :value";
             $params[':value'] = '%' . $value . '%';
         }
     

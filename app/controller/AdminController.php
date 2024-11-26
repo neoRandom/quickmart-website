@@ -399,6 +399,11 @@ class AdminController
 
             $tableIndex = (int) $_GET['id'];
 
+            $key = null;
+            if (isset($_GET["key"])) {
+                $key = $_GET["key"];
+            }
+
             $value = "";
             if (isset($_GET["value"])) {
                 $value = $_GET["value"];
@@ -415,7 +420,7 @@ class AdminController
             }
 
             try {
-                $payload = Connection::getTableRowsJSON($tableIndex, $value, $limit, $offset);
+                $payload = Connection::getTableRowsJSON($tableIndex, $key, $value, $limit, $offset);
 
                 // Return the registers as a JSON response
                 return [

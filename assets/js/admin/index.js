@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a;
 import { renderElement, renderNotification, renderTag } from "../Render/index.js";
-import { hideEdit, showCreate } from "./crud.js";
+import { showCreate } from "./crud.js";
 import renderContent from "./renderContent.js";
 import { NotificationType } from "../enum/render.js";
 const sideMenu = document.querySelector("#sidebar");
@@ -59,6 +59,7 @@ sideMenuItens.forEach((e, i) => {
     });
 });
 let tablesMetadataCache = [];
+let structure;
 function loadPage(id) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!(yield fetchMetadata(id)))
@@ -70,11 +71,10 @@ function loadPage(id) {
             else
                 e.classList.remove("selected-item");
         });
-        hideEdit();
         while (crudContainer.firstChild) {
             crudContainer.removeChild(crudContainer.firstChild);
         }
-        const structure = renderContainer(crudContainer);
+        structure = renderContainer(crudContainer);
         if (!(yield renderContent(structure, metadata, 0)))
             return;
         crudContainer.classList.remove("hidden");
@@ -184,7 +184,17 @@ function renderSearchBar() {
         tagName: "form",
         attributes: {
             action: "",
+            method: "GET",
             class: "flex gap-4 w-full"
+        },
+        events: {
+            submit: (e) => {
+                var _a, _b;
+                e.preventDefault();
+                let formData = new FormData(e.target);
+                renderContent(structure, metadata, 0, (_a = formData.get("search-column")) === null || _a === void 0 ? void 0 : _a.toString(), (_b = formData.get("search-input")) === null || _b === void 0 ? void 0 : _b.toString());
+                return false;
+            }
         }
     }, renderElement({
         tagName: "label",
@@ -199,7 +209,7 @@ function renderSearchBar() {
             type: "search",
             name: "search-input",
             id: "search-input",
-            placeholder: "Pesquise pelo nome",
+            placeholder: "Pesquisar...",
             class: `
                         flex-1 px-4 py-1 bg-neutral-100 
                         border-2 border-transparent 
@@ -207,6 +217,25 @@ function renderSearchBar() {
                     `
         }
     }), renderElement({
+        tagName: "select",
+        attributes: {
+            name: "search-column",
+            id: "search-column",
+            class: `
+                            px-4 py-1 bg-neutral-100 
+                            border-2 border-transparent 
+                            rounded-md outline-none focus:border-secondary
+                        `
+        }
+    }, ...metadata.rows.map((column) => {
+        return renderElement({
+            tagName: "option",
+            innerText: column.Field,
+            attributes: {
+                value: column.Field
+            }
+        });
+    })), renderElement({
         tagName: "button",
         innerText: "Pesquisar",
         attributes: {

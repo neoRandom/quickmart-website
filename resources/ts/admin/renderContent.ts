@@ -10,6 +10,7 @@ import {
 } from "../Render/index.js";
 
 import {
+    hideEdit,
     showDelete,
     showDetails,
     showEdit
@@ -21,9 +22,11 @@ let data: TableData;
 let metadata: TableMetadata;
 
 let cached_page: number = 0;
+let cached_key: string = "";
+let cached_search: string = "";
 
 
-async function renderContent(container: HTMLElement, new_metadata: TableMetadata, page?: number, search?: string) {
+async function renderContent(container: HTMLElement, new_metadata: TableMetadata, page?: number, key?: string, search?: string) {
     metadata = new_metadata;
 
     // Fetch the data (registers) from the server
@@ -33,10 +36,27 @@ async function renderContent(container: HTMLElement, new_metadata: TableMetadata
     if (localStorage.getItem("per_page") !== null)
         per_page = parseInt(localStorage.getItem("per_page") ?? "12");
 
-    if (search !== undefined) url += `&value=${search}`;
-    if (page !== undefined) {
+    if (key === undefined) {
+        if (cached_key !== undefined && cached_key !== "") {
+            url += `&key=${cached_key}`;
+        }
+    }
+    else if (key !== "") {
+        url += `&key=${key}`;
+    }
+
+    if (search === undefined) {
+        if (cached_search !== undefined && cached_search !== "") {
+            url += `&value=${cached_search}`;
+        }
+    }
+    else if (search !== "") {
+        url += `&value=${search}`;
+    }
+
+    if (per_page !== undefined) {
         url += `&limit=${per_page}`;
-        if (per_page !== undefined) {
+        if (page !== undefined) {
             url += `&offset=${page * per_page}`;
         }
     }
@@ -59,6 +79,14 @@ async function renderContent(container: HTMLElement, new_metadata: TableMetadata
 
     if (page !== undefined)
         cached_page = page;
+
+    if (key !== undefined)
+        cached_key = key;
+
+    if (search !== undefined)
+        cached_search = search;
+
+    hideEdit();
 
     // Setting the placeholder
     const placeholder = container.children[1]?.children[1] as HTMLElement;
@@ -458,6 +486,7 @@ function renderPagination(container: HTMLElement) {
             events: {
                 click: () => {
                     if (cached_page > 0) {
+                        hideEdit();
                         renderContent(container, metadata, cached_page - 1);
                     }
                 }
@@ -471,7 +500,10 @@ function renderPagination(container: HTMLElement) {
                 class: "hover:underline"
             },
             events: {
-                click: () => renderContent(container, metadata, cached_page + 1)
+                click: () => {
+                    hideEdit();
+                    renderContent(container, metadata, cached_page + 1)
+                }
             }
         }),
         renderElement(
@@ -501,7 +533,21 @@ function renderPagination(container: HTMLElement) {
                     input: (e) => localStorage.setItem("per_page", (e.target as HTMLInputElement).value)
                 }
             })
-        )
+        ),
+        renderElement({
+            tagName: "button",
+            innerText: "Recarregar Tabela",
+            attributes: {
+                class: "px-2 py-0.5 border border-primary-dark border-opacity-10 rounded-md hover:bg-primary-dark hover:bg-opacity-10",
+                type: "button"
+            },
+            events: {
+                click: () => {
+                    hideEdit();
+                    renderContent(container, metadata, 0, "", "");
+                }
+            }
+        })
     );
 }
 

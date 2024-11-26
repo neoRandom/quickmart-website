@@ -2,22 +2,21 @@
 
 namespace utilities;
 
+namespace utilities;
+
 class Post {
     public static function objectToArray($d) 
     {
         if (is_object($d)) {
-            // Gets the properties of the given object
-            // with get_object_vars function
+            // Converts the object to an associative array
             $d = get_object_vars($d);
         }
 
         if (is_array($d)) {
             /*
-            * Return array converted to object
-            * Using __FUNCTION__ (Magic constant)
-            * for recursive call
+            * Recursively convert objects within arrays to arrays
             */
-            return array_map(__FUNCTION__, $d);
+            return array_map([self::class, 'objectToArray'], $d);
         } else {
             // Return array
             return $d;
@@ -25,12 +24,16 @@ class Post {
     }
 
     public static function getData() {
-        $data = file_get_contents('php://input');
-        $data = json_decode($data, true);
-        $data = self::objectToArray($data);
+        if (!$_POST) {
+            $data = file_get_contents('php://input');
+            $data = json_decode($data, true);
+            $data = self::objectToArray($data);
 
-        return $data;
+            return $data;
+        }
+        return $_POST;
     }
 }
+
 
 ?>

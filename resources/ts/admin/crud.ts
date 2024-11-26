@@ -264,7 +264,7 @@ function showEdit(new_metadata: TableMetadata, data: TableData, dropdown: HTMLDi
                     type: "submit",
                     form: `edit-id-${key}`,
                     value: "Salvar",
-                    class: "cursor-pointer"
+                    class: "text-left cursor-pointer"
                 }
             }
         ),

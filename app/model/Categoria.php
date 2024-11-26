@@ -178,12 +178,19 @@ class Categoria extends Model {
 
     // ========================= Table-scoped Methods =========================
 
-    public static function getAll(string $value = "", int $limit = 0, int $offset = 0): array {
+    public static function getAll(string | null $key, string $value = "", int $limit = 0, int $offset = 0): array {
         $sql = "SELECT * FROM categoria";
         $params = [];
+
+        if ($key !== "") {
+            $sanitizedKey = preg_replace('/[^a-zA-Z0-9_]/', '', $key);
+        }
+        else {
+            $sanitizedKey = "descricao";
+        }
     
-        if ($value !== "") {
-            $sql .= " WHERE descricao LIKE :value";
+        if ($value !== "" && isset($sanitizedKey)) {
+            $sql .= " WHERE $sanitizedKey LIKE :value";
             $params[':value'] = '%' . $value . '%';
         }
     

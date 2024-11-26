@@ -8,12 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { renderElement, renderNotification } from "../Render/index.js";
-import { showDelete, showDetails, showEdit } from "./crud.js";
+import { hideEdit, showDelete, showDetails, showEdit } from "./crud.js";
 import { NotificationType } from "../enum/render.js";
 let data;
 let metadata;
 let cached_page = 0;
-function renderContent(container, new_metadata, page, search) {
+let cached_key = "";
+let cached_search = "";
+function renderContent(container, new_metadata, page, key, search) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
         metadata = new_metadata;
@@ -21,11 +23,25 @@ function renderContent(container, new_metadata, page, search) {
         let per_page = undefined;
         if (localStorage.getItem("per_page") !== null)
             per_page = parseInt((_a = localStorage.getItem("per_page")) !== null && _a !== void 0 ? _a : "12");
-        if (search !== undefined)
+        if (key === undefined) {
+            if (cached_key !== undefined && cached_key !== "") {
+                url += `&key=${cached_key}`;
+            }
+        }
+        else if (key !== "") {
+            url += `&key=${key}`;
+        }
+        if (search === undefined) {
+            if (cached_search !== undefined && cached_search !== "") {
+                url += `&value=${cached_search}`;
+            }
+        }
+        else if (search !== "") {
             url += `&value=${search}`;
-        if (page !== undefined) {
+        }
+        if (per_page !== undefined) {
             url += `&limit=${per_page}`;
-            if (per_page !== undefined) {
+            if (page !== undefined) {
                 url += `&offset=${page * per_page}`;
             }
         }
@@ -44,6 +60,11 @@ function renderContent(container, new_metadata, page, search) {
         }
         if (page !== undefined)
             cached_page = page;
+        if (key !== undefined)
+            cached_key = key;
+        if (search !== undefined)
+            cached_search = search;
+        hideEdit();
         const placeholder = (_b = container.children[1]) === null || _b === void 0 ? void 0 : _b.children[1];
         const table = renderElement({
             tagName: "div",
@@ -272,6 +293,7 @@ function renderPagination(container) {
         events: {
             click: () => {
                 if (cached_page > 0) {
+                    hideEdit();
                     renderContent(container, metadata, cached_page - 1);
                 }
             }
@@ -284,7 +306,10 @@ function renderPagination(container) {
             class: "hover:underline"
         },
         events: {
-            click: () => renderContent(container, metadata, cached_page + 1)
+            click: () => {
+                hideEdit();
+                renderContent(container, metadata, cached_page + 1);
+            }
         }
     }), renderElement({
         tagName: "div",
@@ -309,6 +334,19 @@ function renderPagination(container) {
         events: {
             input: (e) => localStorage.setItem("per_page", e.target.value)
         }
-    })));
+    })), renderElement({
+        tagName: "button",
+        innerText: "Recarregar Tabela",
+        attributes: {
+            class: "px-2 py-0.5 border border-primary-dark border-opacity-10 rounded-md hover:bg-primary-dark hover:bg-opacity-10",
+            type: "button"
+        },
+        events: {
+            click: () => {
+                hideEdit();
+                renderContent(container, metadata, 0, "", "");
+            }
+        }
+    }));
 }
 export default renderContent;

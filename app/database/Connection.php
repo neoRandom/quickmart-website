@@ -135,12 +135,7 @@ class Connection extends \PDO
             model\Produto::class,
             model\Cargo::class,
             model\Categoria::class,
-            model\Classificacao::class,
-            model\Cliente::class,
-            model\Compra::class,
-            model\Credenciais::class,
-            model\Expediente::class,
-            model\Funcionario::class
+            model\Credenciais::class
         ];
     }
 
@@ -170,11 +165,11 @@ class Connection extends \PDO
         }
     }
 
-    public static function getTableRowsJSON(int $tableID, string $value, int $limit, int $offset): array
+    public static function getTableRowsJSON(int $tableID, string | null $key, string $value, int $limit, int $offset): array
     {
         $table = self::getTables()[$tableID];
 
-        $rows = $table::getAll($value, $limit, $offset);
+        $rows = $table::getAll($key, $value, $limit, $offset);
 
         foreach ($rows as $key => $row) {
             $rows[$key] = $row->toArray();

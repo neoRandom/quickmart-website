@@ -172,7 +172,7 @@ function showEdit(new_metadata, data, dropdown, key) {
             type: "submit",
             form: `edit-id-${key}`,
             value: "Salvar",
-            class: "cursor-pointer"
+            class: "text-left cursor-pointer"
         }
     }), renderElement({
         tagName: "button",

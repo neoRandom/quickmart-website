@@ -49,7 +49,9 @@ class Authentication
         }
 
         // Verify the admin token
-        if (!JWT::verifyJWT($_COOKIE["admin_token"])) {
+        try {
+            JWT::verifyJWT($_COOKIE["admin_token"]);
+        } catch (\Exception) {
             return false; // Token verification failed, validation fails
         }
 

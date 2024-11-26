@@ -25,17 +25,17 @@ abstract class Model {
 
     // ========================= Object-scoped Methods =========================
 
-    public abstract function create(): bool;
+    abstract public function create(): bool;
 
-    public abstract function read(): bool;
+    abstract public function read(): bool;
 
-    public abstract function update(): bool;
+    abstract public function update(): bool;
 
-    public abstract function delete(): bool;
+    abstract public function delete(): bool;
 
     // ========================= Table-scoped Methods =========================
 
-    public abstract static function getAll(string $value, int $limit, int $offset): array;
+    abstract public static function getAll(string | null $key, string $value = "", int $limit = 0, int $offset = 0): array;
 }
 
 ?>

@@ -10,7 +10,6 @@ import {
 } from "../Render/index.js";  
 
 import { 
-    hideEdit,
     showCreate
 } from "./crud.js";
 
@@ -94,6 +93,8 @@ sideMenuItens.forEach((e, i) => {
 
 let tablesMetadataCache: TableMetadata[] = [];
 
+let structure: HTMLDivElement;
+
 
 /**
  * Loads a table based on the given id.
@@ -122,13 +123,11 @@ async function loadPage(id: number) {
             e.classList.remove("selected-item");
     });
 
-    hideEdit();
-
     // Render the structure (based on the metadata)
     while (crudContainer.firstChild) {
         crudContainer.removeChild(crudContainer.firstChild);
     }
-    const structure = renderContainer(crudContainer);
+    structure = renderContainer(crudContainer) as HTMLDivElement;
 
     // Render the content (based on the data)
     if (!await renderContent(structure, metadata, 0))
@@ -307,7 +306,25 @@ function renderSearchBar() {
                 tagName: "form", 
                 attributes: {
                     action: "",
+                    method: "GET",
                     class: "flex gap-4 w-full"
+                },
+                events: {
+                    submit: (e) => {
+                        e.preventDefault();
+
+                        let formData = new FormData(e.target as HTMLFormElement);
+
+                        renderContent(
+                            structure, 
+                            metadata, 
+                            0, 
+                            formData.get("search-column")?.toString(), 
+                            formData.get("search-input")?.toString()
+                        );
+
+                        return false;
+                    }
                 }
             },
             renderElement({
@@ -324,7 +341,7 @@ function renderSearchBar() {
                     type: "search", 
                     name: "search-input",
                     id: "search-input", 
-                    placeholder: "Pesquise pelo nome" , 
+                    placeholder: "Pesquisar...", 
                     class: `
                         flex-1 px-4 py-1 bg-neutral-100 
                         border-2 border-transparent 
@@ -332,6 +349,30 @@ function renderSearchBar() {
                     `
                 }
             }),
+            // Combobox to select which column to search
+            renderElement(
+                {
+                    tagName: "select", 
+                    attributes: {
+                        name: "search-column", 
+                        id: "search-column", 
+                        class: `
+                            px-4 py-1 bg-neutral-100 
+                            border-2 border-transparent 
+                            rounded-md outline-none focus:border-secondary
+                        `
+                    }
+                },
+                ...metadata.rows.map((column) => {
+                    return renderElement({
+                        tagName: "option", 
+                        innerText: column.Field,
+                        attributes: {
+                            value: column.Field
+                        }
+                    });
+                })
+            ),
             renderElement({
                 tagName: "button", 
                 innerText: "Pesquisar",

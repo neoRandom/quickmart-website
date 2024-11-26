@@ -83,9 +83,9 @@ INSERT INTO `compra` (`cod_compra`, `id_func`, `id_cliente`, `data_compra`, `met
 --
 
 INSERT INTO `credenciais` (`usuario`, `hash`, `salt`, `cod_acesso`) VALUES
-('admin', 'd4ddf76df545edf78cc8b43c3e825e6451ce919769e8d3b96cb2d6b7ec4b4193', 3721619912, 1),
+('admin', '326a3b68cad9f7178dcebf3792f1244680270e25eaf188cdbf0616686f5834c9', 3721619912, 1),
 ('carlos', '005c19658919186b85618c5870463eec8d9b8c1a9d00208a5352891ba5bbe086', 346033364, 2),
-('joao', '8abb8e2f76f2c4347b038b3081e0ac87e260d3b36680749ee4363678210d38e2', 1518285939, 2),
+('joao', '9201689b31a58acab182adf1359103b598ffe665d0f28376fd1cf060f2c2ecfd', 1518285939, 2),
 ('maria', 'e5e088a0b66163a0a26a5e053d2a4496dc16ab6e0e3dd1adf2d16aa84a078c9d', 1852754427, 2),
 ('supervisor', 'f8638b979b2f4f793ddb6dbd197e0ee25a7a6ea32b0ae22f5e3c5d119d839e75', 3976280539, 1);
 

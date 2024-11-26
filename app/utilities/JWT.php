@@ -12,7 +12,13 @@ class JWT {
      * @return string The generated JWT.
      * @throws \Exception If the specified algorithm is not supported.
      */
-    public static function createJWT(array $payload, string $secret, string $algorithm = 'HS256'): string {
+    public static function createJWT(array $payload, string $algorithm = 'HS256'): string | null {
+        $secret = self::getSecretKey();
+        
+        if ($secret === null) {
+            return null;
+        }
+
         // Supported algorithms for signing
         $supportedAlgorithms = ['HS256' => 'sha256'];
 
@@ -72,7 +78,13 @@ class JWT {
      * @return array The payload of the JWT if verification is successful.
      * @throws \Exception If the JWT is invalid or verification fails.
      */
-    public static function verifyJWT(string $jwt, string $secret, string $algorithm = 'HS256'): array {
+    public static function verifyJWT(string $jwt, string $algorithm = 'HS256'): array | null {
+        $secret = self::getSecretKey();
+        
+        if ($secret === null) {
+            return null;
+        }
+        
         // Supported algorithms
         $supportedAlgorithms = ['HS256' => 'sha256'];
     
@@ -148,6 +160,27 @@ class JWT {
         
         // Replace URL-safe characters with standard base64 characters and decode
         return base64_decode(strtr($data, '-_', '+/'));
+    }
+
+
+    /**
+     * Retrieves the JWT secret key from the environment configuration.
+     *
+     * This function reads the .env file located in the config directory
+     * and fetches the 'JWT_SECRET' value. If the value is not found, it
+     * returns null.
+     *
+     * @return string|null The JWT secret key, or null if not found.
+     */
+    private static function getSecretKey() {
+        // Read the database configuration from the .env file
+        $env = parse_ini_file(__DIR__ . "/../../config/.env");
+
+        if (!isset($env['JWT_SECRET'])) {
+            return null;
+        }
+
+        return $env['JWT_SECRET'];
     }
 }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace utilities;
 
 require_once __DIR__ . "/../autoload.php";
@@ -43,21 +44,17 @@ class Authentication
         session_start();
 
         // Check if the admin token is set in the session
-        if (!isset($_SESSION["admin_token"])) {
+        if (!isset($_COOKIE["admin_token"])) {
             return false; // Token is not set, validation fails
         }
 
         // Verify the admin token
-        if (!self::verifyAdminToken($_SESSION["admin_token"])) {
+        if (!JWT::verifyJWT($_COOKIE["admin_token"])) {
             return false; // Token verification failed, validation fails
         }
 
         // Admin is validated
         return true;
-    }
-
-    private static function verifyAdminToken(string $token) {
-        return false;
     }
 
     /**

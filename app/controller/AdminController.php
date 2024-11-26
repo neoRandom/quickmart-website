@@ -2,7 +2,10 @@
 
 use utilities\Authentication;
 use utilities\Post;
+use utilities\Hash;
 use database\Connection;
+use model\Credenciais;
+use utilities\JWT;
 
 require_once __DIR__ . "/../autoload.php";
 
@@ -57,6 +60,7 @@ class AdminController
         // Validate admin identity
         if (!Authentication::validateAdmin()) {
             http_response_code(401);
+            header("Location: " . BASE_URL . "admin/login");
             header('Content-Type: application/json');
             echo json_encode(['error' => 'Unauthorized']);
             return;
@@ -94,7 +98,60 @@ class AdminController
     }
 
 
-    private static function postLogin() { /* ... */ }
+    /**
+     * Processes the admin login request.
+     *
+     * This method validates the presence of 'username' and 'password' in the POST request.
+     * If credentials are valid, it creates a JWT token and sets it as an admin cookie.
+     * If validation fails, it returns an appropriate HTTP status code and error message.
+     *
+     * - On successful login, redirects to the admin dashboard.
+     * - On failure, redirects to the login page with an error response.
+     *
+     * @return void
+     */
+    private static function postLogin() {
+        if (!isset($_POST['username']) || !isset($_POST['password'])) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Bad Request']);
+            return;
+        }
+
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        // Verificando as credenciais
+        $user = new Credenciais($username);
+        $user->read();
+
+        $result = Hash::verify($password, $user->getHash(), $user->getSalt());
+
+        if ($result) {
+            $token = JWT::createJWT(['username' => $user->getUsuario(), 'access' => $user->getCodAcesso()]);
+
+            setcookie("admin_token", $token, [
+                'expires' => time() + 60 * 60 * 24 * 7, // Expiration time (in seconds) defined as 7 days
+                'path' => '/',  // This path means that the cookie will be sent only to the current domain
+                'httponly' => true, // Server-side only
+                'samesite' => 'Strict' // CSRF Protection
+            ]);
+
+            header('Location: ' . BASE_URL . 'admin');
+        }
+        else {
+            http_response_code(401);
+            header('Location: ' . BASE_URL . 'admin/login');
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Unauthorized']);
+        }
+    }
+
+
+    public static function logout() {
+        setcookie("admin_token", "", time() - 3600, "/", "", false, true);
+        header('Location: ' . BASE_URL . 'admin/login');
+    }
 
 
     /**
@@ -136,7 +193,7 @@ class AdminController
     public static function postInsert() 
     {
         self::handleRequest("POST", function () {
-            $data = Post::getPostData();
+            $data = Post::getData();
 
             $tableIndex = (int) $data['id'];
             $tableClass = Connection::getTables()[$tableIndex];
@@ -179,7 +236,7 @@ class AdminController
     public static function postUpdate() 
     {
         self::handleRequest("POST", function () {
-            $data = Post::getPostData();
+            $data = Post::getData();
 
             $tableIndex = (int) $data['id'];
             $tableClass = Connection::getTables()[$tableIndex];
@@ -222,7 +279,7 @@ class AdminController
     public static function postDelete() 
     {
         self::handleRequest("POST", function () {
-            $data = Post::getPostData();
+            $data = Post::getData();
 
             $tableIndex = (int) $data['id'];
             $tableClass = Connection::getTables()[$tableIndex];

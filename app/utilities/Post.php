@@ -1,4 +1,5 @@
 <?php
+
 namespace utilities;
 
 class Post {
@@ -23,7 +24,7 @@ class Post {
         }
     }
 
-    public static function getPostData() {
+    public static function getData() {
         $data = file_get_contents('php://input');
         $data = json_decode($data, true);
         $data = self::objectToArray($data);

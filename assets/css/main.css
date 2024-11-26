@@ -898,20 +898,20 @@ video {
   width: 80%;
 }
 
-.w-56 {
-  width: 14rem;
-}
-
 .w-6 {
   width: 1.5rem;
+}
+
+.w-64 {
+  width: 16rem;
 }
 
 .w-\[680px\] {
   width: 680px;
 }
 
-.w-\[calc\(100\%-14rem\)\] {
-  width: calc(100% - 14rem);
+.w-\[calc\(100\%-16rem\)\] {
+  width: calc(100% - 16rem);
 }
 
 .w-desktop {

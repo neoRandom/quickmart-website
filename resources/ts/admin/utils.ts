@@ -82,7 +82,7 @@ function generateModal() {
 }
 
 
-function generateCreateSection(column: SQLMetadata) {
+function generateCreateSection(column: SQLMetadata, value: string | null = null) {
     const label = renderElement({
         tagName: "label",
         innerText: column.Field,
@@ -120,11 +120,14 @@ function generateCreateSection(column: SQLMetadata) {
                 rounded-md outline-none transition-colors
             `
         }
-    );
+    ) as HTMLInputElement;
 
     if (input.getAttribute("type") === "text" && input.getAttribute("maxlength") !== null) {
         label.innerText += ' (Tamanho máximo: ' + input.getAttribute("maxlength") + ')';
     }
+
+    if (value !== null)
+        input.value = value;
 
     const section = renderElement(
         {

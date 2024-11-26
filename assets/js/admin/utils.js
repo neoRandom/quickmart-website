@@ -46,7 +46,7 @@ function generateModal() {
         deleteModal
     };
 }
-function generateCreateSection(column) {
+function generateCreateSection(column, value = null) {
     const label = renderElement({
         tagName: "label",
         innerText: column.Field,
@@ -78,6 +78,8 @@ function generateCreateSection(column) {
     if (input.getAttribute("type") === "text" && input.getAttribute("maxlength") !== null) {
         label.innerText += ' (Tamanho máximo: ' + input.getAttribute("maxlength") + ')';
     }
+    if (value !== null)
+        input.value = value;
     const section = renderElement({
         tagName: "div",
         attributes: {

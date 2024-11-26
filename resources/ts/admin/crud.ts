@@ -276,6 +276,23 @@ function showEdit(new_metadata: TableMetadata, data: TableData, dropdown: HTMLDi
                 },
                 events: {
                     "click": () => {
+                        showAdvancedEdit(register);
+                    }
+                }
+            },
+            renderElement({
+                tagName: "p",
+                innerText: "Avançado"
+            })
+        ),
+        renderElement(
+            {
+                tagName: "button",
+                attributes: {
+                    type: "button"
+                },
+                events: {
+                    "click": () => {
                         hideEdit();
                     }
                 }
@@ -306,6 +323,87 @@ function hideEdit() {
     dropdown.replaceWith(cachedDropdown);
 
     editing = -1;
+}
+
+
+function showAdvancedEdit(register: Record<string, string>) {
+    let {
+        modal,
+        deleteModal
+    } = generateModal();
+
+    const cancelButton = renderElement({
+        tagName: "button",
+        innerText: "Cancelar",
+        attributes: {
+            type: "button",
+            class: "py-2 hover:underline",
+        },
+        events: {
+            click: deleteModal
+        }
+    });
+
+    modal.classList.add("max-h-[80%]", "min-w-[640px]");
+
+    // Header
+    renderElement(
+        {
+            container: modal,
+            tagName: "div",
+            attributes: {
+                class: `
+                    flex items-center justify-between 
+                    w-full h-fit px-4 py-2
+                    border-b-2 border-primary-dark border-opacity-50
+                `
+            }
+        },
+        renderElement({
+            tagName: "h2",
+            innerText: `Atualizar ${metadata.name}`,
+            attributes: {
+                class: "text-2xl"
+            }
+        }),
+        cancelButton
+    );
+
+    // Body
+    renderElement(
+        {
+            container: modal,
+            tagName: "form",
+            attributes: {
+                class: "flex-1 flex flex-col gap-4 p-4 overflow-y-auto",
+                action: "",
+                method: "POST"
+            },
+            events: {
+                submit: (e: Event) => {
+                    postEdit(e);
+                    deleteModal();
+                }
+            }
+        },
+        ...metadata.rows.map((column) => {
+            return generateCreateSection(column, register[column.Field]);
+        }),
+        renderElement({
+            tagName: "button",
+            innerText: "Atualizar",
+            attributes: {
+                type: "submit",
+                class: `
+                    text-white 
+                    w-3/4 mx-auto 
+                    mt-6 p-3 
+                    bg-primary hover:bg-primary-dark 
+                    rounded-md transition-colors
+                `
+            }
+        })
+    );
 }
 
 

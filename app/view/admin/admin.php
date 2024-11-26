@@ -29,6 +29,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> QuickMart | Painel de Administrador </title>
+    <link rel="icon" type="image/x-icon" href="/quickmart/assets/images/icon_transparente.png">
     <link rel="stylesheet" href="/quickmart/assets/css/main.css">
     <link rel="stylesheet" href="/quickmart/assets/css/admin.css">
 </head>

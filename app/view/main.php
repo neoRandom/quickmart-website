@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> QuickMart </title>
+    <link rel="icon" type="image/x-icon" href="/quickmart/assets/images/icon_transparente.png">
     <script src="/quickmart/assets/js/Carousel.js"></script>
     <link rel="stylesheet" href="/quickmart/assets/css/main.css">
     <link rel="stylesheet" href="/quickmart/assets/css/main_header.css">

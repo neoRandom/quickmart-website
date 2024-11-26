@@ -297,11 +297,12 @@ function hideEdit() {
         return;
 
     let form = document.querySelector(`#edit-id-${editing}`) as HTMLFormElement;
-
-    form.replaceWith(cachedLI);
-
     let dropdown = document.querySelector(`#dropdown-id-${editing}`) as HTMLDivElement;
 
+    if (form === null || cachedLI === null || dropdown === null || cachedDropdown === null)
+        return;
+
+    form.replaceWith(cachedLI);
     dropdown.replaceWith(cachedDropdown);
 
     editing = -1;

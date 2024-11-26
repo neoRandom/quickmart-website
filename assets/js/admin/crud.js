@@ -195,8 +195,10 @@ function hideEdit() {
     if (editing === -1)
         return;
     let form = document.querySelector(`#edit-id-${editing}`);
-    form.replaceWith(cachedLI);
     let dropdown = document.querySelector(`#dropdown-id-${editing}`);
+    if (form === null || cachedLI === null || dropdown === null || cachedDropdown === null)
+        return;
+    form.replaceWith(cachedLI);
     dropdown.replaceWith(cachedDropdown);
     editing = -1;
 }

@@ -45,6 +45,7 @@ function renderContent(container, new_metadata, page, key, search) {
                 url += `&offset=${page * per_page}`;
             }
         }
+        console.log(url);
         const payload = yield fetch(url);
         if (payload.status !== 200) {
             renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);

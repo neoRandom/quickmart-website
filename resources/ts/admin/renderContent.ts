@@ -61,6 +61,8 @@ async function renderContent(container: HTMLElement, new_metadata: TableMetadata
         }
     }
 
+    console.log(url);
+
     const payload = await fetch(url);
     if (payload.status !== 200) {
         renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);

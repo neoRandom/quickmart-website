@@ -150,7 +150,7 @@ function loadPage(id) {
             crudContainer.removeChild(crudContainer.firstChild);
         }
         structure = renderContainer(crudContainer);
-        if (!(yield renderContent(structure, metadata, 0)))
+        if (!(yield renderContent(structure, metadata, 0, "", "")))
             return;
         crudContainer.classList.remove("hidden");
     });

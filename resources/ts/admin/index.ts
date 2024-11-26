@@ -237,7 +237,7 @@ async function loadPage(id: number) {
     structure = renderContainer(crudContainer) as HTMLDivElement;
 
     // Render the content (based on the data)
-    if (!await renderContent(structure, metadata, 0))
+    if (!await renderContent(structure, metadata, 0, "", ""))
         return;
 
     // Show the CRUD container

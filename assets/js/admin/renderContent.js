@@ -45,7 +45,6 @@ function renderContent(container, new_metadata, page, key, search) {
                 url += `&offset=${page * per_page}`;
             }
         }
-        console.log(url);
         const payload = yield fetch(url);
         if (payload.status !== 200) {
             renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
@@ -253,6 +252,7 @@ function renderTableActionsButtons() {
         });
         container.appendChild(newDropdown);
         button.addEventListener("click", (e) => {
+            var _a, _b, _c;
             let dropdown = container.querySelector(".admin-dropdown-menu");
             if (!dropdown) {
                 console.error("Dropdown not found");
@@ -260,13 +260,19 @@ function renderTableActionsButtons() {
             }
             dropdown.classList.toggle("hidden");
             dropdown.setAttribute("aria-hidden", dropdown.classList.contains("hidden").toString());
-            let posX = e.clientX;
-            let posY = e.clientY;
-            if (posY >= 720) {
-                posY -= dropdown.offsetHeight + 25;
+            let relativePos = (_a = document.querySelector("#side-container")) === null || _a === void 0 ? void 0 : _a.getBoundingClientRect();
+            let posX = e.clientX - ((_b = relativePos === null || relativePos === void 0 ? void 0 : relativePos.x) !== null && _b !== void 0 ? _b : 0);
+            let posY = e.clientY - ((_c = relativePos === null || relativePos === void 0 ? void 0 : relativePos.y) !== null && _c !== void 0 ? _c : 0);
+            posX -= dropdown.offsetWidth + 10;
+            console.log(window.innerHeight - dropdown.offsetHeight);
+            if (e.clientY >= window.innerHeight - dropdown.offsetHeight) {
+                posY -= dropdown.offsetHeight + 10;
             }
-            dropdown.style.left = `${posX - 340}px`;
-            dropdown.style.top = `${posY - 50}px`;
+            else {
+                posY += 10;
+            }
+            dropdown.style.left = `${posX}px`;
+            dropdown.style.top = `${posY}px`;
         });
     }
     return buttons;

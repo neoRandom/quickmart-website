@@ -67,8 +67,6 @@ async function renderContent(container: HTMLElement, new_metadata: TableMetadata
         }
     }
 
-    console.log(url);
-
     const payload = await fetch(url);
     if (payload.status !== 200) {
         renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
@@ -427,6 +425,7 @@ function renderTableActionsButtons() {
 
         container.appendChild(newDropdown);
 
+        // Dropdown menu logic
         button.addEventListener("click", (e) => {
             let dropdown = container.querySelector(".admin-dropdown-menu") as HTMLDivElement;
             if (!dropdown) {
@@ -437,17 +436,24 @@ function renderTableActionsButtons() {
             dropdown.classList.toggle("hidden");
             dropdown.setAttribute("aria-hidden", dropdown.classList.contains("hidden").toString());
 
-            let posX = e.clientX;
-            let posY = e.clientY;
+            // let dropdownPos = dropdown.getBoundingClientRect();
+            let relativePos = document.querySelector("#side-container")?.getBoundingClientRect();
+
+            let posX = e.clientX - (relativePos?.x ?? 0);
+            let posY = e.clientY - (relativePos?.y ?? 0);
+
+            posX -= dropdown.offsetWidth + 10;
 
             // Prevent overflow
-            if (posY >= 720) {
-                posY -= dropdown.offsetHeight + 25;
+            if (e.clientY >= window.innerHeight - dropdown.offsetHeight) {
+                posY -= dropdown.offsetHeight + 10;
+            }
+            else {
+                posY += 10;
             }
 
-            // For some (unholy) reason, these values are off by a few pixels
-            dropdown.style.left = `${posX - 340}px`;
-            dropdown.style.top = `${posY - 50}px`;
+            dropdown.style.left = `${posX}px`;
+            dropdown.style.top = `${posY}px`;
         });
     }
 

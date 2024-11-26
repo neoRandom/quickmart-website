@@ -14,9 +14,14 @@ import {
     showCreateUser
 } from "./crud.js";
 
+import { 
+    generateDevModal,
+    generateSupportModal
+} from "./headerModals.js";
+
 import renderContent from "./renderContent.js";
+
 import { NotificationType } from "../enum/render.js";
-import { generateModal } from "./utils.js";
 
 
 const sideMenu = document.querySelector("#sidebar") as HTMLDivElement;
@@ -65,115 +70,10 @@ document.addEventListener("click", (e: Event) => {
 })
 
 const devButton = document.querySelector("#header-dropdown-menu-dev-button") as HTMLButtonElement;
-devButton.addEventListener("click", () => {
-    let {
-        modal,
-        deleteModal
-    } = generateModal();
+devButton.addEventListener("click", generateDevModal);
 
-    const cancelButton = renderElement({
-        tagName: "button",
-        innerText: "Cancelar",
-        attributes: {
-            type: "button",
-            class: "absolute right-4 py-2 hover:underline",
-        },
-        events: {
-            click: deleteModal
-        }
-    });
-
-    modal.classList.add("max-h-[80%]", "w-[680px]");
-
-    // Header
-    renderElement(
-        {
-            container: modal,
-            tagName: "div",
-            attributes: {
-                class: `
-                    relative flex items-center justify-between 
-                    w-full h-fit px-4 py-2
-                    border-b-2 border-primary-dark border-opacity-50
-                `
-            }
-        },
-        renderElement({
-            tagName: "h2",
-            innerText: `Desenvolvedores`,
-            attributes: {
-                class: "w-full text-2xl text-center font-semibold"
-            }
-        }),
-        cancelButton
-    );
-
-    let body: Record<string, string> = {
-        "Fellipe Leonardo Peixoto Cunha": "Atualmente um estudante de Desenvolvimento de Sistemas, mas apaixonado desde a infância por tecnologia.",
-        "Bárbara Fernandes Rampazi": "Estudante do curso de DS, novata na área da tecnologia, mas aprimorando minhas habilidades.",
-        "Enzo de Paulo Souto": "Sou um jovem estudante, desenvolvendo minhas habilidades em DS, buscando aprimorar meus conhecimentos."
-    };
-
-    // Body
-    renderElement(
-        {
-            container: modal,
-            tagName: "div",
-            attributes: {
-                class: "flex-1 flex flex-col gap-4 p-4 overflow-y-auto"
-            }
-        },
-        renderElement(
-            {
-                tagName: "div",
-                attributes: {
-                    class: "flex flex-col divide-y w-4/5 mx-auto px-8 py-2 *:py-4 rounded-md shadow-md border border-black-pure border-opacity-10"
-                }
-            },
-            ...Object.keys(body).map((key: string) => 
-                renderElement(
-                    {
-                        tagName: "div",
-                        attributes: {
-                            class: "flex flex-col gap-2"
-                        }
-                    },
-                    renderElement({
-                        tagName: "h3",
-                        innerText: key,
-                        attributes: {
-                            class: "text-lg font-semibold"
-                        }
-                    }),
-                    renderElement({
-                        tagName: "p",
-                        innerText: body[key],
-                        attributes: {
-                            class: "text-wrap break-words"
-                        }
-                    })
-                )
-            )
-        ),
-        renderElement(
-            {
-                tagName: "div",
-                attributes: {
-                    class: "text-center mt-4"
-                }
-            },
-            renderElement({
-                tagName: "p",
-                innerText: "Centro Paula Souza - Etec da Zona Leste"
-            }),
-            renderElement({
-                tagName: "p",
-                innerText: "Desenvolvimento de Sistemas - 2º Módulo - Turma A"
-            })
-        )
-    );
-});
-
+const supportButton = document.querySelector("#header-dropdown-menu-support-button") as HTMLButtonElement;
+supportButton.addEventListener("click", generateSupportModal);
 
 // Side bar
 sideMenu.querySelector("button")

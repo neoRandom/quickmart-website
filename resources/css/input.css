@@ -71,4 +71,11 @@
             active:*:bg-primary active:*:text-white active:*:transition-none
         ;
     }
+
+    .default-border {
+        @apply 
+            border border-black-pure border-opacity-10 
+            outline-none focus:border-opacity-100
+        ;
+    }
 }

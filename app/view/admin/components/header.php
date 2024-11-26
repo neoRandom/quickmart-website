@@ -62,6 +62,23 @@ function generateHeader(string $username, array $access) {
                             </button>
                         </li>
                         <li>
+                            <button type="button" id="header-dropdown-menu-support-button">
+                                <div class="
+                                        flex items-center gap-4
+                                        px-4 py-2
+                                        rounded-md transition-colors
+                                        hover:bg-neutral-200
+                                    ">
+                                    <div class="w-4 mx-[0.25rem] aspect-square">
+                                        <img src="/quickmart/assets/images/support.png" alt="" width="100%" height="100%">
+                                    </div>
+                                    <p>
+                                        Suporte
+                                    </p>
+                                </div>
+                            </button>
+                        </li>
+                        <li>
                             <a href="/quickmart/public/admin/login">
                                 <div class="
                                         flex items-center gap-4
@@ -86,7 +103,7 @@ function generateHeader(string $username, array $access) {
                                         rounded-md transition-colors
                                         hover:bg-neutral-200
                                     ">
-                                    <div class="w-4 mr-2 aspect-square">
+                                    <div class="w-4 mx-[0.25rem] aspect-square">
                                         <img src="/quickmart/assets/images/logout.png" alt="" width="100%" height="100%">
                                     </div>
                                     <p>

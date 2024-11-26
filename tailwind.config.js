@@ -10,7 +10,10 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                white: "#fdfdfd",
+                white: {
+                    DEFAULT: "#fdfdfd",
+                    pure: "#ffffff"
+                },
                 black: {
                     DEFAULT: "#202020",
                     pure: "#000000"

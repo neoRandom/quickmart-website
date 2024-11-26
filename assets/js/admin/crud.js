@@ -75,6 +75,79 @@ function showCreate(new_metadata) {
         }
     }));
 }
+function showCreateUser(new_metadata) {
+    metadata = new_metadata;
+    if (metadata.rows.length < 4)
+        return;
+    let { modal, deleteModal } = generateModal();
+    const cancelButton = renderElement({
+        tagName: "button",
+        innerText: "Cancelar",
+        attributes: {
+            type: "button",
+            class: "py-2 hover:underline",
+        },
+        events: {
+            click: deleteModal
+        }
+    });
+    modal.classList.add("max-h-[80%]", "min-w-[640px]");
+    let new_columns = metadata.rows;
+    new_columns[1] = {
+        Field: "senha",
+        Type: "varchar(64)",
+        Null: "NO",
+        Key: "",
+        Default: null,
+        Extra: ""
+    };
+    new_columns[2] = new_columns[3];
+    new_columns.pop();
+    renderElement({
+        container: modal,
+        tagName: "div",
+        attributes: {
+            class: `
+                    flex items-center justify-between 
+                    w-full h-fit px-4 py-2
+                    border-b-2 border-primary-dark border-opacity-50
+                `
+        }
+    }, renderElement({
+        tagName: "h2",
+        innerText: `Criar ${metadata.name}`,
+        attributes: {
+            class: "text-2xl"
+        }
+    }), cancelButton);
+    renderElement({
+        container: modal,
+        tagName: "form",
+        attributes: {
+            class: "flex-1 flex flex-col gap-4 p-4 overflow-y-auto",
+            action: "",
+            method: "POST"
+        },
+        events: {
+            submit: (e) => postCreateUser(e, deleteModal)
+        }
+    }, ...new_columns.map((column) => {
+        return generateCreateSection(column);
+    }), renderElement({
+        tagName: "button",
+        innerText: "Gerar Usuário (com hash e salt)",
+        attributes: {
+            type: "submit",
+            class: `
+                    text-white 
+                    w-3/4 mx-auto 
+                    mt-6 p-3 
+                    bg-primary hover:bg-primary-dark 
+                    rounded-md transition-colors
+                `
+        }
+    }));
+}
 function showDetails(new_metadata, data, key) {
     metadata = new_metadata;
     let register = getRegister(data, metadata, key);
@@ -367,6 +440,41 @@ function postCreate(e, deleteModal) {
         return false;
     });
 }
+function postCreateUser(e, deleteModal) {
+    return __awaiter(this, void 0, void 0, function* () {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        formData.append("id", metadata.index.toString());
+        const data = {};
+        formData.forEach((value, key) => {
+            if (typeof value === 'string') {
+                data[key] = value;
+            }
+        });
+        try {
+            const response = yield fetch('create_user/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            if (response.ok) {
+                renderContent(document.querySelector("#structure"), metadata);
+                renderNotification('Usuário criado com sucesso!', NotificationType.Success);
+                deleteModal();
+            }
+            else {
+                renderNotification('Ocorreu um erro ao tentar criar o usuário.', NotificationType.Error);
+            }
+        }
+        catch (error) {
+            console.error('Unexpected error:', error);
+            renderNotification("Um erro inesperado ocorreu", NotificationType.Error);
+        }
+        return false;
+    });
+}
 function postEdit(e) {
     return __awaiter(this, void 0, void 0, function* () {
         e.preventDefault();
@@ -440,4 +548,4 @@ function postDelete(deleteModal, key) {
         }
     });
 }
-export { showCreate, showDetails, showEdit, showDelete, hideEdit };
+export { showCreate, showCreateUser, showDetails, showEdit, showDelete, hideEdit };

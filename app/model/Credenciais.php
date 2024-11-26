@@ -2,8 +2,9 @@
 namespace model;
 
 use database;
+use utilities\Hash;
 
-require_once __DIR__ . "/Model.php";
+require_once __DIR__ . "/../autoload.php";
 
 class Credenciais extends Model {
     public const TABLE_NAME = "credenciais";
@@ -58,6 +59,16 @@ class Credenciais extends Model {
         }
     }
 
+    public function generateHashSalt(string $password) {
+        $salt = Hash::generateSalt();
+        $hash = Hash::generate($password, $salt);
+
+        $this->setSalt($salt);
+        $this->setHash($hash);
+
+        return true;
+    }
+
     // ================================================== Getters and Setters ==================================================
 
     public function getUsuario(): string {
@@ -97,8 +108,15 @@ class Credenciais extends Model {
     // ========================= Object-scoped Methods =========================
 
     public function create(): bool {
-        $sql = "INSERT INTO credenciais (usuario, hash, salt, cod_acesso)
+        $sql = "INSERT INTO credenciais (usuario, `hash`, salt, cod_acesso)
                 VALUES (:usuario, :hash, :salt, :cod_acesso)";
+
+        error_log(json_encode([
+            ':usuario' => $this->getUsuario(),
+            ':hash' => $this->getHash(),
+            ':salt' => $this->getSalt(),
+            ':cod_acesso' => $this->getCodAcesso(),
+        ]));
 
         return database\Connection::executeDML(
             $sql,

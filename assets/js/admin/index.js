@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a;
 import { renderElement, renderNotification, renderTag } from "../Render/index.js";
-import { showCreate } from "./crud.js";
+import { showCreate, showCreateUser } from "./crud.js";
 import renderContent from "./renderContent.js";
 import { NotificationType } from "../enum/render.js";
 import { generateModal } from "./utils.js";
@@ -237,9 +237,11 @@ function renderContainer(container) {
                     `
         },
         events: {
-            "click": () => {
+            "click": (metadata.name === "credenciais") ? (() => {
+                showCreateUser(metadata);
+            }) : (() => {
                 showCreate(metadata);
-            }
+            })
         }
     })), renderElement({
         tagName: "div",

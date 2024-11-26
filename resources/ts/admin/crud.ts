@@ -114,6 +114,101 @@ function showCreate(new_metadata: TableMetadata) {
 }
 
 
+function showCreateUser(new_metadata: TableMetadata) {
+    metadata = new_metadata;
+
+    if (metadata.rows.length < 4)
+        return;
+
+    let {
+        modal,
+        deleteModal
+    } = generateModal();
+
+    const cancelButton = renderElement({
+        tagName: "button",
+        innerText: "Cancelar",
+        attributes: {
+            type: "button",
+            class: "py-2 hover:underline",
+        },
+        events: {
+            click: deleteModal
+        }
+    });
+
+    modal.classList.add("max-h-[80%]", "min-w-[640px]");
+
+    let new_columns = metadata.rows;
+    new_columns[1] = {
+        Field: "senha",
+        Type: "varchar(64)",
+        Null: "NO",
+        Key: "",
+        Default: null,
+        Extra: ""
+    };
+    new_columns[2] = new_columns[3]!;
+    new_columns.pop();
+
+    // Header
+    renderElement(
+        {
+            container: modal,
+            tagName: "div",
+            attributes: {
+                class: `
+                    flex items-center justify-between 
+                    w-full h-fit px-4 py-2
+                    border-b-2 border-primary-dark border-opacity-50
+                `
+            }
+        },
+        renderElement({
+            tagName: "h2",
+            innerText: `Criar ${metadata.name}`,
+            attributes: {
+                class: "text-2xl"
+            }
+        }),
+        cancelButton
+    );
+
+    // Body
+    renderElement(
+        {
+            container: modal,
+            tagName: "form",
+            attributes: {
+                class: "flex-1 flex flex-col gap-4 p-4 overflow-y-auto",
+                action: "",
+                method: "POST"
+            },
+            events: {
+                submit: (e: Event) => postCreateUser(e, deleteModal)
+            }
+        },
+        ...new_columns.map((column) => {
+            return generateCreateSection(column);
+        }),
+        renderElement({
+            tagName: "button",
+            innerText: "Gerar Usuário (com hash e salt)",
+            attributes: {
+                type: "submit",
+                class: `
+                    text-white 
+                    w-3/4 mx-auto 
+                    mt-6 p-3 
+                    bg-primary hover:bg-primary-dark 
+                    rounded-md transition-colors
+                `
+            }
+        })
+    );
+}
+
+
 /**
  * Creates a modal for showing details of a record.
  * 
@@ -546,6 +641,55 @@ async function postCreate(e: Event, deleteModal: () => void) {
 }
 
 
+async function postCreateUser(e: Event, deleteModal: () => void) {
+    e.preventDefault();
+
+    const formData = new FormData(e.target as HTMLFormElement);
+
+    formData.append("id", metadata.index.toString());
+
+    // Convert FormData to a plain object
+    const data: Record<string, string> = {};
+    formData.forEach((value, key) => {
+        if (typeof value === 'string') {
+            data[key] = value;
+        }
+    });
+
+    try {
+        // Make the POST request
+        const response = await fetch(
+            'create_user/', // For some unholy reason, the URL must end with a slash
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // Specify JSON content type
+                },
+                body: JSON.stringify(data), // Convert data to JSON format
+            }
+        );
+
+        // Handle the response
+        if (response.ok) {
+            // const result = await response.json(); // Parse the JSON response
+            // console.log('Success:', result);
+            renderContent(document.querySelector("#structure") as HTMLElement, metadata);
+            renderNotification('Usuário criado com sucesso!', NotificationType.Success);
+            deleteModal();
+        } else {
+            // const error = await response.json();
+            // console.error('Error:', error);
+            renderNotification('Ocorreu um erro ao tentar criar o usuário.', NotificationType.Error);
+        }
+    } catch (error) {
+        console.error('Unexpected error:', error);
+        renderNotification("Um erro inesperado ocorreu", NotificationType.Error);
+    }
+
+    return false;
+}
+
+
 async function postEdit(e: Event) {
     e.preventDefault();
 
@@ -656,6 +800,7 @@ async function postDelete(deleteModal: () => void, key: number) {
 
 export {
     showCreate,
+    showCreateUser,
     showDetails,
     showEdit,
     showDelete,

@@ -205,6 +205,14 @@ class AdminController
         self::handleRequest("POST", function () {
             $data = Post::getData();
 
+            if (!isset($data["id"])) {
+                return [
+                    "status" => 400,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode(["error" => "Failed to insert data."])
+                ];
+            }
+
             $tableIndex = (int) $data['id'];
             $tableClass = Connection::getTables()[$tableIndex];
             $register = new $tableClass();
@@ -247,6 +255,14 @@ class AdminController
     {
         self::handleRequest("POST", function () {
             $data = Post::getData();
+
+            if (!isset($data["id"])) {
+                return [
+                    "status" => 400,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode(["error" => "Failed to update data."])
+                ];
+            }
 
             $tableIndex = (int) $data['id'];
             $tableClass = Connection::getTables()[$tableIndex];
@@ -291,6 +307,15 @@ class AdminController
         self::handleRequest("POST", function () {
             $data = Post::getData();
 
+            if (!isset($data["id"])) {
+                return [
+                    "status" => 400,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode(["error" => "Failed to delete data."])
+                ];
+            }
+
+
             $tableIndex = (int) $data['id'];
             $tableClass = Connection::getTables()[$tableIndex];
             $register = new $tableClass();
@@ -299,7 +324,7 @@ class AdminController
                 return [
                     "status" => 400,
                     "header" => "Content-Type: application/json",
-                    "body" => json_encode(["error" => "Failed to insert data."])
+                    "body" => json_encode(["error" => "Failed to delete data."])
                 ];
             }
 
@@ -307,13 +332,60 @@ class AdminController
                 return [
                     "status" => 400,
                     "header" => "Content-Type: application/json",
-                    "body" => json_encode(["error" => "Failed to insert data."])
+                    "body" => json_encode(["error" => "Failed to delete data."])
                 ];
             }
             return [
                 "status" => 200,
                 "header" => "Content-Type: application/json",
-                "body" => json_encode(["success" => "Data inserted successfully."])
+                "body" => json_encode(["success" => "Data deleted successfully."])
+            ];
+        });
+    }
+
+
+    public static function createUser() 
+    {
+        self::handleRequest("POST", function() {
+            $data = Post::getData();
+
+            if (!isset($data["usuario"]) || !isset($data["senha"]) || !isset($data["cod_acesso"])) {
+                return [
+                    "status" => 400,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode(["error" => "Bad request."])
+                ];
+            }
+
+            $new_user = new Credenciais($data["usuario"], "", 0, $data["cod_acesso"]);
+
+            if (!isset($new_user)) {
+                return [
+                    "status" => 400,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode(["error" => "Failed to create user."])
+                ];
+            }
+
+            if (!$new_user->generateHashSalt($data["senha"])) {
+                return [
+                    "status" => 400,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode(["error" => "Failed to generate hash and salt."])
+                ];
+            }
+
+            if (!$new_user->create()) {
+                return [
+                    "status" => 400,
+                    "header" => "Content-Type: application/json",
+                    "body" => json_encode(["error" => "Failed to create user."])
+                ];
+            }
+            return [
+                "status" => 200,
+                "header" => "Content-Type: application/json",
+                "body" => json_encode(["success" => "User created successfully."])
             ];
         });
     }

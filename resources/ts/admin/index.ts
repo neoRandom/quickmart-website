@@ -10,7 +10,8 @@ import {
 } from "../Render/index.js";  
 
 import { 
-    showCreate
+    showCreate,
+    showCreateUser
 } from "./crud.js";
 
 import renderContent from "./renderContent.js";
@@ -372,9 +373,11 @@ function renderContainer(container: HTMLDivElement) {
                     `
                 },
                 events: {
-                    "click": () => {
+                    "click": (metadata.name === "credenciais") ? (() => {
+                        showCreateUser(metadata);
+                    }) : (() => {
                         showCreate(metadata);
-                    }
+                    })
                 }
             })
         ),

@@ -92,7 +92,7 @@ function showCreateUser(new_metadata) {
         }
     });
     modal.classList.add("max-h-[80%]", "min-w-[640px]");
-    let new_columns = metadata.rows;
+    let new_columns = [...metadata.rows];
     new_columns[2] = {
         Field: "senha",
         Type: "varchar(64)",

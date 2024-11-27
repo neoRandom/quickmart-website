@@ -98,7 +98,7 @@ function generateSupportModal() {
         }
     });
     modal.classList.remove("p-4");
-    modal.classList.add("max-h-[80%]", "w-[440px]");
+    modal.classList.add("max-h-[80%]", "w-[520px]");
     renderElement({
         container: modal,
         tagName: "div",
@@ -197,7 +197,7 @@ function generateSupportModal() {
             id: "message",
             name: "message",
             placeholder: "Sua mensagem aqui...",
-            class: "max-h-[115px] p-2 rounded-md default-border",
+            class: "p-2 rounded-md default-border",
             style: "resize: none; field-sizing: content;"
         }
     })), renderElement({

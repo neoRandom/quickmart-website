@@ -46,6 +46,6 @@
         </main>
     </div>
 
-    <script type="module" src="/quickmart/assets/js/admin/index.js"></script>
+    <script type="module" src="/quickmart/assets/js/admin/main.js"></script>
 </body>
 </html>

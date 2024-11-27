@@ -138,7 +138,7 @@ function generateSupportModal() {
     });
 
     modal.classList.remove("p-4");
-    modal.classList.add("max-h-[80%]", "w-[440px]");
+    modal.classList.add("max-h-[80%]", "w-[520px]");
 
     // Header
     renderElement(

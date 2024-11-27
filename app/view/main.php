@@ -8,141 +8,60 @@
     <script src="/quickmart/assets/js/Carousel.js"></script>
     <link rel="stylesheet" href="/quickmart/assets/css/main.css">
     <link rel="stylesheet" href="/quickmart/assets/css/main_header.css">
+    <?php 
+        $subitems = [
+            [
+                "image" => "/quickmart/assets/images/user.png",
+                "name" => "Item 1",
+                "old_price" => "R$ 20,00",
+                "price" => "R$ 10,00",
+                "discount" => "50",
+                "unity" => "cada"
+            ],
+            [
+                "image" => "/quickmart/assets/images/item-2.png",
+                "name" => "Item 2",
+                "price" => "R$ 15,00",
+                "discount" => "50",
+                "unity" => "cada"
+            ],
+            [
+                "image" => "/quickmart/assets/images/item-3.png",
+                "name" => "Item 3",
+                "old_price" => "R$ 40,00",
+                "price" => "R$ 20,00",
+                "discount" => "50",
+                "unity" => "cada"
+            ],
+            [
+                "image" => "/quickmart/assets/images/item-4.png",
+                "name" => "Item 4",
+                "old_price" => "R$ 50,00",
+                "price" => "R$ 25,00",
+                "discount" => "50",
+                "unity" => "cada"
+            ],
+            [
+                "image" => "/quickmart/assets/images/item-5.png",
+                "name" => "Item 5",
+                "old_price" => "R$ 60,00",
+                "price" => "R$ 30,00",
+                "discount" => "50",
+                "unity" => "cada"
+            ],
+            [
+                "image" => "/quickmart/assets/images/item-6.png",
+                "name" => "Item 6",
+                "old_price" => "R$ 70,00",
+                "price" => "R$ 35,00",
+                "discount" => "50",
+                "unity" => "cada"
+            ]
+        ];
+    ?>
 </head>
 <body class="flex flex-col h-screen">
-    <header 
-        class="
-            sticky top-0
-            z-50
-            text-white  
-            bg-primary
-            shadow-lg
-        ">
-        <div class="bg-primary pt-6">
-            <div class="w-desktop mx-auto">
-                <div class="flex gap-10 items-center">
-                    <img src="/quickmart/assets/images/QuickMart.png">
-                    <div class="flex-1 flex flex-col justify-center">
-                        <form 
-                            action="" 
-                            method="get"
-                            class="
-                                flex w-full h-9
-                                text-black
-                                bg-white
-                                rounded-sm
-                                overflow-hidden
-                                border-b-2
-                                border-transparent
-                                focus-within:border-secondary
-                            ">
-    
-                            <input 
-                                type="search" 
-                                placeholder="Hmm... hoje eu quero..."
-                                name="" 
-                                id=""
-                                class="
-                                    flex-1 h-full 
-                                    px-2 py-1
-                                    outline-none
-                                ">
-                            <svg 
-                                class="h-full p-1 pb-0.5 pr-1.5" 
-                                role="button" 
-                                viewBox="0 0 24 24">
-                                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
-                            </svg>
-                        </form>
-                    </div>
-                    <div class="flex gap-4 justify-center border-l-2 pl-6">
-                        <button type="button" class="btn-w-bg-image">
-                            <img src="/quickmart/assets/images/shopping-cart.png" class="image">
-                        </button>
-                        <button type="button" class="btn-w-bg-image">
-                            <img src="/quickmart/assets/images/user.png" class="image">
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="bg-primary-dark border-b-2 border-secondary">
-            <div class="w-desktop mx-auto">
-                <nav class="flex gap-4 h-10 mt-4">
-                    <div
-                        type="button" 
-                        role="menu" 
-                        class="group flex items-center pl-4 pr-8 hover:bg-white rounded-t-md cursor-pointer">
-                        <div class="hidden group-hover:block relative h-0 w-0">
-                        <div 
-                            class="
-                                absolute top-5 -left-4 
-                                text-black-pure 
-                                h-fit w-fit px-4 py-3 
-                                bg-white
-                                border-b-[6px] border-primary
-                                shadow-lg
-                            ">
-                            <ul>
-                                <li>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</li>
-                                <li>bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</li>
-                                <li>ccccccccccccccccccccccccccccccccc</li>
-                            </ul>
-                        </div>
-                        </div>
-    
-                        <svg 
-                            viewBox="0 0 24 24"
-                            class="
-                                h-full mt-0.5 
-                                scale-[.6]
-                                fill-white group-hover:fill-black
-                            "><path d="M2 15.5v2h20v-2H2zm0-5v2h20v-2H2zm0-5v2h20v-2H2z"></path></svg>
-                        <span class="ml-1 whitespace-nowrap group-hover:text-black">
-                            Todas as categorias
-                        </span>
-                    </div>
-                    <ul class="flex-1 flex gap-2 *:flex-1 hover:*:*:bg-white hover:*:*:text-black">
-                        <li>
-                            <a href="" class="menubar-item">
-                                Categoria X
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="menubar-item">
-                                Categoria X
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="menubar-item">
-                                Categoria X
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="menubar-item">
-                                Categoria X
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="menubar-item">
-                                Categoria X
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="menubar-item">
-                                Categoria X
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" class="menubar-item">
-                                Categoria X
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </header>
+    <?php include "components/header.php" ?>
 
     <main class="flex flex-col gap-20 flex-1 w-desktop mx-auto py-10">
         <!-- Top section: main ads and carousel -->
@@ -164,7 +83,7 @@
                 </div>
 
                 <!-- Other ads -->
-                 <div class="flex gap-4 *:flex-1 *:h-56 *:bg-primary *:rounded-md">
+                 <div class="flex gap-4 *:flex-1 *:h-52 *:bg-primary *:rounded-md">
                     <div></div>
                     <div></div>
                     <div></div>
@@ -174,29 +93,73 @@
         </section>
 
         <!-- Other sections -->
-        <section class="bg-red-500 h-[512px]">
-
+        <?php foreach(["section-1", "section-2"] as $item) { ?>
+        <section class="flex flex-col gap-8 h-[500px]">
+            <div class="flex items-center justify-between">
+                <h2 class="font-semibold text-xl w-fit transition-transform select-none hover:translate-x-1">
+                    Mais vendidos da semana
+                </h2>
+                <a href="#" class="text-primary font-semibold hover:underline">Ver tudo</a>
+            </div>
+            <div class="flex-1 flex gap-4 py-2 overflow-x-auto">
+                <?php foreach($subitems as $subitem) { ?>
+                <div 
+                    class="
+                        group min-w-64 h-full 
+                        default-border rounded-md 
+                        shadow-md cursor-pointer
+                    ">
+                    <div class="flex flex-col w-full h-full p-4">
+                        <div class="relative w-full">
+                            <p class="absolute font-semibold text-white m-2 px-2 py-1 bg-secondary rounded-md">
+                                <?php echo "-" . $subitem["discount"] . "%" ?>
+                            </p>
+                            <img src="<?php echo $subitem["image"] ?>" alt="" class="w-full aspect-[4/3] border-0">
+                        </div>
+                        <div class="flex-1 flex flex-col gap-2 my-2">
+                            <div class="flex flex-col gap-1 items-center">
+                                <?php if(isset($subitem["old_price"])) { ?>
+                                <p class="text-sm line-through opacity-50">
+                                    <?php echo $subitem["old_price"] ?>
+                                </p>
+                                <?php } ?>
+                                <p class="text-xl text-primary font-bold">
+                                    <?php echo $subitem["price"] ?>
+                                    <span class="text-base font-normal uppercase">
+                                        <?php echo "/ " . $subitem["unity"] ?>
+                                    </span>
+                                </p>
+                            </div>
+                            
+                            <p class="text-sm font-semibold px-1 truncate">
+                                <?php echo $subitem["name"] ?>
+                            </p>
+                            <p class="text-sm opacity-90 break-words line-clamp-3">
+                                Produto mais incrivel e fenomenal que voce jamais viu na sua vida, e esse nome é realmente grande, não tem nenhum parecido com tamanho tamanho
+                            </p>
+                        </div>
+                        <div>
+                            <button 
+                                type="button" 
+                                class="
+                                    text-primary-dark
+                                    w-full py-1 
+                                    border-2 border-primary
+                                    rounded-md transition-colors 
+                                    group-hover:bg-primary-dark group-hover:text-white
+                                ">
+                                Adicionar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <?php } ?>
+            </div>
         </section>
-
-        <section class="bg-red-500 h-[512px]">
-
-        </section>
+        <?php } ?>
     </main>
 
-    <footer 
-        class="
-            text-white 
-            py-8 
-            bg-primary 
-            border-t-[12px] border-primary-dark 
-            shadow-lg
-        ">
-        <div>
-            <p class="text-center">
-                Feito por: rakRandom, caramelPopp and EnzoSouto01 | QuickMart Project © 2024
-            </p>
-        </div>
-    </footer>
+    <?php include "components/footer.php" ?>
 
     <script>
         let carousel = new Carousel(document.querySelector("#carousel-images-container"));

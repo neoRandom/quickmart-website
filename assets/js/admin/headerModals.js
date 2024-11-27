@@ -197,7 +197,7 @@ function generateSupportModal() {
             id: "message",
             name: "message",
             placeholder: "Sua mensagem aqui...",
-            class: "p-2 rounded-md default-border",
+            class: "max-h-[115px] p-2 rounded-md default-border",
             style: "resize: none; field-sizing: content;"
         }
     })), renderElement({

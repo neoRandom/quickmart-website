@@ -95,6 +95,7 @@ CREATE TABLE `compra` (
 --
 
 CREATE TABLE `credenciais` (
+  `cod_credencial` int(10) UNSIGNED NOT NULL,
   `usuario` varchar(64) NOT NULL,
   `hash` varchar(64) NOT NULL,
   `salt` int(10) UNSIGNED NOT NULL,
@@ -300,8 +301,8 @@ ALTER TABLE `compra`
 -- Indexes for table `credenciais`
 --
 ALTER TABLE `credenciais`
-  ADD UNIQUE KEY `usuario` (`usuario`),
-  ADD KEY `cod_acesso` (`cod_acesso`);
+  ADD PRIMARY KEY (`cod_credencial`),
+  ADD UNIQUE KEY `usuario` (`usuario`);
 
 --
 -- Indexes for table `expediente`
@@ -408,6 +409,12 @@ ALTER TABLE `cliente`
 --
 ALTER TABLE `compra`
   MODIFY `cod_compra` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `credenciais`
+--
+ALTER TABLE `credenciais`
+  MODIFY `cod_credencial` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `expediente`

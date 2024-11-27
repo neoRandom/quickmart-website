@@ -122,8 +122,10 @@ class AdminController
         $password = $_POST['password'];
 
         // Verificando as credenciais
-        $user = new Credenciais($username);
-        if (!$user->read())
+        $user = new Credenciais();
+        $user->setUsuario($username);
+
+        if (!$user->readByUsername())
         {
             setcookie("state", "not-found", time() + 3600);
             header('Location: ' . BASE_URL . 'admin/login');
@@ -357,7 +359,7 @@ class AdminController
                 ];
             }
 
-            $new_user = new Credenciais($data["usuario"], "", 0, $data["cod_acesso"]);
+            $new_user = new Credenciais(0, $data["usuario"], "", 0, $data["cod_acesso"]);
 
             if (!isset($new_user)) {
                 return [

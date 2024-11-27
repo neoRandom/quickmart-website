@@ -139,8 +139,9 @@ function showCreateUser(new_metadata: TableMetadata) {
 
     modal.classList.add("max-h-[80%]", "min-w-[640px]");
 
+    // Removes hash and salt to put password instead, becoming ["cod_credencial", "usuario", "senha", "cod_acesso"]
     let new_columns = metadata.rows;
-    new_columns[1] = {
+    new_columns[2] = {
         Field: "senha",
         Type: "varchar(64)",
         Null: "NO",
@@ -148,7 +149,7 @@ function showCreateUser(new_metadata: TableMetadata) {
         Default: null,
         Extra: ""
     };
-    new_columns[2] = new_columns[3]!;
+    new_columns[3] = new_columns[4]!;
     new_columns.pop();
 
     // Header

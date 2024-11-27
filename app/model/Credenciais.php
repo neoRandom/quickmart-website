@@ -9,38 +9,41 @@ require_once __DIR__ . "/../autoload.php";
 class Credenciais extends Model {
     public const TABLE_NAME = "credenciais";
 
+    private int $cod_credencial;
     private string $usuario;
     private string $hash;
     private int $salt;
     private int $cod_acesso;
 
-    // ================================================== Constructor ==================================================
-
     public function __construct(
+        int $cod_credencial = 0,
         string $usuario = "",
         string $hash = "",
         int $salt = 0,
         int $cod_acesso = 0
     ) {
+        $this->cod_credencial = $cod_credencial;
         $this->usuario = $usuario;
         $this->hash = $hash;
         $this->salt = $salt;
         $this->cod_acesso = $cod_acesso;
     }
 
-    // ================================================== Conversion Methods ==================================================
-
     public function toArray(): array {
         return [
+            "cod_credencial" => $this->cod_credencial,
             "usuario" => $this->usuario,
             "hash" => $this->hash,
             "salt" => $this->salt,
-            "cod_acesso" => $this->cod_acesso,
+            "cod_acesso" => $this->cod_acesso
         ];
     }
 
     public function fromArray(array $data): bool {
         try {
+            if (isset($data["cod_credencial"])) {
+                $this->setCodCredencial($data["cod_credencial"]);
+            }
             if (isset($data["usuario"])) {
                 $this->setUsuario($data["usuario"]);
             }
@@ -70,6 +73,14 @@ class Credenciais extends Model {
     }
 
     // ================================================== Getters and Setters ==================================================
+
+    public function getCodCredencial(): int {
+        return $this->cod_credencial;
+    }
+
+    public function setCodCredencial(int $cod_credencial): void {
+        $this->cod_credencial = $cod_credencial;
+    }
 
     public function getUsuario(): string {
         return $this->usuario;
@@ -105,40 +116,57 @@ class Credenciais extends Model {
 
     // ================================================== CRUD Methods ==================================================
 
-    // ========================= Object-scoped Methods =========================
-
     public function create(): bool {
-        $sql = "INSERT INTO credenciais (usuario, `hash`, salt, cod_acesso)
+        $sql = "INSERT INTO credenciais (usuario, hash, salt, cod_acesso) 
                 VALUES (:usuario, :hash, :salt, :cod_acesso)";
 
-        error_log(json_encode([
-            ':usuario' => $this->getUsuario(),
-            ':hash' => $this->getHash(),
-            ':salt' => $this->getSalt(),
-            ':cod_acesso' => $this->getCodAcesso(),
-        ]));
-
-        return database\Connection::executeDML(
-            $sql,
+        $result = database\Connection::executeDML(
+            $sql, 
             [
                 ':usuario' => $this->getUsuario(),
                 ':hash' => $this->getHash(),
                 ':salt' => $this->getSalt(),
-                ':cod_acesso' => $this->getCodAcesso(),
+                ':cod_acesso' => $this->getCodAcesso()
             ]
         );
+
+        if ($result) {
+            $this->setCodCredencial(database\Connection::getInstance()->lastInsertId());
+        }
+
+        return $result;
     }
 
     public function read(): bool {
-        $sql = "SELECT * FROM credenciais WHERE usuario = :usuario";
+        $sql = "SELECT * FROM credenciais WHERE cod_credencial = :cod_credencial";
+
         $stmt = database\Connection::executeDQL(
-            $sql,
+            $sql, 
+            [":cod_credencial" => $this->getCodCredencial()]
+        );
+
+        $credencial = $stmt->fetch(database\Connection::FETCH_ASSOC);
+
+        if ($credencial) {
+            $this->fromArray($credencial);
+            return true;
+        }
+
+        return false;
+    }
+
+    public function readByUsername(): bool {
+        $sql = "SELECT * FROM credenciais WHERE usuario COLLATE utf8mb4_bin LIKE :usuario";
+
+        $stmt = database\Connection::executeDQL(
+            $sql, 
             [":usuario" => $this->getUsuario()]
         );
 
-        $credenciais = $stmt->fetch(database\Connection::FETCH_ASSOC);
-        if ($credenciais) {
-            $this->fromArray($credenciais);
+        $credencial = $stmt->fetch(database\Connection::FETCH_ASSOC);
+
+        if ($credencial) {
+            $this->fromArray($credencial);
             return true;
         }
 
@@ -146,32 +174,33 @@ class Credenciais extends Model {
     }
 
     public function update(): bool {
-        $sql = "UPDATE credenciais SET
-                    hash = :hash,
-                    salt = :salt,
-                    cod_acesso = :cod_acesso
-                WHERE usuario = :usuario";
+        $sql = "UPDATE credenciais SET 
+                    usuario = :usuario, 
+                    hash = :hash, 
+                    salt = :salt, 
+                    cod_acesso = :cod_acesso 
+                WHERE cod_credencial = :cod_credencial";
 
         return database\Connection::executeDML(
             $sql,
             [
+                ':cod_credencial' => $this->getCodCredencial(),
                 ':usuario' => $this->getUsuario(),
                 ':hash' => $this->getHash(),
                 ':salt' => $this->getSalt(),
-                ':cod_acesso' => $this->getCodAcesso(),
+                ':cod_acesso' => $this->getCodAcesso()
             ]
         );
     }
 
     public function delete(): bool {
-        $sql = "DELETE FROM credenciais WHERE usuario = :usuario";
+        $sql = "DELETE FROM credenciais WHERE cod_credencial = :cod_credencial";
+
         return database\Connection::executeDML(
             $sql,
-            [':usuario' => $this->getUsuario()]
+            [':cod_credencial' => $this->getCodCredencial()]
         );
     }
-
-    // ========================= Table-scoped Methods =========================
 
     public static function getAll(string | null $key, string $value = "", int $limit = 0, int $offset = 0): array {
         $sql = "SELECT * FROM credenciais";
@@ -179,14 +208,13 @@ class Credenciais extends Model {
 
         if ($key !== "") {
             $sanitizedKey = preg_replace('/[^a-zA-Z0-9_]/', '', $key);
-        }
-        else {
+        } else {
             $sanitizedKey = "usuario";
         }
 
         if ($value !== "" && isset($sanitizedKey)) {
             $sql .= " WHERE $sanitizedKey LIKE :value";
-            $params[':value'] = "%$value%";
+            $params[':value'] = '%' . $value . '%';
         }
 
         if ($limit > 0) {
@@ -206,6 +234,7 @@ class Credenciais extends Model {
 
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $credenciais[] = new Credenciais(
+                cod_credencial: $row['cod_credencial'],
                 usuario: $row['usuario'],
                 hash: $row['hash'],
                 salt: $row['salt'],
@@ -216,5 +245,4 @@ class Credenciais extends Model {
         return $credenciais;
     }
 }
-
 ?>

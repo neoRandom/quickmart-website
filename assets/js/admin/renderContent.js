@@ -335,7 +335,7 @@ function renderPagination(container) {
             min: "1",
             max: "100",
             value: `${(_a = localStorage.getItem("per_page")) !== null && _a !== void 0 ? _a : 12}`,
-            class: "w-16 px-1 py-0.5 border border-primary-dark border-opacity-10 rounded-md outline-none focus:border-opacity-100"
+            class: "w-16 px-1 py-0.5 primary-border rounded-md outline-none focus:border-opacity-100"
         },
         events: {
             input: (e) => localStorage.setItem("per_page", e.target.value)
@@ -344,7 +344,7 @@ function renderPagination(container) {
         tagName: "button",
         innerText: "Recarregar Tabela",
         attributes: {
-            class: "px-2 py-0.5 border border-primary-dark border-opacity-10 rounded-md hover:bg-primary-dark hover:bg-opacity-10",
+            class: "px-2 py-0.5 primary-border rounded-md hover:bg-primary-dark hover:bg-opacity-10",
             type: "button"
         },
         events: {

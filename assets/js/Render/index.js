@@ -15,7 +15,8 @@ function renderElement(element, ...children) {
             newElement.addEventListener(key, element.events[key]);
     });
     for (let child of children)
-        newElement.appendChild(child);
+        if (child !== null)
+            newElement.appendChild(child);
     if ('container' in element && element.container !== null)
         (_c = element.container) === null || _c === void 0 ? void 0 : _c.appendChild(newElement);
     return newElement;

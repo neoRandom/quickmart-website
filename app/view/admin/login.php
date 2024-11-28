@@ -29,7 +29,7 @@
                 catch(\Exception $e){}
             ?>
         </div>
-        <div class="bg-white border border-black-pute border-opacity-10 rounded-md shadow-md -translate-y-16">
+        <div class="bg-white default-border rounded-md shadow-md -translate-y-16">
             <div class="text-center bg-primary px-8 pb-2 pt-4 rounded-t-md">
                 <h1 class="text-secondary text-4xl font-semibold">
                     QuickMart
@@ -45,7 +45,7 @@
                         required type="text" name="username" id="username" maxlength="64"
                         class="
                             w-full px-2 py-1 
-                            border border-primary-dark border-opacity-25 
+                            primary-border 
                             focus:border-opacity-100 focus:border-secondary
                             rounded-md transition-colors outline-none
                         ">
@@ -56,7 +56,7 @@
                         required type="password" name="password" id="password" 
                         class="
                             w-full px-2 py-1 
-                            border border-primary-dark border-opacity-25 f
+                            primary-border f
                             ocus:border-opacity-100 focus:border-secondary
                             rounded-md transition-colors outline-none
                         ">

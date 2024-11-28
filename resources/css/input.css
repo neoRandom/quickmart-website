@@ -74,7 +74,14 @@
 
     .default-border {
         @apply 
-            border border-black-pure border-opacity-10 
+            border border-black-pure border-opacity-15 
+            outline-none focus:border-opacity-100
+        ;
+    }
+
+    .primary-border {
+        @apply 
+            border border-primary-dark border-opacity-15 
             outline-none focus:border-opacity-100
         ;
     }

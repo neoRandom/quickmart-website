@@ -40,7 +40,7 @@ function generateHeader(string $username, array $access) {
                     class="
                         hidden absolute top-16 right-0 
                         h-fit w-fit p-2 bg-white 
-                        border border-black-pure border-opacity-10 
+                        default-border 
                         rounded-md shadow-md
                     ">
                     <ul class="flex flex-col gap-2 *:w-full *:*:w-full">

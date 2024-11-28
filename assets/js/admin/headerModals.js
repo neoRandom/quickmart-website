@@ -46,7 +46,7 @@ function generateDevModal() {
     }, renderElement({
         tagName: "div",
         attributes: {
-            class: "flex flex-col divide-y w-4/5 mx-auto px-8 py-2 *:py-4 rounded-md shadow-md border border-black-pure border-opacity-10"
+            class: "flex flex-col divide-y w-4/5 mx-auto px-8 py-2 *:py-4 rounded-md shadow-md default-border"
         }
     }, ...Object.keys(body).map((key) => renderElement({
         tagName: "div",

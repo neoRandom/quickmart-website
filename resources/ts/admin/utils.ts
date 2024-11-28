@@ -116,7 +116,7 @@ function generateCreateSection(column: SQLMetadata, value: string | null = null)
             class: `
                 px-2 py-1.5 
                 bg-neutral-100 
-                border border-primary border-opacity-10 focus:border-opacity-100
+                primary-border focus:border-opacity-100
                 rounded-md outline-none transition-colors
             `
         }

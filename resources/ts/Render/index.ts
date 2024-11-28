@@ -16,7 +16,7 @@ import {
 function renderElement(
     element: 
         RenderElement, 
-    ...children: HTMLElement[]
+    ...children: (HTMLElement | null)[]
 ) {
     // Creating the element
     const newElement = document.createElement(element.tagName) as HTMLElement;
@@ -39,7 +39,8 @@ function renderElement(
 
     // Appending the childs, if is any
     for (let child of children)
-        newElement.appendChild(child);
+        if (child !== null)
+            newElement.appendChild(child);
 
     // Adding it to the container, if it exists
     if ('container' in element && element.container !== null)

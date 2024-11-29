@@ -12,6 +12,7 @@ let productsListData = [
     {
         image: "/quickmart/assets/images/image_placeholder.jpg",
         name: "Item 2",
+        old_price: "R$ 30,00",
         price: "R$ 15,00",
         discount: "50",
         unity: "cada",

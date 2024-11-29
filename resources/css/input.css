@@ -8,6 +8,7 @@
     --primary: #003366;
     --primary-dark: #002952;
     --secondary: #fed233;
+    --secondary-dark: #f9c800;
     --desktop-width: 1365px;
     --mobile-width: 100vw;
 }
@@ -46,6 +47,7 @@
             transition-transform duration-300
         ;
     }
+
     .admin-action-button {
         @apply 
             block 
@@ -55,6 +57,27 @@
             transition-colors
         ;
     }
+
+    /* WARNING: Used in a highly specific situation */
+    .product-card {
+        @apply 
+            flex flex-col 
+            h-full p-4 
+            default-border /* Nested components give me creeps, but whatever */
+            rounded-md 
+            hover:shadow-md hover:-translate-y-2 
+            transition-all cursor-pointer
+        ;
+    }
+
+    .product-card-button {
+        @apply 
+            text-primary-dark 
+            w-full py-1 border-2 border-primary rounded-md 
+            transition-colors
+        ;
+    }
+    /* END-WARNING */
 
     .admin-dropdown-menu {
         @apply 

@@ -2,7 +2,7 @@ import { renderElement } from "../../Render/index.js";
 import { ProductCard } from "../../types/main.js";
 import ProductSlider from "./class/ProductSlider.js";
 
-const buttonStyleClasses = "z-10 text-white text-lg font-semibold w-10 aspect-square rounded-md bg-primary hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+const buttonStyleClasses = "z-10 text-white text-lg font-semibold w-10 aspect-square rounded-lg bg-primary hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 
 function renderProductSlider(
     title: string,
@@ -34,7 +34,7 @@ function renderProductSlider(
     renderElement({
         tagName: "div",
         attributes: {
-            class: "flex h-full px-4 transition-transform duration-500",
+            class: "flex h-full px-0 transition-transform duration-500",
             style: `gap: ${gap}rem;`,
         }},
         ...products.map((product) => renderProductCard(product, gap))
@@ -45,13 +45,13 @@ function renderProductSlider(
     renderElement({
         tagName: "section",
         attributes: {
-            class: "flex flex-col gap-8 h-[500px]",
+            class: "relative flex flex-col gap-4 h-[480px]",
         }},
         // Title and link
         renderElement({
             tagName: "div",
             attributes: {
-                class: "flex items-center justify-between",
+                class: "z-10 flex items-end justify-between",
             }},
             renderElement({
                 tagName: "h2",
@@ -69,21 +69,21 @@ function renderProductSlider(
                 innerText: "Ver tudo",
             })
         ),
+        // Slider buttons
+        renderElement({
+            tagName: "div",
+            attributes: {
+                class: "absolute top-0 -left-12 flex items-center justify-between w-[calc(100%+6rem)] h-full",
+            }},
+            leftButton,
+            rightButton
+        ),
         // Slider container
         renderElement({
             tagName: "div",
             attributes: {
-                class: "relative flex-1 py-2 overflow-x-hidden",
+                class: "flex-1 py-2 overflow-x-hidden",
             }},
-            // Slider buttons
-            renderElement({
-                tagName: "div",
-                attributes: {
-                    class: "absolute top-0 left-0 flex items-center justify-between w-full h-full",
-                }},
-                leftButton,
-                rightButton
-            ),
             // Products container
             productSliderElement
         )
@@ -110,7 +110,7 @@ function renderProductCard(product: ProductCard, gap: number) {
     renderElement({
         tagName: "div",
         attributes: {
-            class: "group flex flex-col h-full p-4 default-border rounded-md hover:shadow-md hover:-translate-y-2 transition-all cursor-pointer",
+            class: "group product-card",
             style: `min-width: calc(20% - ${gap}rem * 0.8);`,
         }},
         renderElement({
@@ -122,7 +122,7 @@ function renderProductCard(product: ProductCard, gap: number) {
                 tagName: "p",
                 innerText: `-${product.discount}%`,
                 attributes: {
-                    class: "absolute font-semibold text-white m-2 px-2 py-1 bg-secondary rounded-md",
+                    class: "absolute font-semibold text-white m-2 px-2 py-1 bg-secondary-dark rounded-md",
                 }
             }),
             renderElement({
@@ -130,7 +130,7 @@ function renderProductCard(product: ProductCard, gap: number) {
                 attributes: {
                     src: product.image,
                     alt: "",
-                    class: "w-full aspect-[4/3] border-0",
+                    class: "w-full aspect-[5/4] border-0 object-cover rounded-md",
                 },
             })
         ),
@@ -169,7 +169,7 @@ function renderProductCard(product: ProductCard, gap: number) {
             renderElement({
                 tagName: "p",
                 attributes: {
-                    class: "text-sm font-semibold px-1 truncate",
+                    class: "font-semibold px-1 truncate",
                 },
                 innerText: product.name,
             }),
@@ -186,7 +186,7 @@ function renderProductCard(product: ProductCard, gap: number) {
             innerText: "Adicionar",
             attributes: {
                 type: "button",
-                class: "text-primary-dark w-full py-1 border-2 border-primary rounded-md transition-colors group-hover:bg-primary-dark group-hover:text-white",
+                class: "product-card-button group-hover:bg-primary-dark group-hover:text-white",
             },
         })
     );

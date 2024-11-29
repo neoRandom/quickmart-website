@@ -24,7 +24,7 @@ module.exports = {
                 },
                 secondary: {
                     DEFAULT: "#fed233",
-                    dark: "#000000"  // Undefined for now
+                    dark: "#f9c800"
                 }
             },
             width: {

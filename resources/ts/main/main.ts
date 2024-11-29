@@ -14,35 +14,44 @@ document.body.onload = (() => {
 // SECTION LOADER ================================
 ///////////////////////////////////////////////////
 
-// Image Slider ==================================
-let imageSlider = new ImageSlider(document.querySelector("#image-slider-container") as HTMLElement);
+function sectionLoader() {
+    let sections: Set<HTMLElement> = new Set();
 
-imageSlider.cycle();
+    const sectionContainer = document.querySelector("body > main") as HTMLDivElement;
 
-document.querySelector("#image-slider-right-button")
-?.addEventListener("click", () => {
-    imageSlider.next();
-});
+    // Image Slider ==================================
+    let imageSlider = new ImageSlider(document.querySelector("#image-slider-container") as HTMLElement);
 
-document.querySelector("#image-slider-left-button")
-?.addEventListener("click", () => {
-    imageSlider.previous();
-});
+    imageSlider.cycle();
 
-// Produt Slider =================================
-const { section: section1 } = renderProductSlider(
-    "Mais vendidos da semana", 
-    "#", 
-    1,
-    productsListData
-);
+    document.querySelector("#image-slider-right-button")
+    ?.addEventListener("click", () => {
+        imageSlider.next();
+    });
 
-const { section: section2 } = renderProductSlider(
-    "Talvez você goste", 
-    "#", 
-    1,
-    productsListData
-);
+    document.querySelector("#image-slider-left-button")
+    ?.addEventListener("click", () => {
+        imageSlider.previous();
+    });
 
-document.querySelector("body > main")?.appendChild(section1);
-document.querySelector("body > main")?.appendChild(section2);
+    // Produt Slider =================================
+    sections.add(renderProductSlider(
+        "Mais vendidos da semana", 
+        "#", 
+        1,
+        productsListData
+    ).section);
+
+    sections.add(renderProductSlider(
+        "Talvez você goste", 
+        "#", 
+        1,
+        productsListData
+    ).section);
+
+    sections.forEach((section: HTMLElement) => {
+        sectionContainer.appendChild(section);
+    });
+}
+
+sectionLoader();

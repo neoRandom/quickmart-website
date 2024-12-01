@@ -1,18 +1,19 @@
 {
   "name": "quickmart-website",
   "version": "1.0.0",
-  "description": "Projeto interdisciplinar que consiste na criação de um sistema completo para um minimercado.  Utiliza PHP com TailwindCSS.",
+  "description": "Projeto interdisciplinar que consiste na criação de um sistema completo para um minimercado. Utiliza PHP com TailwindCSS e TypeScript.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ts": "tsc",
     "build:css": "npx tailwindcss -i ./resources/css/input.css -o ./assets/css/main.css",
     "build": "tsc && npx tailwindcss -i ./resources/css/input.css -o ./assets/css/main.css --minify",
+    "load:l": "sudo ./config/load.sh",
+    "load:w": ".\\config\\load.bat",
+    "xampp:l": "sudo ./config/start_xampp.sh",
     "dev": "tsc && npm run build:css",
     "dev:l": "npm run dev && sudo ./config/load.sh",
-    "dev:w": "npm run dev && .\\config\\load.bat",
-    "load:l": "sudo ./config/load.sh",
-    "load:w": ".\\config\\load.bat"
+    "dev:w": "npm run dev && .\\config\\load.bat"
   },
   "repository": {
     "type": "git",

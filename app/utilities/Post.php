@@ -2,8 +2,6 @@
 
 namespace utilities;
 
-namespace utilities;
-
 class Post {
     public static function objectToArray($d) 
     {

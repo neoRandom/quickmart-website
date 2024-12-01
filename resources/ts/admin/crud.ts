@@ -21,7 +21,18 @@ import { NotificationType } from "../enum/render.js";
 
 let metadata: TableMetadata;
 
-let editing: number = -1;
+/* Used in edition related functions
+ *
+ * Edition have two states: editing and not editing
+ * When editing, the form is shown and the li is hidden
+ * Also, the dropdown is replaced with a new one with different buttons
+ * 
+ * When the transition happen, the li and the original dropdown are cached
+ * When the form is closed, the li is restored and the dropdown is replaced
+ * 
+ * The form and the new dropdown are generated dynamically every time a record is edited
+ */
+let editing: number = -1;  // Stores the key of the record being edited
 let cachedLI: HTMLLIElement;
 let cachedDropdown: HTMLDivElement;
 

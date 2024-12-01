@@ -10,12 +10,37 @@ Link para o outro sistema do projeto interdisciplinar: [Projeto Minimercado](htt
 
 ## Sumário
 
+- [Guia de instalação](#guia-de-instala%C3%A7%C3%A3o)
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
 - [Documentação](#documenta%C3%A7%C3%A3o)
 - [Diferenciais](#diferenciais)
 - [To-do list](#lista-de-funcionalidades-to-do-list)
 - [Desenvolvedores](#desenvolvedores)
 - [Licença](#licen%C3%A7a)
+
+## Guia de instalação
+
+Este guia de instalação é para usuários de Windows.
+
+> Nota 1: O projeto foi feito majoritariamente em Linux, para ver o guia de instalação para Linux, clique [aqui](/).
+
+Pré-requisitos:
+- XAMPP/WAMPP instalado
+- NodeJS e NPM instalados
+- Conhecimento básico com Shell/CLI (CMD do Windows)
+- Ter a pasta do projeto em sua máquina, seja baixando o `.zip` ou usando o comando `git clone https://github.com/neoRandom/quickmart-website.git`. Veja a `Nota 2` dessa seção.
+
+Passo a Passo:
+- Iniciar o Apache e o MySQL por meio do Painel de Controle do XAMPP.
+- Carregar o Banco de Dados no phpMyAdmin.
+  - Primeiro o *Schema* (estrutura) do arquivo (`./database/schema.sql`).
+  - Em seguida, os registros (dados) do arquivo (`./database/data.sql`). (**opcional**)
+- Configurar um arquivo `.env` (variáveis de ambiente) na pasta `config/`, se baseando no arquivo de exemplo `.env.example`.
+- Instalar os módulos do Node usando o comando `npm install`.
+- Executar o comando principal de execução (Windows) `npm run dev:w`.
+- Abrir em um navegador a URL `http://localhost/quickmart/public/admin` [link](http://localhost/quickmart/public/admin).
+
+> Nota 2: Não é necessário baixar o projeto na pasta `htdocs`, pois o comando principal de execução já adiciona todos os arquivos necessários para o website na pasta `htdocs/quickmart`.
 
 ## Tecnologias Utilizadas
 

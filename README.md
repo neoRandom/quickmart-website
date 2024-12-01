@@ -25,9 +25,10 @@ Este guia de instalação é para usuários de Windows.
 > Nota 1: O projeto foi feito majoritariamente em Linux, para ver o guia de instalação para Linux, clique [aqui](/).
 
 Pré-requisitos:
-- XAMPP/WAMPP instalado
-- NodeJS e NPM instalados
-- Conhecimento básico com Shell/CLI (CMD do Windows)
+- XAMPP/WAMPP instalado.
+- NodeJS e NPM instalados.
+- Conhecimento básico com Shell/CLI (CMD do Windows).
+- Conhecimento básico com phpMyAdmin.
 - Ter a pasta do projeto em sua máquina, seja baixando o `.zip` ou usando o comando `git clone https://github.com/neoRandom/quickmart-website.git`. Veja a `Nota 2` dessa seção.
 
 Passo a Passo:
@@ -46,9 +47,9 @@ Passo a Passo:
 
 <img src="https://skillicons.dev/icons?i=html,css,js,ts,tailwind,php,mysql,npm,figma,bash,postman" />
 
-> - Figma: Design das páginas
-> - Bash: Scripts para automação
-> - Postman: Teste dos endpoints e requisições 
+> - Figma: Design das páginas.
+> - Bash: Scripts para automação.
+> - Postman: Teste dos endpoints e requisições.
 > - XAMPP (não incluído na lista visual): *Server Tech Stack* utilizado no desenvolvimento.
 
 ## Documentação
@@ -98,4 +99,4 @@ Entre os elementos da documentação, estão incluidos:
 
 ## Licença
 
-Este projeto atualmente não possui licenças externas
+Esse repositório atualmente não possui licenças externas.

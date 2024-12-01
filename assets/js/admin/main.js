@@ -13,6 +13,7 @@ import { showCreate, showCreateUser } from "./crud.js";
 import { generateDevModal, generateSupportModal } from "./headerModals.js";
 import renderContent from "./renderContent.js";
 import { NotificationType } from "../enum/render.js";
+import { fetchMetadata } from "../data/admin/database.js";
 const sideMenu = document.querySelector("#sidebar");
 const sideMenuItens = sideMenu.querySelectorAll("div > ul > li");
 const crudContainer = document.querySelector("#side-container");
@@ -63,7 +64,7 @@ let tablesMetadataCache = [];
 let structure;
 function loadPage(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!(yield fetchMetadata(id)))
+        if (!(yield fetchMetadataWrapper(id)))
             return;
         const menuItens = sideMenu.querySelectorAll("div > ul > li");
         menuItens.forEach((e, i) => {
@@ -82,46 +83,21 @@ function loadPage(id) {
     });
 }
 ;
-function fetchMetadata(id) {
+function fetchMetadataWrapper(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        var _a, _b;
         if (tablesMetadataCache[id]) {
             metadata = tablesMetadataCache[id];
+            return true;
         }
-        else {
-            let payload = yield fetch(`get_metadata/?id=${id}`);
-            if (payload.status !== 200) {
-                renderNotification("Não foi possível carregar a tabela.", NotificationType.Warning);
-                return false;
-            }
-            metadata = yield payload.json();
-            metadata.index = id;
-            metadata.sizes = calculateTableSize(metadata.rows);
-            metadata.pk = (_b = (_a = metadata.rows.find(row => row.Key === "PRI")) === null || _a === void 0 ? void 0 : _a.Field) !== null && _b !== void 0 ? _b : "";
-            tablesMetadataCache[id] = metadata;
+        let temp = yield fetchMetadata(id);
+        if (temp === null) {
+            renderNotification("Não foi possível carregar a tabela.", NotificationType.Warning);
+            return false;
         }
+        metadata = temp;
+        tablesMetadataCache[id] = metadata;
         return true;
     });
-}
-function calculateTableSize(metadataSQL) {
-    var _a, _b;
-    let sizes = {
-        total: 0,
-        columns: []
-    };
-    for (let rowData of metadataSQL) {
-        if (rowData.Type.includes("char") || rowData.Type.includes("binary")) {
-            let columnSize = parseInt((_b = (_a = rowData.Type.split("(")[1]) === null || _a === void 0 ? void 0 : _a.split(")")[0]) !== null && _b !== void 0 ? _b : "1");
-            let gridCols = Math.min(Math.ceil(columnSize / 12), 4);
-            sizes.columns.push(gridCols);
-            sizes.total += gridCols;
-        }
-        else {
-            sizes.columns.push(1);
-            sizes.total += 1;
-        }
-    }
-    return sizes;
 }
 function renderContainer(container) {
     return renderElement({

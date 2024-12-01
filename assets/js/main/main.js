@@ -1,6 +1,6 @@
-import ImageSlider from "./components/class/ImageSlider.js";
-import renderProductSlider from "./components/ProductSlider.js";
-import { productsListData } from "./data/products.js";
+import ImageSlider from "../classes/ImageSlider.js";
+import renderProductSlider from "../components/ProductSlider.js";
+import { productsListData } from "../data/products.js";
 document.body.onload = (() => {
     document.body.style.display = "";
 });

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { renderElement, renderNotification } from "../Render/index.js";
 import { hideEdit, showDelete, showDetails, showEdit } from "./crud.js";
 import { NotificationType } from "../enum/render.js";
+import { fetchData } from "../data/admin/database.js";
 let data;
 let metadata;
 let cached_page = 0;
@@ -45,19 +46,20 @@ function renderContent(container, new_metadata, page, key, search) {
                 url += `&offset=${page * per_page}`;
             }
         }
-        const payload = yield fetch(url);
-        if (payload.status !== 200) {
-            renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
+        let temp = yield fetchData(url);
+        if (typeof temp === "number") {
+            if (temp === 3) {
+                renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
+            }
+            if (temp === 2) {
+                renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
+            }
+            if (temp === 1) {
+                renderNotification("Nenhum dado encontrado.", NotificationType.Warning);
+            }
             return false;
         }
-        data = yield payload.json().catch((_) => {
-            renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
-            return false;
-        });
-        if (data.length === 0) {
-            renderNotification("Nenhum dado encontrado.", NotificationType.Warning);
-            return false;
-        }
+        data = temp;
         if (page !== undefined)
             cached_page = page;
         if (key !== undefined)

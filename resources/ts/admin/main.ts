@@ -1,5 +1,4 @@
 import type {
-    SQLMetadata,
     TableMetadata
 } from "../types/admin.js";
 
@@ -22,6 +21,7 @@ import {
 import renderContent from "./renderContent.js";
 
 import { NotificationType } from "../enum/render.js";
+import { fetchMetadata } from "../data/admin/database.js";
 
 
 const sideMenu = document.querySelector("#sidebar") as HTMLDivElement;
@@ -118,7 +118,7 @@ let structure: HTMLDivElement;
  * @param id - The id of the table to load.
  */
 async function loadPage(id: number) {
-    if(!await fetchMetadata(id))
+    if(!await fetchMetadataWrapper(id))
         return;
 
     // Make the clicked button have the different style
@@ -145,67 +145,47 @@ async function loadPage(id: number) {
 };
 
 
+
 /**
- * Fetches the metadata for a table given its id.
- *
- * Checks if the metadata is cached in the tablesMetadataCache array.
- * If it is, it returns the cached metadata.
- * If it is not, it fetches it from the server and caches it.
- *
- * @param id The index of the table in the database.
- * @returns true if the metadata was fetched successfully, false otherwise.
+ * Fetches metadata for a given ID, either from cache or from the server.
+ * 
+ * @param id - The ID of the metadata to fetch.
+ * @returns A promise that resolves to `true` if the metadata was successfully fetched or retrieved from cache, `false` otherwise.
+ * 
+ * @remarks
+ * - If the metadata is cached, it retrieves it from the cache.
+ * - If the metadata is not cached, it fetches it from the server.
+ * - If the fetch operation fails, it renders a notification with a warning message.
+ * 
+ * @example
+ * ```typescript
+ * const success = await fetchMetadataWrapper(123);
+ * if (success) {
+ *     console.log("Metadata fetched successfully.");
+ * } else {
+ *     console.log("Failed to fetch metadata.");
+ * }
+ * ```
  */
-async function fetchMetadata(id: number) {
+async function fetchMetadataWrapper(id: number) {
     // Check if the metadata is cached
     if (tablesMetadataCache[id]) {
         metadata = tablesMetadataCache[id];
+        return true;
     }
     // If is not cached, fetch metadata from the server
-    else {
-        let payload = await fetch(`get_metadata/?id=${id}`);
+    let temp = await fetchMetadata(id);
 
-        if (payload.status !== 200) {
-            renderNotification("Não foi possível carregar a tabela.", NotificationType.Warning);
-            return false;
-        }
+    if (temp === null){
+        renderNotification("Não foi possível carregar a tabela.", NotificationType.Warning);
+        return false;
+    }
+
+    metadata = temp;
+
+    tablesMetadataCache[id] = metadata;
     
-        metadata = await payload.json();
-        metadata.index = id;
-        metadata.sizes = calculateTableSize(metadata.rows);
-        metadata.pk = metadata.rows.find(row => row.Key === "PRI")?.Field ?? "";
-        tablesMetadataCache[id] = metadata;
-    }
     return true;
-}
-
-
-/**
- * Calculates the total size of a table based on its metadata.
- * The size of a column is based on the type of the column. If the type is char or binary,
- * the size is the length of the column divided by 12. Otherwise, the size is 1.
- * @param metadataSQL The metadata of the table to calculate the size of.
- * @returns The total size of the table.
- */
-function calculateTableSize(metadataSQL: SQLMetadata[]) {
-    let sizes: { total: number, columns: number[] } = {
-        total: 0,
-        columns: []
-    };
-
-    for (let rowData of metadataSQL) {
-        if (rowData.Type.includes("char") || rowData.Type.includes("binary")) {
-            let columnSize = parseInt(rowData.Type.split("(")[1]?.split(")")[0] ?? "1");
-            let gridCols = Math.min(Math.ceil(columnSize / 12), 4);
-            sizes.columns.push(gridCols);
-            sizes.total += gridCols;
-        }
-        else {
-            sizes.columns.push(1);
-            sizes.total += 1;
-        }
-    }
-
-    return sizes;
 }
 
 

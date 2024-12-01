@@ -15,7 +15,9 @@ import {
     showDetails,
     showEdit
 } from "./crud.js";
+
 import { NotificationType } from "../enum/render.js";
+import { fetchData } from "../data/admin/database.js";
 
 
 let data: TableData;
@@ -67,21 +69,25 @@ async function renderContent(container: HTMLElement, new_metadata: TableMetadata
         }
     }
 
-    const payload = await fetch(url);
-    if (payload.status !== 200) {
-        renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
+    let temp: TableData | number = await fetchData(url);
+
+    if (typeof temp === "number") {
+        if (temp === 3) {
+            renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
+        }
+    
+        if (temp === 2) {
+            renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
+        }
+    
+        if (temp === 1) {
+            renderNotification("Nenhum dado encontrado.", NotificationType.Warning);
+        }
+            
         return false;
     }
 
-    data = await payload.json().catch((_) => {
-        renderNotification("Não foi possível carregar os dados da tabela.", NotificationType.Warning);
-        return false;
-    });
-
-    if (data.length === 0) {
-        renderNotification("Nenhum dado encontrado.", NotificationType.Warning);
-        return false;
-    }
+    data = temp;
 
     if (page !== undefined)
         cached_page = page;

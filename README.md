@@ -49,7 +49,7 @@ Entre os elementos da documentação, estão incluidos:
 
 - Scripts (tanto para Windows quanto Linux) para desenvolvimento mais dinâmico.
 - Renderizador de HTML baseado em TypeScript (mini-micro-framework pessoal).
-- Uso de *hash* (SHA256) e *salt* (random unsigned 32-bits number) para as credenciais
+- Uso de *hash* (SHA256) e *salt* (random unsigned 32-bits number) para as credenciais.
 - Uso de *JSON Web Tokens* (JWT) para manter a sessão do usuário.
 - Para fins de aprendizado, o código de todos os componentes foram manualmente feitos do zero.
 
@@ -64,7 +64,7 @@ Entre os elementos da documentação, estão incluidos:
 
 ## Desenvolvedores
 
-- [Fellipe Leonardo](https://github.com/rakRandom) (rakRandom) (líder)
+- [Fellipe Leonardo](https://github.com/neoRandom) (neoRandom) (líder)
 - [Bárbara Rampazi](https://github.com/caramelPopp) (caramelPopp)
 - [Enzo Souto](https://github.com/EnzoSouto01)
 

@@ -59,9 +59,8 @@ Os diagramas relacionados ao Banco de Dados podem ser encontrados [aqui](/). (Li
 Grande parte do funcionamento do sistema já é descrito no próprio código (com *Self-Documenting Code*, *Docstrings*, entre outros), mas uma visão completa pode ser encontrada na pasta [docs](docs/index.md), clique para saber mais.
 
 Entre os elementos da documentação, estão incluidos:
-- Público alvo
 - Descrição do projeto (features e diferenciais)
-- Pré-requisitos para utilizar o software
+- Guia de instalação
 - Estrutura de pastas (baseado em Laravel)
 - Arquitetura geral
 - Utilização das tecnologias

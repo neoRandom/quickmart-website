@@ -22,7 +22,7 @@ Link para o outro sistema do projeto interdisciplinar: [Projeto Minimercado](htt
 
 Este guia de instalação é para usuários de Windows.
 
-> Nota 1: O projeto foi feito majoritariamente em Linux, para ver o guia de instalação para Linux, clique [aqui](/).
+> Nota 1: O projeto foi feito majoritariamente em Linux, para ver o guia de instalação para Linux, clique [aqui](docs/installation_guide.md#linux).
 
 Pré-requisitos:
 - XAMPP/WAMPP instalado.

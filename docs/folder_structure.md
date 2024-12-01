@@ -10,5 +10,14 @@
 - `config`: Arquivos de configuração para o projeto (variáveis de ambiente e scripts)
 - `database`: Arquivos SQL, como o Schema do banco de dados, testes e registros
 - `docs`: Documentação, como arquivos Markdown e Diagramas
-- `public`: Diretório que os usuários devem acessar, os arquivos aqui chamam os controllers que chamam os views
+- `public`: Diretório que os usuários devem acessar, contém os endpoints
 - `resources`: Arquivos estáticos a serem compilados, como o `input.css` do Tailwind (vão para a pasta `assets`)
+    - `ts`: Diretório onde ficam os arquivos TypeScript (.ts)
+        - `components`: Componentes visuais, como ProductSlider ou Carousel
+        - `classes`: Classes gerais do projeto, principalmente as que compõem os componentes
+        - `types`: Definições dos tipos usados no projeto
+        - `enums`: Definições dos enums usados no projeto
+        - `Render`: Diretório do "mini" framework baseado em React
+        - `data`: Diretório da camada de receber e enviar dados
+        - `admin`: Arquivos TypeScript usados na página do administrador (dashboard)
+        - `main`: Arquivos TypeScript usados na página principal

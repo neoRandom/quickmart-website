@@ -14,7 +14,6 @@
         - [ ] Carregar os arquivos do banco de dados para o phpMyAdmin 
         - [ ] Carregar o projeto para a pasta `htdocs`
         - [ ] Deletar o projeto da pasta `htdocs`
-
     - [ ] Node
         - [ ] Compilação do TypeScript
         - [ ] Compilação do TailwindCSS
@@ -35,7 +34,6 @@
         - [ ] Main
             - [ ] Carregar página
             - [ ] Carregar login
-        
         - [ ] Admin
             - [ ] Wrapper para requisições
             - [ ] POST
@@ -79,7 +77,6 @@
             - [ ] Banners de divulgação e anúncios
             - [ ] Ícones para botões
         - [ ] Compilar arquivos da pasta `resources`
-
     - [ ] TypeScript
         - [ ] Definição dos `class`, `type`, `interface` e `enum` necessários
         - [ ] Renderizador de HTML
@@ -94,13 +91,11 @@
             - [ ] POST de Inserção (Credenciais)
             - [ ] POST de Alteração
             - [ ] POST de Exclusão
-
     - [ ] TailwindCSS/CSS
         - [ ] Definição das variáveis (cores, tamanhos etc.)
         - [ ] Estilização da barra de rolagem (scroll)
         - [ ] Modificação da estilização padrão de tags necessárias
         - [ ] Criação dos componentes de estilização
-
     - [ ] Dashboard
         - [ ] Modais
             - [ ] Inserção
@@ -121,7 +116,6 @@
                 - [ ] Registros
                 - [ ] Ações
                 - [ ] Paginação
-    
     - [ ] Login
         - [ ] Principal
         - [ ] Credenciais incorretas

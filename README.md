@@ -73,7 +73,7 @@ Entre os elementos da documentação, estão incluidos:
 
 ## Diferenciais
 
-> Para ver a lista completa, clique [aqui](/).
+> Para ver a lista completa, clique [aqui](docs/unique_features.md).
 
 > Nota: Essa lista é principalmente em relação a outros trabalhos da mesma Feira Tecnológica, não refletindo práticas comuns no mercado (autenticação com hash e salt, por exemplo).
 
@@ -87,9 +87,31 @@ Entre os elementos da documentação, estão incluidos:
 
 ## Lista de funcionalidades (To-do list)
 
-> Para ver a lista completa, clique [aqui](/).
+> Para ver a lista completa, clique [aqui](docs/todo_list.md).
 
-- [x] To-do list
+- [x] Banco de Dados
+    - [x] Criação da estrutura (schema)
+    - [x] Criação dos dados (data)
+
+- [x] Back-end
+    - [x] Autoloader
+    - [x] Controllers
+    - [x] Database (classe de Conexão)
+    - [x] Model (classes de modelagem)
+    - [x] Utilities (classes para lidar com)
+
+- [ ] Front-end
+    - [ ] Assets
+    - [x] TypeScript
+    - [x] TailwindCSS/CSS
+    - [x] Dashboard
+    - [x] Login
+
+- [x] Public
+    - [x] Definir os endpoints
+    - [x] Configurar os endpoints
+
+- [x] Testes
 
 ## Desenvolvedores
 

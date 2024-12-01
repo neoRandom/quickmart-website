@@ -8,7 +8,14 @@ Nosso objetivo principal foi desenvolver um sistema de forma profissional, visan
 
 Link para o outro sistema do projeto interdisciplinar: [Projeto Minimercado](https://github.com/neoRandom/projeto-minimercado)
 
-<br />
+## Sumário
+
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Documentação](#documenta%C3%A7%C3%A3o)
+- [Diferenciais](#diferenciais)
+- [To-do list](#lista-de-funcionalidades-to-do-list)
+- [Desenvolvedores](#desenvolvedores)
+- [Licença](#licen%C3%A7a)
 
 ## Tecnologias Utilizadas
 
@@ -18,8 +25,6 @@ Link para o outro sistema do projeto interdisciplinar: [Projeto Minimercado](htt
 > - Bash: Scripts para automação
 > - Postman: Teste dos endpoints e requisições 
 > - XAMPP (não incluído na lista visual): *Server Tech Stack* utilizado no desenvolvimento.
-
-<br />
 
 ## Documentação
 
@@ -40,9 +45,8 @@ Entre os elementos da documentação, estão incluidos:
 - Protocolos de segurança
 - Referências de estudo
 
-<br />
-
 ## Diferenciais
+
 > Para ver a lista completa, clique [aqui](/).
 
 > Nota: Essa lista é principalmente em relação a outros trabalhos da mesma Feira Tecnológica, não refletindo práticas comuns no mercado (autenticação com hash e salt, por exemplo).
@@ -55,22 +59,17 @@ Entre os elementos da documentação, estão incluidos:
 - Uso de *JSON Web Tokens* (JWT) para manter a sessão do usuário.
 - Para fins de aprendizado, o código de todos os componentes foram manualmente feitos do zero.
 
-<br />
+## Lista de funcionalidades (To-do list)
 
-## To-do list:
 > Para ver a lista completa, clique [aqui](/).
 
 - [x] To-do list
-
-<br />
 
 ## Desenvolvedores
 
 - [Fellipe Leonardo](https://github.com/neoRandom) (neoRandom) (líder)
 - [Bárbara Rampazi](https://github.com/caramelPopp) (caramelPopp)
 - [Enzo Souto](https://github.com/EnzoSouto01)
-
-<br />
 
 ## Licença
 

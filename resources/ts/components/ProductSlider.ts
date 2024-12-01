@@ -1,6 +1,6 @@
-import { renderElement } from "../../Render/index.js";
-import { ProductCard } from "../../types/main.js";
-import ProductSlider from "./class/ProductSlider.js";
+import { renderElement } from "../Render/index.js";
+import { ProductCard } from "../types/main.js";
+import ProductSlider from "../classes/ProductSlider.js";
 
 const buttonStyleClasses = "z-10 text-white text-lg font-semibold w-10 aspect-square rounded-lg bg-primary hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 

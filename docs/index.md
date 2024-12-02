@@ -32,21 +32,19 @@ Em resumo, na corrida do ouro, nós queremos vender as pás e picaretas.
 
 - [Estrutura de Pastas](folder_structure.md)
 
-- [Arquitetura Geral]()
-
-- [Utilização das tecnologias]()
+- [Arquitetura Geral](general_architecture.md)
 
 - [Diferenciais](unique_features.md)
 
 - [Lista de features (To-do List)](todo_list.md)
 
-- [Fluxo do código]()
+- [Fluxo do código](code_flow.md)
 
-- [Lista de endpoints]()
+- [Lista de endpoints](endpoints_list.md)
 
-- [Protocolos de segurança]()
+- [Protocolos de segurança](security_features.md)
 
-- [Referências de estudo]()
+- [Referências de estudo](references.md)
 
 # Notas
 

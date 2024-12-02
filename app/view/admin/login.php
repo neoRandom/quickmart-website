@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/quickmart/assets/css/main.css">
 </head>
 <body>
-    <div class="flex items-center justify-center w-screen h-screen bg-gray-100">
+    <div class="flex items-center justify-center w-screen h-screen">
         <div class="absolute top-0 left-0 flex items-center w-full px-5 py-2 bg-primary">
             <img src="/quickmart/assets/images/QuickMart.png" alt="">
             <?php 
@@ -29,52 +29,51 @@
                 catch(\Exception $e){}
             ?>
         </div>
-        <div class="bg-white default-border rounded-md shadow-md -translate-y-16">
-            <div class="text-center bg-primary px-8 pb-2 pt-4 rounded-t-md">
-                <h1 class="text-secondary text-4xl font-semibold">
-                    QuickMart
-                </h1>
-                <p class="text-white opacity-80 mt-1">
-                    Login Administrador
-                </p>
-            </div>
-            <form action="" method="POST" class="px-8 pb-6 pt-2">
-                <div class="my-2">
-                    <label for="username" class="text-sm opacity-80 ml-2 mb-1">Usuário:</label>
-                    <input 
-                        required type="text" name="username" id="username" maxlength="64"
-                        class="
-                            w-full px-2 py-1 
-                            primary-border 
-                            focus:border-opacity-100 focus:border-secondary
-                            rounded-md transition-colors outline-none
-                        ">
+        <div class="flex default-border rounded-md shadow-md -translate-y-16 overflow-hidden">
+            <form action="" method="POST" class="flex flex-col items-center w-[270px] p-6">
+                <div class="text-center">
+                    <h2 class="text-2xl font-semibold">
+                        Login
+                    </h2>
+                    <hr class="my-1 border-t-2" />
+                    <h3 class="text-xl">
+                        Administrador
+                    </h3>
                 </div>
-                <div class="my-2">
-                    <label for="password" class="text-sm opacity-80 ml-2 mb-1">Senha:</label>
-                    <input  
-                        required type="password" name="password" id="password" 
-                        class="
-                            w-full px-2 py-1 
-                            primary-border f
-                            ocus:border-opacity-100 focus:border-secondary
-                            rounded-md transition-colors outline-none
-                        ">
+                <div class="flex-1 flex flex-col gap-4 justify-center w-full">
+                    <div class="flex flex-col gap-2">
+                        <label for="username" class="text-sm opacity-80 indent-2">Usuário</label>
+                        <input 
+                            required type="text" name="username" id="username" maxlength="64"
+                            class="
+                                w-full px-2 py-1 
+                                primary-border 
+                                focus:border-opacity-100 focus:border-secondary
+                                rounded-md transition-colors outline-none
+                            ">
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="password" class="text-sm opacity-80 indent-2">Senha</label>
+                        <input  
+                            required type="password" name="password" id="password" 
+                            class="
+                                w-full px-2 py-1 
+                                primary-border f
+                                ocus:border-opacity-100 focus:border-secondary
+                                rounded-md transition-colors outline-none
+                            ">
+                    </div>
                 </div>
-                <div class="mt-6">
-                    <button 
-                        type="submit"
-                        class="
-                            text-white w-full p-2
-                            bg-primary hover:shadow-md
-                            rounded-md transition-all" >
-                        Entrar
-                    </button>
-                </div>
+                <button 
+                    type="submit"
+                    class="product-card-button hover:bg-primary hover:text-white" >
+                    Entrar
+                </button>
             </form>
+            <img src="/quickmart/assets/images/login_banner.png" />
         </div>
         <div class="absolute bottom-0 left-0 w-full px-5 py-2 bg-primary">
-            <p class="text-center text-white hover:*:underline">
+            <p class="text-sm text-center text-white hover:*:underline">
                 © QuickMart 2024 | Criado por: 
                 <a href="https://github.com/neoRandom" target="_blank">Fellipe Leonardo</a>, Bárbara Fernandes e Enzo Souto
             </p>

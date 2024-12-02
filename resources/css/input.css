@@ -39,6 +39,7 @@
     scrollbar-color: var(--primary) #DDD;
 }
 
+/*
 @layer base {
     input[type="text"],
     input[type="email"],
@@ -52,7 +53,7 @@
             focus:border-opacity-100
         ;
     }
-}
+} */
 
 @layer components {
     .btn-w-bg-image {

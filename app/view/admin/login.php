@@ -10,25 +10,8 @@
 </head>
 <body>
     <div class="flex items-center justify-center w-screen h-screen">
-        <div class="absolute top-0 left-0 flex items-center w-full px-5 py-2 bg-primary">
-            <img src="/quickmart/assets/images/QuickMart.png" alt="">
-            <?php 
-                require_once __DIR__ . "/../../utilities/JWT.php";
-                try{
-                    if (!isset($_COOKIE["admin_token"])) {
-                        throw new Exception();
-                    }
-                    $payload = utilities\JWT::verifyJWT($_COOKIE["admin_token"]);
-
-                    ?>
-                    <div class="ml-auto text-white">
-                        Já logado como: <?php echo $payload["username"] ?>
-                    </div>
-                    <?php
-                }
-                catch(\Exception $e){}
-            ?>
-        </div>
+        <header class="absolute top-0 left-0 flex items-center h-12 w-full px-5 py-2 bg-primary shadow-md">
+        </header>
         <div class="flex default-border rounded-md shadow-md -translate-y-16 overflow-hidden">
             <form action="" method="POST" class="flex flex-col items-center w-[270px] p-6">
                 <div class="text-center">
@@ -72,8 +55,8 @@
             </form>
             <img src="/quickmart/assets/images/login_banner.png" />
         </div>
-        <div class="absolute bottom-0 left-0 w-full px-5 py-2 bg-primary">
-            <p class="text-sm text-center text-white hover:*:underline">
+        <div class="absolute bottom-0 left-0 w-full px-5 py-2">
+            <p class="text-sm text-center hover:*:underline">
                 © QuickMart 2024 | Criado por: 
                 <a href="https://github.com/neoRandom" target="_blank">Fellipe Leonardo</a>, Bárbara Fernandes e Enzo Souto
             </p>

@@ -112,12 +112,6 @@ Entre os elementos da documentação, estão incluidos:
 
 - [x] Testes
 
-## Desenvolvedores
-
-- [Fellipe Leonardo](https://github.com/neoRandom) (neoRandom) (líder)
-- [Bárbara Rampazi](https://github.com/caramelPopp) (caramelPopp)
-- [Enzo Souto](https://github.com/EnzoSouto01)
-
 ## Licença
 
 Esse repositório atualmente não possui licenças externas.

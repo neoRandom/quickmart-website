@@ -4,7 +4,7 @@
 
 O **QuickMart** Website é um dos dois sistemas para o projeto interdisciplinar da Feira Tecnológica da Etec da Zona Leste (2024), que tem como objetivo criar um sistema multiplataforma para uma empresa fictícia.
 
-Nosso objetivo principal foi desenvolver um sistema de forma profissional, visando utilizar as técnicas e tecnologias necessárias para tal, além de um código limpo, escalável e legível. Temos como meta um sistema seguro, escalável, profissional e de fácil manutenção.
+Meu objetivo principal foi desenvolver um sistema de forma profissional, visando utilizar as técnicas e tecnologias necessárias para tal, além de um código limpo, escalável e legível. Tenho como meta um sistema seguro, escalável, profissional e de fácil manutenção.
 
 Link para o outro sistema do projeto interdisciplinar: [Projeto Minimercado](https://github.com/neoRandom/projeto-minimercado)
 
